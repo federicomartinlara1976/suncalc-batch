@@ -1,0 +1,27 @@
+[
+	{
+		"codigo": "JA",
+		"nombre": "JAEN",
+		"descripcion": "Zona Jaén"
+	},
+	{
+		"codigo": "CO",
+		"nombre": "CORDOBA",
+		"descripcion": "Zona Córdoba"
+	},
+	{
+		"codigo": "SE",
+		"nombre": "SEVILLA",
+		"descripcion": "Zona Sevilla"
+	},
+	{
+		"codigo": "GR",
+		"nombre": "GRANADA",
+		"descripcion": "Zona Granada"
+	},
+	{
+		"codigo": "RG",
+		"nombre": "GENERAL",
+		"descripcion": "Sist. Reg. Gral."
+	}
+]

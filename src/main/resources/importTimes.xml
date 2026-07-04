@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- Batch de ingesta de datos diarios de tiempos del sol -->
+	<batch:job id="importTimes" job-repository="jobRepository">
+		<batch:flow id="importTimesFlow" parent="importFlow" />
+		
+		<batch:listeners>
+			<batch:listener ref="importJobListener" />
+		</batch:listeners>
+	</batch:job>
+	
+	<batch:job id="recalculateDifferences" job-repository="jobRepository">
+		<batch:flow id="recalculateDifferencesFlow" parent="recalculateFlow" />
+		
+		<batch:listeners>
+			<batch:listener ref="importJobListener" />
+		</batch:listeners>
+	</batch:job>
+
+	<!-- Thread safe Reader -->
+	<bean id="timeDataImporterReader"
+		class="net.bounceme.chronos.suncalc.reader.DailyRegisterItemReader"/>
+	
+	<bean id="timeDataProcessor" class="org.springframework.batch.item.validator.ValidatingItemProcessor">
+		<property name="filter" value="false" />
+		<property name="validator" ref="timeDataValidator"/>
+	</bean>
+
+</beans>

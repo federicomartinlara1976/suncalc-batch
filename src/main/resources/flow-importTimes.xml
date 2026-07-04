@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- Batch de ingesta de datos de niveles de embalses a través del SAIH -->
+	<batch:flow id="importFlow">
+		<batch:decision id="stepFlowDecider" decider="isExecutedDecider">
+            <batch:next on="NO_EXECUTED" to="getLastMarkStep" />
+            <batch:next on="EXECUTED" to="countExecutionStep" />
+        </batch:decision>
+        
+        <batch:step id="getLastMarkStep" next="importStep">
+			<batch:tasklet ref="getLastMarkTasklet"/>
+		</batch:step>
+	
+		<batch:step id="importStep" next="calculateDifferenceStep">
+			<batch:tasklet>
+				<batch:chunk reader="timeDataImporterReader"
+					processor="timeDataProcessor"
+					writer="timeDataImporterWriter" commit-interval="5" skip-limit="2">
+					
+					<batch:skippable-exception-classes>
+						<batch:include class="org.springframework.batch.item.validator.ValidationException"/>
+					</batch:skippable-exception-classes>
+					
+					<batch:listeners>
+						<batch:listener ref="customSkipListener" />
+						<batch:listener ref="customChunkListener" />
+					</batch:listeners>
+				</batch:chunk>
+			</batch:tasklet>
+			
+			<batch:listeners>
+				<batch:listener ref="timeStepListener" />
+			</batch:listeners>
+		</batch:step>
+		
+		<batch:step id="calculateDifferenceStep" next="countExecutionStep">
+			<batch:tasklet ref="calculateDifferenceTasklet"/>
+		</batch:step>
+		
+		<batch:step id="countExecutionStep">
+			<batch:tasklet ref="updateExecutionTasklet"/>
+		</batch:step>
+	</batch:flow>
+
+</beans>

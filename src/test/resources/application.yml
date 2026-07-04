@@ -1,0 +1,54 @@
+spring:
+  main.allow-bean-definition-overriding: true
+  
+  datasource:
+    batch:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url:               jdbc:mysql://localhost/batch_test?allowPublicKeyRetrieval=true&useSSL=false
+      username:          federico
+      password:          MedinaAzahara2468@
+    postgres:
+      driver-class-name: org.h2.Driver
+      url:               jdbc:h2:mem:demo;DB_CLOSE_ON_EXIT=FALSE
+      username:          sa
+      password:          
+    
+  batch.job.enabled: false
+  
+  data.mongodb.uri: mongodb://localhost:27017/EmbalsesCHG
+  
+server:
+  port : 9091
+  
+batch:
+  jdbc:
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    batch.jdbc.pool.size: 6
+  
+  database:
+    incrementer:
+      class: org.springframework.jdbc.support.incrementer.MySQLMaxValueIncrementer
+      parent: columnIncrementerParent
+
+  lob.handler.class: org.springframework.jdbc.support.lob.DefaultLobHandler
+  grid.size: 50
+  verify.cursor.position: true
+  initialize-schema: always
+  
+application:
+  importJob:
+    cron: 0 45 9 ? * 1,2,3,4,5  
+    url: https://www.chguadalquivir.es/saih/EmbalNiv.aspx
+   
+  lastExecutions:
+    cron: 0 0 10 ? * 5
+    export:
+      file:
+        header: ID,VALUE,EXECUTIONTIME
+        path: /home/federico/logs/lastExecutions
+        suffix: csv
+        
+  statExecutions:
+    cron: 0 30 10 ? * 5
+    
