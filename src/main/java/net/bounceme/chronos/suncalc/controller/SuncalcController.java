@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +22,22 @@ public class SuncalcController {
 
 	@Autowired
 	private SuncalcService suncalcService;
-
+	
 	@GetMapping("current")
-	public ResponseEntity<Map<String, Object>> getJobs() {
+	public ResponseEntity<Map<String, Object>> getCurrent() {
 		Map<String, Object> response = new HashMap<>();
 
 		TimeData timeData = suncalcService.getCurrentTimeData();
 		response.put("result", timeData);
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@GetMapping("fecha")
+	public ResponseEntity<Map<String, Object>> getByDate(@RequestParam("d") String date) {
+		return suncalcService.getTimeDataByDate(date).map(t -> {
+			Map<String, Object> response = new HashMap<>();
+			response.put("result", t);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 }
