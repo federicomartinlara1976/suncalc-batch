@@ -1,7 +1,7 @@
 spring:
   application:
     name: suncalc-batch
-    version: 1.0.1
+    version: 1.0.2
   
   config.import: "optional:configserver:"
   cloud:
