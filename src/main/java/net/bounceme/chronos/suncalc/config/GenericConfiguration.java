@@ -27,28 +27,28 @@ public class GenericConfiguration {
 
 	@Bean
 	@Scope("prototype")
-	public ObjectMapper objectMapper() {
+	ObjectMapper objectMapper() {
 		return new ObjectMapper();
 	}
 	
 	@Bean(name = "dateFormat")
-	public SimpleDateFormat dateFormat() {
+	SimpleDateFormat dateFormat() {
 		return new SimpleDateFormat(DATE_FORMAT);
 	}
 	
 	@Bean(name = "timeFormat")
-	public SimpleDateFormat timeFormat() {
+	SimpleDateFormat timeFormat() {
 		return new SimpleDateFormat(TIME_FORMAT);
 	}
 	
 	@Bean(name = "dateTimeFormat")
-	public SimpleDateFormat dateTimeFormat() {
+	SimpleDateFormat dateTimeFormat() {
 		return new SimpleDateFormat(DATE_TIME_FORMAT);
 	}
 	
 	@Bean
 	@Scope("prototype")
-	public ValidatorService<TimeData> timeDataValidatorService() {
+	ValidatorService<TimeData> timeDataValidatorService() {
 		return new ValidatorServiceImpl<>();
 	}
 }
