@@ -1,8 +1,10 @@
 package net.bounceme.chronos.suncalc.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,5 +41,19 @@ public class SuncalcController {
 			response.put("result", t);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	}
+	
+	@GetMapping("fechas")
+	public ResponseEntity<Map<String, Object>> getByDates(@RequestParam("inicio") String initDate, @RequestParam("fin") String endDate) {
+		Map<String, Object> response = new HashMap<>();
+		List<TimeData> registros = suncalcService.getByRangeDate(initDate, endDate);
+		
+		if (CollectionUtils.isNotEmpty(registros)) {
+			response.put("result", registros);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 }

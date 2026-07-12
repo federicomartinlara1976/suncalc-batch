@@ -2,6 +2,7 @@ package net.bounceme.chronos.suncalc.services.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,12 @@ public class SuncalcServiceImpl implements SuncalcService {
 		repositoryCollectionCustom.setCollectionName(collection);
 		
 		return timeDataRepository.findById(date);
+	}
+
+	@Override
+	public List<TimeData> getByRangeDate(String initDate, String endDate) {
+		repositoryCollectionCustom.setCollectionName(collection);
+		return timeDataRepository.listRegistros(initDate, endDate);
 	}
 
 }
