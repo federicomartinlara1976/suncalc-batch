@@ -1,5 +1,6 @@
 package net.bounceme.chronos.suncalc.controller;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +39,15 @@ class GlobalControllerExceptionHandler {
 			String errorMessage = error.getDefaultMessage();
 			errors.put(fieldName, errorMessage);
 		});
+
+		return ResponseEntity.badRequest().body(errors);
+	}
+	
+	@ExceptionHandler(ParseException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<Map<String, String>> handleParseException(ParseException ex) {
+		Map<String, String> errors = new HashMap<>();
+		errors.put("mensaje", ex.getMessage());
 
 		return ResponseEntity.badRequest().body(errors);
 	}
