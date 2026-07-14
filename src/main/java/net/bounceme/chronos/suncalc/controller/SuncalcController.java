@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.services.SuncalcService;
+import net.bounceme.chronos.suncalc.validation.validator.Fecha;
 
 @RestController
 @RequestMapping("/suncalc-batch/")
@@ -35,7 +36,7 @@ public class SuncalcController {
 	}
 	
 	@GetMapping("fecha")
-	public ResponseEntity<Map<String, Object>> getByDate(@RequestParam("d") String date) {
+	public ResponseEntity<Map<String, Object>> getByDate(@RequestParam("d") @Fecha String date) {
 		return suncalcService.getTimeDataByDate(date).map(t -> {
 			Map<String, Object> response = new HashMap<>();
 			response.put("result", t);
@@ -44,7 +45,7 @@ public class SuncalcController {
 	}
 	
 	@GetMapping("fechas")
-	public ResponseEntity<Map<String, Object>> getByDates(@RequestParam("inicio") String initDate, @RequestParam("fin") String endDate) {
+	public ResponseEntity<Map<String, Object>> getByDates(@RequestParam("inicio") @Fecha String initDate, @RequestParam("fin") @Fecha String endDate) {
 		Map<String, Object> response = new HashMap<>();
 		List<TimeData> registros = suncalcService.getByRangeDate(initDate, endDate);
 		
