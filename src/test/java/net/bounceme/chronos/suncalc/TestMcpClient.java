@@ -10,6 +10,7 @@ import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
+import io.modelcontextprotocol.spec.McpSchema.ListToolsResult;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -22,10 +23,16 @@ public class TestMcpClient {
 
 		client.initialize();
 
-		CallToolResult suncalc = client.callTool(new CallToolRequest("getCurrentTimeData", Map.of()));
+		// List and demonstrate tools
+		ListToolsResult toolsList = client.listTools();
+		log.info("Available Tools = {}", toolsList);
 		
-		assertNotNull(suncalc);
+		CallToolResult suncalcResult = client.callTool(new CallToolRequest("getCurrentTimeData", Map.of()));
 		
-		log.info("Result: {}", suncalc);
+		assertNotNull(suncalcResult);
+		
+		log.info("Result: {}", suncalcResult);
+		
+		client.closeGracefully();
 	}
 }
