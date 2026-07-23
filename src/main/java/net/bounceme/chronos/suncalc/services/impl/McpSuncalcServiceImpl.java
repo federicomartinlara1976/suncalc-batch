@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
 import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
+import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.services.SuncalcService;
 
 @Service
+@Slf4j
 public class McpSuncalcServiceImpl {
 	
 	@Autowired
@@ -20,6 +22,8 @@ public class McpSuncalcServiceImpl {
 
 	@McpTool(description = "get dawn, sunrise, culmination, sunset and dusk for the current time")
 	public TimeData getCurrentTimeData(McpSyncServerExchange exchange) {
+		log.info("Call getCurrentTimeData");
+		
 		exchange.loggingNotification(LoggingMessageNotification.builder()
 				.level(LoggingLevel.DEBUG)
 				.data("Call getCurrentTimeData")

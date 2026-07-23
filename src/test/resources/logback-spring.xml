@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<springProperty name="LOG_LEVEL" source="log.level" defaultValue="info"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+      		<charset>UTF-8</charset>
+      		<layout class="ch.qos.logback.classic.PatternLayout">
+        		<pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</pattern>
+      		</layout>         
+    	</encoder>
+    </appender>
+    
+    <logger name="net.bounceme.chronos.suncalc" level="${LOG_LEVEL}" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <root level="${LOG_LEVEL}">
+    	<appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
