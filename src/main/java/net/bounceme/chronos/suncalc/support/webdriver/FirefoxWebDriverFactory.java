@@ -2,14 +2,19 @@ package net.bounceme.chronos.suncalc.support.webdriver;
 
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @deprecated
+ */
 @Slf4j
 @Deprecated(since = "1.0.2", forRemoval = true)
 public class FirefoxWebDriverFactory implements WebDriverFactory {
 
+	/**
+	 * @deprecated
+	 */
 	@Override
 	@Deprecated(since = "1.0.2", forRemoval = true)
 	public WebDriverProduct getDriverMethod() {
