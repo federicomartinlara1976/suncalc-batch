@@ -57,7 +57,7 @@ public class JobController {
 	 */
 	@PostMapping("/executeByMonth/{year}/{month}")
 	@SneakyThrows
-	public ResponseEntity<Map<String, Object>> executeTaskByMonthAndYear(@PathVariable Integer year, @PathVariable Integer month, BindingResult result) {
+	public ResponseEntity<Map<String, Object>> executeTaskByMonthAndYear(@PathVariable Integer year, @PathVariable Integer month) {
 		Map<String, Object> response = new HashMap<>();
 
 		log.info("Ejecutar: byMonthAndYear with {}/{}", month, year);
