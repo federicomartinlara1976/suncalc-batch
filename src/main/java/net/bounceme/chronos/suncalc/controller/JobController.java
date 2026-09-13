@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.bounceme.chronos.suncalc.dto.JobDTO;
+import net.bounceme.chronos.suncalc.dto.MonthYearDTO;
+import net.bounceme.chronos.suncalc.facade.JobFacade;
 import net.bounceme.chronos.suncalc.model.ExecutionResult;
 import net.bounceme.chronos.suncalc.model.Task;
 import net.bounceme.chronos.suncalc.services.JobService;
@@ -29,6 +32,9 @@ public class JobController {
 
 	@Autowired
 	private JobService jobService;
+	
+	@Autowired
+	private JobFacade jobFacade;
 
 	@PostMapping("/execute")
 	@SneakyThrows
@@ -56,9 +62,13 @@ public class JobController {
 
 		log.info("Ejecutar: byMonthAndYear with {}/{}", month, year);
 		
-		// TODO - Sustituir por sistema de publicación de evento. La respuesta se devuelve de forma inmediata
-		//ExecutionResult resultado = jobService.run("byMonthAndYear");
-		//response.put("resultado", resultado);
+		MonthYearDTO monthYearDTO = MonthYearDTO.builder().month(month).year(year).build();
+		
+		JobDTO<MonthYearDTO> jobDTO = new JobDTO<>();
+		jobDTO.setContent(monthYearDTO);
+		jobFacade.publishJob(jobDTO);
+		
+		response.put("message", "Tarea en ejecución");
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
