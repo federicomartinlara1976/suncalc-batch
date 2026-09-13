@@ -23,6 +23,7 @@ import net.bounceme.chronos.suncalc.validation.validator.Fecha;
 @Slf4j
 public class SuncalcController {
 
+	private static final String RESULT = "result";
 	@Autowired
 	private SuncalcService suncalcService;
 	
@@ -31,7 +32,7 @@ public class SuncalcController {
 		Map<String, Object> response = new HashMap<>();
 
 		TimeData timeData = suncalcService.getCurrentTimeData();
-		response.put("result", timeData);
+		response.put(RESULT, timeData);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
@@ -39,7 +40,7 @@ public class SuncalcController {
 	public ResponseEntity<Map<String, Object>> getByDate(@RequestParam("d") @Fecha String date) {
 		return suncalcService.getTimeDataByDate(date).map(t -> {
 			Map<String, Object> response = new HashMap<>();
-			response.put("result", t);
+			response.put(RESULT, t);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
@@ -50,7 +51,7 @@ public class SuncalcController {
 		List<TimeData> registros = suncalcService.getByRangeDate(initDate, endDate);
 		
 		if (CollectionUtils.isNotEmpty(registros)) {
-			response.put("result", registros);
+			response.put(RESULT, registros);
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 		else {

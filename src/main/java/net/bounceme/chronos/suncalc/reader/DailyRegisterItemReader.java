@@ -26,9 +26,6 @@ public class DailyRegisterItemReader extends ItemStreamSupport implements ItemRe
 	@Qualifier("feignDocumentProcessor")
 	private DocumentProcessor documentProcessor;
 	
-//	@Autowired
-//	private SuncalcHelper helper;
-
 	private List<TimeData> records;
 	
 	private Integer index = 0;
@@ -46,9 +43,6 @@ public class DailyRegisterItemReader extends ItemStreamSupport implements ItemRe
 
 		records = new ArrayList<>();
 		
-//		String urlQuery = helper.buildUrlQuery(url, coords, new Date());
-
-		//documentProcessor.setUrl(url);
 		records.add(documentProcessor.process());
 
 		index = 0;

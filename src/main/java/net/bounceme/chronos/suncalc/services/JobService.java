@@ -8,9 +8,8 @@ public interface JobService {
 	
 	/**
 	 * @param name
-	 * @throws Exception
 	 */
-	ExecutionResult run(String name) throws Exception;
+	ExecutionResult run(String name);
 	
 	/**
 	 * @return
