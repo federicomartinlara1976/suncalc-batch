@@ -44,22 +44,18 @@ public class JobServiceImpl implements JobService {
 	 */
 	@SneakyThrows
 	public ExecutionResult run(String name) {
-		try {
-			JobParametersBuilder builder = new JobParametersBuilder();
-			builder.addDate("date", new Date());
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addDate("date", new Date());
 
-			Job job = ctx.getBean(name, Job.class);
-			JobExecution result = jobLauncher.run(job, builder.toJobParameters());
+		Job job = ctx.getBean(name, Job.class);
+		JobExecution result = jobLauncher.run(job, builder.toJobParameters());
 
-			// Exit on failure
-			if (ExitStatus.FAILED.equals(result.getExitStatus())) {
-				return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message("La tarea ha fallado").build();
-			} else {
-				return ExecutionResult.builder().exitStatus(result.getExitStatus())
-						.message(result.getExitStatus().getExitDescription()).build();
-			}
-		} catch (NoSuchBeanDefinitionException e) {
-			throw new Exception("Tarea no encontrada");
+		// Exit on failure
+		if (ExitStatus.FAILED.equals(result.getExitStatus())) {
+			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message("La tarea ha fallado").build();
+		} else {
+			return ExecutionResult.builder().exitStatus(result.getExitStatus())
+					.message(result.getExitStatus().getExitDescription()).build();
 		}
 	}
 
@@ -96,23 +92,23 @@ public class JobServiceImpl implements JobService {
 			throw new Exception("Tarea no encontrada");
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
 	@Override
 	public List<String> getAllJobs() {
-        String[] allBeanNames = ctx.getBeanDefinitionNames();
-        List<String> jobNames = new ArrayList<>();
-        
-        for(String beanName : allBeanNames) {
-        	Object bean = ctx.getBean(beanName);
-        	
-        	if (bean instanceof Job) {
-        		jobNames.add(beanName);
-        	}
-        }
-        
-        return jobNames;
-    }
+		String[] allBeanNames = ctx.getBeanDefinitionNames();
+		List<String> jobNames = new ArrayList<>();
+
+		for (String beanName : allBeanNames) {
+			Object bean = ctx.getBean(beanName);
+
+			if (bean instanceof Job) {
+				jobNames.add(beanName);
+			}
+		}
+
+		return jobNames;
+	}
 }
