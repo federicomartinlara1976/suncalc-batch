@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component
 @Slf4j
+@Deprecated(since = "1.0.2", forRemoval = true)
 public class ChromeWebDriverFactory implements WebDriverFactory {
 	
 	@Value("${application.importTimes.chromedriver}")
@@ -17,14 +17,14 @@ public class ChromeWebDriverFactory implements WebDriverFactory {
 	@Value("${application.importTimes.navigator}")
 	private String navigator;
 
+	@Deprecated(since = "1.0.2", forRemoval = true)
 	@Override
 	public WebDriverProduct getDriverMethod() {
-		try {
-			ChromeOptions options = new ChromeOptions(); 
-			options.setBinary(navigator);
-			options.addArguments("--remote-allow-origins=*", "--headless");
-			
-			ChromeWebDriverProduct product = new ChromeWebDriverProduct();
+		ChromeOptions options = new ChromeOptions(); 
+		options.setBinary(navigator);
+		options.addArguments("--remote-allow-origins=*", "--headless");
+		
+		try (ChromeWebDriverProduct product = new ChromeWebDriverProduct()) {
 			product.setWebDriver(new ChromeDriver(options));
 			return product;
 		} catch (Exception e) {
