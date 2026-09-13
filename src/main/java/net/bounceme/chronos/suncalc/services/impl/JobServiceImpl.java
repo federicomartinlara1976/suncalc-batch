@@ -81,16 +81,12 @@ public class JobServiceImpl implements JobService {
 	@Override
 	@SneakyThrows
 	public String getJobScheduling(String name) {
-		try {
-			// Check if job exists
-			Job job = ctx.getBean(name, Job.class);
-			Assert.notNull(job, "job null");
+		// Check if job exists
+		Job job = ctx.getBean(name, Job.class);
+		Assert.notNull(job, "job null");
 
-			String property = new StringBuilder("application.").append(name).append(".cron").toString();
-			return env.getProperty(property);
-		} catch (NoSuchBeanDefinitionException e) {
-			throw new Exception("Tarea no encontrada");
-		}
+		String property = new StringBuilder("application.").append(name).append(".cron").toString();
+		return env.getProperty(property);
 	}
 
 	/**
