@@ -86,45 +86,26 @@ public class SuncalcHelper {
 		Differences d = new Differences();
 		
 		if (!Objects.isNull(nextData)) {
-			if (!Objects.isNull(nextData.getDawn()) && !Objects.isNull(prevData.getDawn())) {
-				Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData.getDawn()),
-						convertToLocalTimeViaInstant(prevData.getDawn()));
-				Long diffDawn = duration.toSeconds();
-				d.setDawn(diffDawn);
-			}
-	
-			if (!Objects.isNull(nextData.getSunrise()) && !Objects.isNull(prevData.getSunrise())) {
-				Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData.getSunrise()),
-						convertToLocalTimeViaInstant(prevData.getSunrise()));
-				Long diffSunrise = duration.toSeconds();
-				d.setSunrise(diffSunrise);
-			}
-			
-			if (!Objects.isNull(nextData.getCulmination()) && !Objects.isNull(prevData.getCulmination())) {
-				Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData.getCulmination()),
-					convertToLocalTimeViaInstant(prevData.getCulmination()));
-				Long diffCulmination = duration.toSeconds();
-				d.setCulmination(diffCulmination);
-			}
-	
-			if (!Objects.isNull(nextData.getSunset()) && !Objects.isNull(prevData.getSunset())) {
-				Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData.getSunset()),
-						convertToLocalTimeViaInstant(prevData.getSunset()));
-				Long diffSunset = duration.toSeconds();
-				d.setSunset(diffSunset);
-			}
-	
-			if (!Objects.isNull(nextData.getDusk()) && !Objects.isNull(prevData.getDusk())) {
-				Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData.getDusk()),
-					convertToLocalTimeViaInstant(prevData.getDusk()));
-				Long diffDusk = duration.toSeconds();
-				d.setDusk(diffDusk);
-			}
+			d.setDawn(calculateDifference(nextData.getDawn(), prevData.getDawn()));
+			d.setSunrise(calculateDifference(nextData.getSunrise(), prevData.getSunrise()));
+			d.setCulmination(calculateDifference(nextData.getCulmination(), prevData.getCulmination()));
+			d.setSunset(calculateDifference(nextData.getSunset(), prevData.getSunset()));
+			d.setDusk(calculateDifference(nextData.getDusk(), prevData.getDusk()));
 			
 			d.setId(nextData.getId() + " - " + prevData.getId());
 			d.setLastDate(nextData.getId());
 		}
 		
 		return d;
+	}
+
+	private Long calculateDifference(Date nextData, Date prevData) {
+		if (!Objects.isNull(nextData) && !Objects.isNull(prevData)) {
+			Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData),
+					convertToLocalTimeViaInstant(prevData));
+			return duration.toSeconds();
+		}
+		
+		return 0L;
 	}
 }
