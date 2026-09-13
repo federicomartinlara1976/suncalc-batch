@@ -11,8 +11,3 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
       - Hacer endpoint para consultar por una fecha en concreto (Completado - 11/07/2026)
       - Hacer endpoint para consultar por un rango de fechas. El resultado será una colección de varios elementos (Completado - 12/07/2026)
       
-
-- **Versión 1.0.3**
-
-    - 13/09/2026
-      - Endpoint y tarea para recuperar datos de un mes y año concretos 
