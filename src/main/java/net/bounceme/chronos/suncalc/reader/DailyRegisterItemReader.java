@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemStreamSupport;
+import org.springframework.batch.item.ItemStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
 
 @Component
-public class DailyRegisterItemReader extends ItemStreamSupport implements ItemReader<TimeData> {
+public class DailyRegisterItemReader implements ItemReader<TimeData>, ItemStream {
 	
 	@Autowired
 	@Qualifier("timeFormat")
