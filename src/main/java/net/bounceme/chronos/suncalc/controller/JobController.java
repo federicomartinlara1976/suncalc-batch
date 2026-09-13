@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,27 @@ public class JobController {
 		log.info("Ejecutar: {}", task.getName());
 		ExecutionResult resultado = jobService.run(task.getName());
 		response.put("resultado", resultado);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	/**
+	 * Ejecuta una tarea que recupera los datos de un mes. Se lanza de forma asíncrona, ya que 
+	 * su tiempo de ejecución es indeterminado. 
+	 * 
+	 * @param task
+	 * @param result
+	 * @return
+	 */
+	@PostMapping("/executeByMonth/{year}/{month}")
+	@SneakyThrows
+	public ResponseEntity<Map<String, Object>> executeTaskByMonthAndYear(@PathVariable Integer year, @PathVariable Integer month, BindingResult result) {
+		Map<String, Object> response = new HashMap<>();
+
+		log.info("Ejecutar: byMonthAndYear with {}/{}", month, year);
+		
+		// TODO - Sustituir por sistema de publicación de evento. La respuesta se devuelve de forma inmediata
+		//ExecutionResult resultado = jobService.run("byMonthAndYear");
+		//response.put("resultado", resultado);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
