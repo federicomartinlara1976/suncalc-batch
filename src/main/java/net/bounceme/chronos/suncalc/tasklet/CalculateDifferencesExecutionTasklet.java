@@ -39,9 +39,6 @@ public class CalculateDifferencesExecutionTasklet implements Tasklet {
 	@Autowired
 	private RepositoryCollectionCustom repositoryCollectionCustom;
 
-	@Autowired
-	private SuncalcHelper helper;
-
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		repositoryCollectionCustom.setCollectionName(collection);
@@ -51,7 +48,7 @@ public class CalculateDifferencesExecutionTasklet implements Tasklet {
 			TimeData nextData = times.get(i + 1);
 			TimeData prevData = times.get(i);
 
-			Differences d = helper.createDifferences(nextData, prevData);
+			Differences d = SuncalcHelper.createDifferences(nextData, prevData);
 
 			if (!Objects.isNull(d.getId())) {
 				log.info("Diferences[{}] -> dawn: {}, sunrise: {}, culmination: {}, sunset: {}, dusk: {}",

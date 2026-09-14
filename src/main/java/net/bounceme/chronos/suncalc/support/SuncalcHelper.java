@@ -12,15 +12,13 @@ import java.util.Objects;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.model.Differences;
 import net.bounceme.chronos.suncalc.model.TimeData;
 
-@Component
-@Scope("prototype")
+@UtilityClass
 @Slf4j
 public class SuncalcHelper {
 	
@@ -38,10 +36,12 @@ public class SuncalcHelper {
 	}
 
 	/**
+	 * @deprecated
 	 * @param url
 	 * @return
 	 * @throws IOException
 	 */
+	@Deprecated(since = "1.0.3", forRemoval = true)
 	public Document retrieveDocument(String url) throws IOException {
 		log.debug("Connecting to {}...", url);
 		return Jsoup.connect(url).get();
