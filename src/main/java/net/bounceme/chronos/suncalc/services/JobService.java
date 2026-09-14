@@ -12,6 +12,13 @@ public interface JobService {
 	ExecutionResult run(String name);
 	
 	/**
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	ExecutionResult runByMonthAndYear(Integer year, Integer month);
+	
+	/**
 	 * @return
 	 */
 	List<String> getJobNames();

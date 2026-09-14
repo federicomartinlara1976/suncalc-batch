@@ -106,4 +106,10 @@ public class JobServiceImpl implements JobService {
 
 		return jobNames;
 	}
+
+	@Override
+	public ExecutionResult runByMonthAndYear(Integer year, Integer month) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
