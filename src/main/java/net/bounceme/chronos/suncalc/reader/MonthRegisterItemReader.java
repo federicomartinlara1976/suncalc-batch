@@ -78,7 +78,7 @@ public class MonthRegisterItemReader implements ItemReader<TimeData>, ItemStream
 			String sDate = String.format("%d-%d-%d", year, month, i);
 			if(!executionsRepository.existsById(sDate)) {
 				log.info("Obteniendo para fecha {}", sDate);
-				//records.add(documentProcessor.process());
+				records.add(documentProcessor.process(sDate));
 			}
 		}
 
