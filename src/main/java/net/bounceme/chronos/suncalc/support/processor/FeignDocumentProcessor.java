@@ -41,6 +41,10 @@ public class FeignDocumentProcessor implements DocumentProcessor {
 
 	@Override
 	public TimeData process() {
+		return obtainData("today");
+	}
+
+	private TimeData obtainData(String sDate) {
 		TimeData timeData = new TimeData();
 		
 		Boolean status = Boolean.FALSE;
@@ -50,7 +54,7 @@ public class FeignDocumentProcessor implements DocumentProcessor {
 		SunriseSunsetResponse response = sunriseSunsetRest.detalle(
 	            lat, 
 	            lng, 
-	            "today", 
+	            sDate, 
 	            "Europe/Madrid", 
 	            0, 
 	            null
@@ -77,5 +81,10 @@ public class FeignDocumentProcessor implements DocumentProcessor {
 		timeData.setStatus(status);
 			
 		return timeData;
+	}
+
+	@Override
+	public TimeData process(String date) {
+		return obtainData(date);
 	}
 }
