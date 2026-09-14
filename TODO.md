@@ -15,3 +15,8 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
 
     - 13/09/2026
       - Endpoint y tarea para recuperar datos de un mes y año concretos
+      
+- **Versión 1.0.4**
+
+    - 14/09/2026
+      - Eliminar código deprecado y todas las dependencias que no se utilicen
