@@ -50,6 +50,8 @@ public class MonthRegisterItemReader extends AbstractItemReader {
 			if(!executionsRepository.existsById(sDate)) {
 				log.info("Obteniendo para fecha {}", sDate);
 				records.add(documentProcessor.process(sDate));
+				
+				// TODO - Por cada proceso, registrar la ejecución
 			}
 		}
 	}
