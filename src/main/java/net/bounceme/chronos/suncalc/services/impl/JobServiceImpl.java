@@ -108,8 +108,13 @@ public class JobServiceImpl implements JobService {
 	}
 
 	@Override
-	public ExecutionResult runByMonthAndYear(Integer year, Integer month) {
-		// TODO Auto-generated method stub
+	public ExecutionResult runImportByMonthAndYear(Integer year, Integer month) {
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addJobParameter("month", month, Integer.class);
+		builder.addJobParameter("year", year, Integer.class);
+		
+		// TODO - Especificar la tarea a ejecutar y devolver el resultado
+		
 		return null;
 	}
 }

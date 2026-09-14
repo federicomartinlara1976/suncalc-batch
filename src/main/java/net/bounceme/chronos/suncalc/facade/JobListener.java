@@ -30,7 +30,7 @@ public class JobListener {
 		
 		if (content instanceof MonthYearDTO) {
 			MonthYearDTO monthYearDTO = (MonthYearDTO) content;
-			ExecutionResult resultado = jobService.runByMonthAndYear(monthYearDTO.getYear(), monthYearDTO.getMonth());
+			ExecutionResult resultado = jobService.runImportByMonthAndYear(monthYearDTO.getYear(), monthYearDTO.getMonth());
 			log.info("{}", resultado);
 		}
 	}

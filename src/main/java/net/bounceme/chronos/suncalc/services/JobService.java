@@ -16,7 +16,7 @@ public interface JobService {
 	 * @param month
 	 * @return
 	 */
-	ExecutionResult runByMonthAndYear(Integer year, Integer month);
+	ExecutionResult runImportByMonthAndYear(Integer year, Integer month);
 	
 	/**
 	 * @return
