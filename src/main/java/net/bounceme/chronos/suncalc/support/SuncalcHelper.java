@@ -23,11 +23,13 @@ import net.bounceme.chronos.suncalc.model.TimeData;
 public class SuncalcHelper {
 	
 	/**
+	 * @deprecated
 	 * @param url
 	 * @param coords
 	 * @param date
 	 * @return
 	 */
+	@Deprecated(since = "1.0.3", forRemoval = true)
 	public String buildUrlQuery(String url, String coords, Date date) {
 		String dateUrl = String.format(Constants.DATE_URL_FORMAT, date);
 		String timeUrl = String.format(Constants.TIME_URL_FORMAT, date);
