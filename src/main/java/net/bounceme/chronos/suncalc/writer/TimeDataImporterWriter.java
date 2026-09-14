@@ -45,7 +45,7 @@ public class TimeDataImporterWriter implements ItemWriter<TimeData> {
             repositoryCollectionCustom.setCollectionName(collection);
             
             timeDataRepository.findById(dateFormat.format(item.getFecha())).ifPresentOrElse(timeData ->
-            	log.info("Time data {} already registered", timeData.toString())
+            	log.info("Time data {} already registered", timeData)
             , () -> {
             	// Set id
             	item.setId(dateFormat.format(item.getFecha()));
