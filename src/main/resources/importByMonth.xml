@@ -10,8 +10,8 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
 	<!-- Batch de ingesta de datos diarios de tiempos del sol -->
-	<batch:job id="importTimes" job-repository="jobRepository">
-		<batch:flow id="importTimesFlow" parent="importFlow" />
+	<batch:job id="importByMonth" job-repository="jobRepository">
+		<batch:flow id="importByMonthTimesFlow" parent="importByMonthFlow" />
 		
 		<batch:listeners>
 			<batch:listener ref="importJobListener" />
@@ -27,7 +27,7 @@
 	</batch:job>
 
 	<!-- Thread safe Reader -->
-	<bean id="timeDataImporterReader"
-		class="net.bounceme.chronos.suncalc.reader.DailyRegisterItemReader"/>
+	<bean id="byMonthImporterReader"
+		class="net.bounceme.chronos.suncalc.reader.MonthRegisterItemReader"/>
 
 </beans>

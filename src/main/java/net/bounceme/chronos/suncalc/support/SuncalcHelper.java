@@ -12,24 +12,24 @@ import java.util.Objects;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.model.Differences;
 import net.bounceme.chronos.suncalc.model.TimeData;
 
-@Component
-@Scope("prototype")
+@UtilityClass
 @Slf4j
 public class SuncalcHelper {
 	
 	/**
+	 * @deprecated
 	 * @param url
 	 * @param coords
 	 * @param date
 	 * @return
 	 */
+	@Deprecated(since = "1.0.3", forRemoval = true)
 	public String buildUrlQuery(String url, String coords, Date date) {
 		String dateUrl = String.format(Constants.DATE_URL_FORMAT, date);
 		String timeUrl = String.format(Constants.TIME_URL_FORMAT, date);
@@ -38,10 +38,12 @@ public class SuncalcHelper {
 	}
 
 	/**
+	 * @deprecated
 	 * @param url
 	 * @return
 	 * @throws IOException
 	 */
+	@Deprecated(since = "1.0.3", forRemoval = true)
 	public Document retrieveDocument(String url) throws IOException {
 		log.debug("Connecting to {}...", url);
 		return Jsoup.connect(url).get();
@@ -86,40 +88,11 @@ public class SuncalcHelper {
 		Differences d = new Differences();
 		
 		if (!Objects.isNull(nextData)) {
-			if (!Objects.isNull(nextData.getDawn()) && !Objects.isNull(prevData.getDawn())) {
-				Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData.getDawn()),
-						convertToLocalTimeViaInstant(prevData.getDawn()));
-				Long diffDawn = duration.toSeconds();
-				d.setDawn(diffDawn);
-			}
-	
-			if (!Objects.isNull(nextData.getSunrise()) && !Objects.isNull(prevData.getSunrise())) {
-				Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData.getSunrise()),
-						convertToLocalTimeViaInstant(prevData.getSunrise()));
-				Long diffSunrise = duration.toSeconds();
-				d.setSunrise(diffSunrise);
-			}
-			
-			if (!Objects.isNull(nextData.getCulmination()) && !Objects.isNull(prevData.getCulmination())) {
-				Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData.getCulmination()),
-					convertToLocalTimeViaInstant(prevData.getCulmination()));
-				Long diffCulmination = duration.toSeconds();
-				d.setCulmination(diffCulmination);
-			}
-	
-			if (!Objects.isNull(nextData.getSunset()) && !Objects.isNull(prevData.getSunset())) {
-				Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData.getSunset()),
-						convertToLocalTimeViaInstant(prevData.getSunset()));
-				Long diffSunset = duration.toSeconds();
-				d.setSunset(diffSunset);
-			}
-	
-			if (!Objects.isNull(nextData.getDusk()) && !Objects.isNull(prevData.getDusk())) {
-				Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData.getDusk()),
-					convertToLocalTimeViaInstant(prevData.getDusk()));
-				Long diffDusk = duration.toSeconds();
-				d.setDusk(diffDusk);
-			}
+			d.setDawn(calculateDifference(nextData.getDawn(), prevData.getDawn()));
+			d.setSunrise(calculateDifference(nextData.getSunrise(), prevData.getSunrise()));
+			d.setCulmination(calculateDifference(nextData.getCulmination(), prevData.getCulmination()));
+			d.setSunset(calculateDifference(nextData.getSunset(), prevData.getSunset()));
+			d.setDusk(calculateDifference(nextData.getDusk(), prevData.getDusk()));
 			
 			d.setId(nextData.getId() + " - " + prevData.getId());
 			d.setLastDate(nextData.getId());
@@ -127,4 +100,36 @@ public class SuncalcHelper {
 		
 		return d;
 	}
+
+	private Long calculateDifference(Date nextData, Date prevData) {
+		if (!Objects.isNull(nextData) && !Objects.isNull(prevData)) {
+			Duration duration = Duration.between(convertToLocalTimeViaInstant(nextData),
+					convertToLocalTimeViaInstant(prevData));
+			return duration.toSeconds();
+		}
+		
+		return 0L;
+	}
+	
+	public Integer getDiasDelMes(Integer month, Integer year) {
+	    switch (month) {
+	        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+	            return 31;
+	        case 4: case 6: case 9: case 11:
+	            return 30;
+	        case 2:
+	            return esBisiesto(year) ? 29 : 28;
+	        default:
+	            throw new IllegalArgumentException("Mes inválido: " + month);
+	    }
+	}
+
+	private boolean esBisiesto(Integer year) {
+	    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+	}
+	
+	public String normalize(Integer num) {
+		return (num < 10) ? "0" + num.toString() : num.toString();
+	}
+
 }

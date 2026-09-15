@@ -8,9 +8,15 @@ public interface JobService {
 	
 	/**
 	 * @param name
-	 * @throws Exception
 	 */
-	ExecutionResult run(String name) throws Exception;
+	ExecutionResult run(String name);
+	
+	/**
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	ExecutionResult runImportByMonthAndYear(Integer year, Integer month);
 	
 	/**
 	 * @return

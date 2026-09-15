@@ -29,4 +29,9 @@
 		<property name="maxPoolSize" value="5"/>
 	</bean>
 	
+	<bean id="timeDataProcessor" class="org.springframework.batch.item.validator.ValidatingItemProcessor">
+		<property name="filter" value="false" />
+		<property name="validator" ref="timeDataValidator"/>
+	</bean>
+	
 </beans>

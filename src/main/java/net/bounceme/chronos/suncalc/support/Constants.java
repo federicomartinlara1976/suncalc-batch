@@ -2,6 +2,8 @@ package net.bounceme.chronos.suncalc.support;
 
 public class Constants {
 
+	private Constants() {}
+
 	public static final String URL_FORMAT = "%s/#/%s/%s/%s/1/3";
 	
 	public static final String DATE_URL_FORMAT = "yyyy.MM.dd";
