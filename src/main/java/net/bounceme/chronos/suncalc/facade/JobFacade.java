@@ -1,7 +1,8 @@
 package net.bounceme.chronos.suncalc.facade;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +12,13 @@ import net.bounceme.chronos.suncalc.dto.JobDTO;
 @Slf4j
 public class JobFacade {
 	
+	@Value("${application.queue}")
+	private String queueName;
+	
 	@Autowired
-	private ApplicationEventPublisher applicationEventPublisher;
+	private RabbitTemplate rabbitTemplate;
 	
 	public void publishJob(JobDTO<?> jobDTO) {
-		applicationEventPublisher.publishEvent(jobDTO);
+		rabbitTemplate.convertAndSend(queueName, jobDTO);
 	}
 }
