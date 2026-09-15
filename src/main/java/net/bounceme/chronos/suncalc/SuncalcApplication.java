@@ -14,7 +14,9 @@ import net.bounceme.chronos.notifications.services.NotificationService;
 @ImportResource({
     "classpath:applicationContext.xml",
 	"classpath:importTimes.xml",
+	"classpath:importByMonth.xml",
     "classpath:flow-importTimes.xml",
+    "classpath:flow-importByMonth.xml",
     "classpath:flow-recalculateDifferences.xml"
 })
 @EnableFeignClients
