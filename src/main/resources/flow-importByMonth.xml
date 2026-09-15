@@ -15,7 +15,7 @@
 			<batch:tasklet>
 				<batch:chunk reader="byMonthImporterReader"
 					processor="timeDataProcessor"
-					writer="nullImporterWriter" commit-interval="5" skip-limit="2">
+					writer="timeDataImporterWriter" commit-interval="5" skip-limit="2">
 					
 					<batch:skippable-exception-classes>
 						<batch:include class="org.springframework.batch.item.validator.ValidationException"/>

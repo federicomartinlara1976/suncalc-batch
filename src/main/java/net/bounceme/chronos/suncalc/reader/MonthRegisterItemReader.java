@@ -51,14 +51,11 @@ public class MonthRegisterItemReader extends AbstractItemReader {
 					log.info("Obteniendo para fecha {}", sDate);
 					records.add(documentProcessor.process(sDate));
 
-					/** 
-					 * TODO - Descomentar una vez se haya realizado la prueba de obtención
-					 * Por cada proceso, registrar la ejecución
+					// Por cada proceso, registrar la ejecución
 					executionsRepository.save(Execution.builder()
 							.id(sDate)
 							.value(1)
 							.build());
-							*/
 				});
 	}
 }
