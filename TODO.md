@@ -20,5 +20,5 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
 
     - 14/09/2026
       - Eliminar código deprecado y todas las dependencias que no se utilicen **(Completado 15/09/2026)**
-      - Recalcular diferencias para 1 año en concreto
+      - Endpoint y tarea para recalcular diferencias para 1 año en concreto, si el año es el presente, hasta la fecha actual
       
