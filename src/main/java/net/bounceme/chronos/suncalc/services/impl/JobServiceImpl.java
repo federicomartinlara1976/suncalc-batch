@@ -111,6 +111,7 @@ public class JobServiceImpl implements JobService {
 	@SneakyThrows
 	public ExecutionResult runImportByMonthAndYear(Integer year, Integer month) {
 		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addDate("date", new Date());
 		builder.addJobParameter("month", month, Integer.class);
 		builder.addJobParameter("year", year, Integer.class);
 

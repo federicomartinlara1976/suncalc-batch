@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.clients.SunriseSunsetRest;
 import net.bounceme.chronos.suncalc.model.SunriseSunsetResponse;
@@ -44,11 +45,13 @@ public class FeignDocumentProcessor implements DocumentProcessor {
 		return obtainData("today");
 	}
 
+	@SneakyThrows
 	private TimeData obtainData(String sDate) {
 		TimeData timeData = new TimeData();
 		
 		Boolean status = Boolean.FALSE;
-		Date date = new Date();
+		// La fecha es la que viene a partir de sDate
+		Date date = dateFormat.parse(sDate);
 		timeData.setFecha(date);
 		
 		SunriseSunsetResponse response = sunriseSunsetRest.detalle(

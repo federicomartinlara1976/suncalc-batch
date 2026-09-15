@@ -127,5 +127,9 @@ public class SuncalcHelper {
 	private boolean esBisiesto(Integer year) {
 	    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 	}
+	
+	public String normalize(Integer num) {
+		return (num < 10) ? "0" + num.toString() : num.toString();
+	}
 
 }

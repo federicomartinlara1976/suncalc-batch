@@ -40,7 +40,7 @@ public class JobController {
 	public ResponseEntity<Map<String, Object>> executeTask(@Valid @RequestBody Task task) {
 		Map<String, Object> response = new HashMap<>();
 
-		log.info("Ejecutar: {}", task.getName());
+		log.debug("Ejecutar: {}", task.getName());
 		JobDTO<Task> jobDTO = new JobDTO<>();
 		jobDTO.setContent(task);
 		jobFacade.publishJob(jobDTO);

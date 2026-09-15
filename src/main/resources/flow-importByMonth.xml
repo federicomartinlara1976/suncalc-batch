@@ -11,7 +11,7 @@
 
 	<!-- Batch de ingesta de datos de niveles de embalses a través del SAIH -->
 	<batch:flow id="importByMonthFlow">
-		<batch:step id="importStep">
+		<batch:step id="importByMonthStep">
 			<batch:tasklet>
 				<batch:chunk reader="byMonthImporterReader"
 					processor="timeDataProcessor"

@@ -46,9 +46,10 @@ public class MonthRegisterItemReader extends AbstractItemReader {
 		Integer diasMes = SuncalcHelper.getDiasDelMes(month, year);
 		records = new ArrayList<>();
 
-		IntStream.rangeClosed(1, diasMes).mapToObj(i -> String.format("%d-%d-%d", year, month, i))
+		IntStream.rangeClosed(1, diasMes)
+				.mapToObj(i -> String.format("%d-%s-%s", year, SuncalcHelper.normalize(month), SuncalcHelper.normalize(i)))
 				.filter(sDate -> !executionsRepository.existsById(sDate)).forEach(sDate -> {
-					log.info("Obteniendo para fecha {}", sDate);
+					log.debug("Obteniendo para fecha {}", sDate);
 					records.add(documentProcessor.process(sDate));
 
 					// Por cada proceso, registrar la ejecución

@@ -4,12 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import com.github.dockerjava.api.model.Task;
-
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.dto.JobDTO;
 import net.bounceme.chronos.suncalc.dto.MonthYearDTO;
 import net.bounceme.chronos.suncalc.model.ExecutionResult;
+import net.bounceme.chronos.suncalc.model.Task;
 import net.bounceme.chronos.suncalc.services.JobService;
 
 @Component
