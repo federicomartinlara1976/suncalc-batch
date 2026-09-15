@@ -1,7 +1,6 @@
 package net.bounceme.chronos.suncalc.reader;
 
 import java.util.ArrayList;
-import java.util.stream.IntStream;
 
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
@@ -45,18 +44,20 @@ public class MonthRegisterItemReader extends AbstractItemReader {
 
 		Integer diasMes = SuncalcHelper.getDiasDelMes(month, year);
 		records = new ArrayList<>();
+		
+		for (int i = 1; i<= diasMes; i++) {
+			String sDate = String.format("%d-%s-%s", year, SuncalcHelper.normalize(month), SuncalcHelper.normalize(i));
+			
+			if (!executionsRepository.existsById(sDate)) {
+				log.debug("Obteniendo para fecha {}", sDate);
+				records.add(documentProcessor.process(sDate));
 
-		IntStream.rangeClosed(1, diasMes)
-				.mapToObj(i -> String.format("%d-%s-%s", year, SuncalcHelper.normalize(month), SuncalcHelper.normalize(i)))
-				.filter(sDate -> !executionsRepository.existsById(sDate)).forEach(sDate -> {
-					log.debug("Obteniendo para fecha {}", sDate);
-					records.add(documentProcessor.process(sDate));
-
-					// Por cada proceso, registrar la ejecución
-					executionsRepository.save(Execution.builder()
-							.id(sDate)
-							.value(1)
-							.build());
-				});
+				// Por cada proceso, registrar la ejecución
+				executionsRepository.save(Execution.builder()
+						.id(sDate)
+						.value(1)
+						.build());
+			}
+		}
 	}
 }
