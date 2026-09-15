@@ -14,7 +14,7 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
 - **Versión 1.0.3**
 
     - 13/09/2026
-      - Endpoint y tarea para recuperar datos de un mes y año concretos
+      - Endpoint y tarea para recuperar datos de un mes y año concretos **(Completado 15/09/2026)**
       
 - **Versión 1.0.4**
 
