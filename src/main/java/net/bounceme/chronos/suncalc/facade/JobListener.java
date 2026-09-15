@@ -1,5 +1,7 @@
 package net.bounceme.chronos.suncalc.facade;
 
+import java.util.Map;
+
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,8 +22,9 @@ public class JobListener {
 	
 	@RabbitListener(queues = "SuncalcEventos")
 	public void executeJob(JobDTO<?> jobDTO) {
-		Object content = jobDTO.getContent();
+		Map<String, Object> content = (Map<String, Object>) jobDTO.getContent();
 		
+		// TODO - Esto cambia por entrada de mapa
 		if (content instanceof Task) {
 			ExecutionResult resultado = jobService.run(((Task) content).getName());
 			log.info("{}", resultado);
