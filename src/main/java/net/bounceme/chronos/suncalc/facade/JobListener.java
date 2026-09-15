@@ -1,7 +1,7 @@
 package net.bounceme.chronos.suncalc.facade;
 
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class JobListener {
 	@Autowired
 	private JobService jobService;
 	
-	@EventListener
+	@RabbitListener(queues = "SuncalcEventos")
 	public void executeJob(JobDTO<?> jobDTO) {
 		Object content = jobDTO.getContent();
 		
