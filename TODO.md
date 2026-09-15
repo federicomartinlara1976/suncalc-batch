@@ -19,4 +19,6 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
 - **Versión 1.0.4**
 
     - 14/09/2026
-      - Eliminar código deprecado y todas las dependencias que no se utilicen
+      - Eliminar código deprecado y todas las dependencias que no se utilicen **(Completado 15/09/2026)**
+      - Recalcular diferencias para 1 año en concreto
+      
