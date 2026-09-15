@@ -1,6 +1,4 @@
-package net.bounceme.chronos.suncalc.model;
-
-import org.springframework.batch.core.ExitStatus;
+package net.bounceme.chronos.suncalc.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,13 +11,13 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-public class ExecutionResult {
+public class MonthYearDTO {
+
+	@Getter
+	@Setter
+	private Integer year;
 	
 	@Getter
 	@Setter
-	private ExitStatus exitStatus;
-	
-	@Getter
-	@Setter
-	private String message;
+	private Integer month;
 }

@@ -1,6 +1,7 @@
 package net.bounceme.chronos.suncalc.listener;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
@@ -29,7 +30,9 @@ public class TimeStepListener implements StepExecutionListener {
 				stepExecution.getStepName(), duration);
 		
 		Map<String, Long> stepTimes = (Map<String, Long>) stepExecution.getJobExecution().getExecutionContext().get("STEP_TIMES");
-		stepTimes.put(stepExecution.getStepName(), duration);
+		if (!Objects.isNull(stepTimes)) {
+			stepTimes.put(stepExecution.getStepName(), duration);
+		}
 		
 		return ExitStatus.COMPLETED;
 	}

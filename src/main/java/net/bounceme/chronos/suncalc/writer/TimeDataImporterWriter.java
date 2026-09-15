@@ -1,6 +1,7 @@
 package net.bounceme.chronos.suncalc.writer;
 
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
@@ -45,10 +46,12 @@ public class TimeDataImporterWriter implements ItemWriter<TimeData> {
             repositoryCollectionCustom.setCollectionName(collection);
             
             timeDataRepository.findById(dateFormat.format(item.getFecha())).ifPresentOrElse(timeData ->
-            	log.info("Time data {} already registered", timeData.toString())
+            	log.warn("Time data {} already registered", timeData)
             , () -> {
-            	// Set id
-            	item.setId(dateFormat.format(item.getFecha()));
+            	// Set id if null
+            	if (Objects.isNull(item.getId())) {
+            		item.setId(dateFormat.format(item.getFecha()));
+            	}
             
             	timeDataRepository.save(item);
             	jobExecution.getExecutionContext().put("NEXT_TIME_DATA", item);

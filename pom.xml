@@ -230,18 +230,6 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 		
-		<!--<dependency>
-			<groupId>net.bounceme.chronos.libs</groupId>
-			<artifactId>chronos-data-utils</artifactId>
-			<version>1.0.5-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>ch.qos.reload4j</groupId>
-					<artifactId>reload4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>-->
-		
 		<dependency>
 			<groupId>net.bounceme.chronos.libs</groupId>
 			<artifactId>chronos-notification-utils</artifactId>

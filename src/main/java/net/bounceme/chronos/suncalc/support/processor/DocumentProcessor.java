@@ -7,5 +7,7 @@ public interface DocumentProcessor {
 	void setUrl(String url);
 	
 	TimeData process();
+	
+	TimeData process(String date);
 
 }
