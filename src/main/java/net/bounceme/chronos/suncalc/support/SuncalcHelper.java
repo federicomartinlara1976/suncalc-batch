@@ -1,6 +1,5 @@
 package net.bounceme.chronos.suncalc.support;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
@@ -10,9 +9,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.model.Differences;
@@ -21,33 +17,6 @@ import net.bounceme.chronos.suncalc.model.TimeData;
 @UtilityClass
 @Slf4j
 public class SuncalcHelper {
-	
-	/**
-	 * @deprecated
-	 * @param url
-	 * @param coords
-	 * @param date
-	 * @return
-	 */
-	@Deprecated(since = "1.0.3", forRemoval = true)
-	public String buildUrlQuery(String url, String coords, Date date) {
-		String dateUrl = String.format(Constants.DATE_URL_FORMAT, date);
-		String timeUrl = String.format(Constants.TIME_URL_FORMAT, date);
-		
-		return String.format(Constants.URL_FORMAT, url, coords, dateUrl, timeUrl);
-	}
-
-	/**
-	 * @deprecated
-	 * @param url
-	 * @return
-	 * @throws IOException
-	 */
-	@Deprecated(since = "1.0.3", forRemoval = true)
-	public Document retrieveDocument(String url) throws IOException {
-		log.debug("Connecting to {}...", url);
-		return Jsoup.connect(url).get();
-	}
 
 	/**
 	 * @param d
