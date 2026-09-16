@@ -43,6 +43,9 @@ public class CalculateDifferencesExecutionTasklet implements Tasklet {
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		repositoryCollectionCustom.setCollectionName(collection);
 		// FIXME - Recogerlos ordenados por fecha (_id)
+		// Si es el año actual, hasta la fecha actual
+		
+		
 		List<TimeData> times = timeDataRepository.findAll();
 
 		for (int i = 0; i < times.size() - 1; i++) {

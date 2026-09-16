@@ -24,13 +24,17 @@ public class JobListener {
 		ExecutionResult resultado = null;
 		Map<String, Object> content = (Map<String, Object>) jobDTO.getContent();
 
-		if (content.containsKey("name")) {
-			resultado = jobService.run((String) content.get("name"));
-		}
-
 		if (content.containsKey("year")) {
-			resultado = jobService.runImportByMonthAndYear((Integer) content.get("year"),
-					(Integer) content.get("month"));
+			if (content.containsKey("month")) {
+				resultado = jobService.run((String) content.get("name"), (Integer) content.get("year"),
+						(Integer) content.get("month"));
+			}
+			else {
+				resultado = jobService.run((String) content.get("name"), (Integer) content.get("year"));
+			}
+		}
+		else {
+			resultado = jobService.run((String) content.get("name"));
 		}
 		
 		log.info("{}", resultado);
