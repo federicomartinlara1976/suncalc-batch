@@ -20,8 +20,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.dto.JobDTO;
 import net.bounceme.chronos.suncalc.dto.MonthYearDTO;
+import net.bounceme.chronos.suncalc.dto.TaskDTO;
 import net.bounceme.chronos.suncalc.facade.JobFacade;
-import net.bounceme.chronos.suncalc.model.Task;
 import net.bounceme.chronos.suncalc.services.JobService;
 
 @RestController
@@ -37,11 +37,11 @@ public class JobController {
 
 	@PostMapping("/execute")
 	@SneakyThrows
-	public ResponseEntity<Map<String, Object>> executeTask(@Valid @RequestBody Task task) {
+	public ResponseEntity<Map<String, Object>> executeTask(@Valid @RequestBody TaskDTO task) {
 		Map<String, Object> response = new HashMap<>();
 
 		log.debug("Ejecutar: {}", task.getName());
-		JobDTO<Task> jobDTO = new JobDTO<>();
+		JobDTO<TaskDTO> jobDTO = new JobDTO<>();
 		jobDTO.setContent(task);
 		jobFacade.publishJob(jobDTO);
 		
@@ -75,7 +75,7 @@ public class JobController {
 	}
 
 	@PostMapping("/scheduling")
-	public ResponseEntity<Map<String, Object>> schedulingJob(@Valid @RequestBody Task task, BindingResult result) {
+	public ResponseEntity<Map<String, Object>> schedulingJob(@Valid @RequestBody TaskDTO task, BindingResult result) {
 		Map<String, Object> response = new HashMap<>();
 
 		String scheduling = jobService.getJobScheduling(task.getName());
