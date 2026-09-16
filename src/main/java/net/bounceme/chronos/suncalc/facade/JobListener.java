@@ -1,6 +1,7 @@
 package net.bounceme.chronos.suncalc.facade;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,15 @@ public class JobListener {
 		ExecutionResult resultado = null;
 		Map<String, Object> content = (Map<String, Object>) jobDTO.getContent();
 
-		if (content.containsKey("year")) {
-			if (content.containsKey("month")) {
-				resultado = jobService.run((String) content.get("name"), (Integer) content.get("year"),
-						(Integer) content.get("month"));
+		Integer year = (Integer) content.get("year"); 
+		if (!Objects.isNull(year)) {
+			Integer month = (Integer) content.get("month");
+			
+			if (!Objects.isNull(month)) {
+				resultado = jobService.run((String) content.get("name"), year, month);
 			}
 			else {
-				resultado = jobService.run((String) content.get("name"), (Integer) content.get("year"));
+				resultado = jobService.run((String) content.get("name"), year);
 			}
 		}
 		else {
