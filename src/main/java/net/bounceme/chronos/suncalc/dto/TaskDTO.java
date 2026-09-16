@@ -1,4 +1,4 @@
-package net.bounceme.chronos.suncalc.model;
+package net.bounceme.chronos.suncalc.dto;
 
 import java.io.Serializable;
 
@@ -14,7 +14,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-public class Task implements Serializable {
+public class TaskDTO implements Serializable {
 	/**
 	 * 
 	 */
