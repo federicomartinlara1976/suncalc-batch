@@ -20,6 +20,8 @@ import net.bounceme.chronos.suncalc.model.TimeData;
 @Slf4j
 public class FeignDocumentProcessor implements DocumentProcessor {
 	
+	private static final String TODAY = "today";
+	
 	@Autowired
 	private SunriseSunsetRest sunriseSunsetRest;
 	
@@ -50,8 +52,8 @@ public class FeignDocumentProcessor implements DocumentProcessor {
 		TimeData timeData = new TimeData();
 		
 		Boolean status = Boolean.FALSE;
-		// La fecha es la que viene a partir de sDate
-		Date date = dateFormat.parse(sDate);
+		// La fecha es la que viene a partir de sDate, excepto si es "today"
+		Date date = (!TODAY.equals(sDate)) ? dateFormat.parse(sDate) : new Date();
 		timeData.setFecha(date);
 		
 		SunriseSunsetResponse response = sunriseSunsetRest.detalle(
