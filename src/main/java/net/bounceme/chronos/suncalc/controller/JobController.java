@@ -62,7 +62,7 @@ public class JobController {
 	public ResponseEntity<Map<String, Object>> executeTaskByMonthAndYear(@PathVariable Integer year, @PathVariable Integer month) {
 		Map<String, Object> response = new HashMap<>();
 
-		log.info("Ejecutar: byMonthAndYear with {}/{}", month, year);
+		log.debug("Ejecutar: byMonthAndYear with {}/{}", month, year);
 		
 		MonthYearDTO monthYearDTO = MonthYearDTO.builder().month(month).year(year).build();
 		
