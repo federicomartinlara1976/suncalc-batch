@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,6 +17,7 @@ import net.bounceme.chronos.suncalc.validation.impl.ValidatorServiceImpl;
 
 @Configuration
 @EnableBatchProcessing
+@EnableScheduling
 @ComponentScan(basePackages = {"net.bounceme.chronos.notifications"})
 public class GenericConfiguration {
 	
