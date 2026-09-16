@@ -21,18 +21,19 @@ public class JobListener {
 	@SuppressWarnings("unchecked")
 	@RabbitListener(queues = "SuncalcEventos")
 	public void executeJob(JobDTO<?> jobDTO) {
+		ExecutionResult resultado = null;
 		Map<String, Object> content = (Map<String, Object>) jobDTO.getContent();
 
 		if (content.containsKey("name")) {
-			ExecutionResult resultado = jobService.run((String) content.get("name"));
-			log.info("{}", resultado);
+			resultado = jobService.run((String) content.get("name"));
 		}
 
 		if (content.containsKey("year")) {
-			ExecutionResult resultado = jobService.runImportByMonthAndYear((Integer) content.get("year"),
+			resultado = jobService.runImportByMonthAndYear((Integer) content.get("year"),
 					(Integer) content.get("month"));
-			log.info("{}", resultado);
 		}
+		
+		log.info("{}", resultado);
 	}
 
 }
