@@ -15,9 +15,11 @@ import net.bounceme.chronos.notifications.services.NotificationService;
     "classpath:applicationContext.xml",
 	"classpath:importTimes.xml",
 	"classpath:importByMonth.xml",
+	"classpath:importFromDate.xml",
 	"classpath:recalculateDifferences.xml",
     "classpath:flow-importTimes.xml",
     "classpath:flow-importByMonth.xml",
+    "classpath:flow-importFrom.xml",
     "classpath:flow-recalculateDifferences.xml"
 })
 @EnableFeignClients

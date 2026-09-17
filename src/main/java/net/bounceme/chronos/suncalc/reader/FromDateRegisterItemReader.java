@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.bounceme.chronos.suncalc.model.Execution;
 import net.bounceme.chronos.suncalc.repository.ExecutionsRepository;
 import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
 
@@ -38,7 +39,7 @@ public class FromDateRegisterItemReader extends AbstractItemReader {
 	@SneakyThrows
 	protected void initialize() {
 		JobParameters parameters = jobExecution.getJobParameters();
-		JobParameter<?> pDate = parameters.getParameter("date");
+		JobParameter<?> pDate = parameters.getParameter("fecha");
 
 		Assert.notNull(pDate, "No se ha obtenido la fecha");
 
@@ -56,11 +57,11 @@ public class FromDateRegisterItemReader extends AbstractItemReader {
 		for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
 			String sDate = dateFormat.format(Date.from(d.atStartOfDay(zone).toInstant()));
 
-			log.info("Obteniendo para fecha {}", sDate);
-			//records.add(documentProcessor.process(sDate));
+			log.debug("Obteniendo para fecha {}", sDate);
+			records.add(documentProcessor.process(sDate));
 
 			// Por cada proceso, registrar la ejecución
-			//executionsRepository.save(Execution.builder().id(sDate).value(1).build());
+			executionsRepository.save(Execution.builder().id(sDate).value(1).build());
 		}
 	}
 }
