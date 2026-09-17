@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -137,9 +138,15 @@ public class JobController {
 		Map<String, Object> response = new HashMap<>();
 
 		String scheduling = jobService.getJobScheduling(name);
-		log.debug("Cron de {}: {}", name, scheduling);
-		response.put("scheduling", scheduling);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		
+		if (StringUtils.isNotBlank(scheduling)) {
+			log.debug("Cron de {}: {}", name, scheduling);
+			response.put("scheduling", scheduling);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@GetMapping("")
