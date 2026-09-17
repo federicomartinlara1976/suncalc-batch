@@ -62,12 +62,31 @@ public class JobServiceImpl implements JobService {
 	
 	@Override
 	@SneakyThrows
+	public ExecutionResult run(String name, String date) {
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addDate("date", new Date());
+		builder.addJobParameter("fecha", date, String.class);
+
+		Job job = ctx.getBean(name, Job.class);
+		JobExecution result = jobLauncher.run(job, builder.toJobParameters());
+
+		// Exit on failure
+		if (ExitStatus.FAILED.equals(result.getExitStatus())) {
+			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message(TASK_FAILED).build();
+		} else {
+			return ExecutionResult.builder().exitStatus(result.getExitStatus())
+					.message(result.getExitStatus().getExitDescription()).build();
+		}
+	}
+	
+	@Override
+	@SneakyThrows
 	public ExecutionResult run(String name, Integer year) {
 		JobParametersBuilder builder = new JobParametersBuilder();
 		builder.addDate("date", new Date());
 		builder.addJobParameter("year", year, Integer.class);
 
-		Job job = ctx.getBean("recalculateByYear", Job.class);
+		Job job = ctx.getBean(name, Job.class);
 		JobExecution result = jobLauncher.run(job, builder.toJobParameters());
 
 		// Exit on failure
@@ -87,7 +106,7 @@ public class JobServiceImpl implements JobService {
 		builder.addJobParameter("month", month, Integer.class);
 		builder.addJobParameter("year", year, Integer.class);
 
-		Job job = ctx.getBean("importByMonth", Job.class);
+		Job job = ctx.getBean(name, Job.class);
 		JobExecution result = jobLauncher.run(job, builder.toJobParameters());
 
 		// Exit on failure

@@ -15,6 +15,12 @@ public interface JobService {
 	 * @param year
 	 * @return
 	 */
+	ExecutionResult run(String name, String date);
+	
+	/**
+	 * @param year
+	 * @return
+	 */
 	ExecutionResult run(String name, Integer year);
 	
 	/**

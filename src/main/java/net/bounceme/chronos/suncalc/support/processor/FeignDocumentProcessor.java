@@ -79,7 +79,7 @@ public class FeignDocumentProcessor implements DocumentProcessor {
 			timeData.setDusk(Date.from(oDusk.toInstant()));
 			
 			status = Boolean.TRUE;
-			log.info("Returned data:\n \tdawn:{},\n\tsunrise: {},\n\tculmination: {},\n\tsunset: {},\n\tdusk: {} ",
+			log.debug("Returned data:\n \tdawn:{},\n\tsunrise: {},\n\tculmination: {},\n\tsunset: {},\n\tdusk: {} ",
 					timeData.getDawn(), timeData.getSunrise(), timeData.getCulmination(), timeData.getSunset(), timeData.getDusk());
 		}
 		

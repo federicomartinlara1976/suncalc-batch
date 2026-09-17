@@ -4,15 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -22,6 +24,7 @@ import net.bounceme.chronos.suncalc.dto.JobDTO;
 import net.bounceme.chronos.suncalc.dto.TaskDTO;
 import net.bounceme.chronos.suncalc.facade.JobFacade;
 import net.bounceme.chronos.suncalc.services.JobService;
+import net.bounceme.chronos.suncalc.validation.validator.Fecha;
 
 @RestController
 @RequestMapping("/suncalc-batch/jobs")
@@ -38,7 +41,7 @@ public class JobController {
 	@Autowired
 	private JobFacade jobFacade;
 
-	@PostMapping("/execute")
+	@PutMapping("/execute")
 	@SneakyThrows
 	public ResponseEntity<Map<String, Object>> executeTask(@Valid @RequestBody TaskDTO task) {
 		Map<String, Object> response = new HashMap<>();
@@ -61,7 +64,7 @@ public class JobController {
 	 * @param result
 	 * @return
 	 */
-	@PostMapping("/executeByMonth/{year}/{month}")
+	@PutMapping("/executeByMonth/{year}/{month}")
 	@SneakyThrows
 	public ResponseEntity<Map<String, Object>> executeTaskByMonthAndYear(@PathVariable Integer year, @PathVariable Integer month) {
 		Map<String, Object> response = new HashMap<>();
@@ -87,7 +90,33 @@ public class JobController {
 	 * @param result
 	 * @return
 	 */
-	@PostMapping("/recalculate/{year}")
+	@PutMapping("/executeFromDate")
+	@SneakyThrows
+	public ResponseEntity<Map<String, Object>> executeFromDate(@RequestParam @Fecha String fecha) {
+		Map<String, Object> response = new HashMap<>();
+
+		log.debug("Ejecutar: executeFromDate with {}", fecha);
+		
+		TaskDTO taskDTO = TaskDTO.builder().name("importFromDate").date(fecha).build();
+		
+		JobDTO<TaskDTO> jobDTO = new JobDTO<>();
+		jobDTO.setContent(taskDTO);
+		jobFacade.publishJob(jobDTO);
+		
+		response.put(MESSAGE, IN_PROGRESS);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	/**
+	 * Ejecuta una tarea que recupera los datos de un mes. Se lanza de forma asíncrona, ya que 
+	 * su tiempo de ejecución es indeterminado. 
+	 * 
+	 * @param year
+	 * @param month
+	 * @param result
+	 * @return
+	 */
+	@PutMapping("/recalculate/{year}")
 	@SneakyThrows
 	public ResponseEntity<Map<String, Object>> recalculateByYear(@PathVariable Integer year) {
 		Map<String, Object> response = new HashMap<>();
@@ -104,14 +133,20 @@ public class JobController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@PostMapping("/scheduling")
-	public ResponseEntity<Map<String, Object>> schedulingJob(@Valid @RequestBody TaskDTO task, BindingResult result) {
+	@GetMapping("/scheduling")
+	public ResponseEntity<Map<String, Object>> schedulingJob(@RequestParam String name) {
 		Map<String, Object> response = new HashMap<>();
 
-		String scheduling = jobService.getJobScheduling(task.getName());
-		log.debug("Cron de {}: {}", task.getName(), scheduling);
-		response.put("scheduling", scheduling);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		String scheduling = jobService.getJobScheduling(name);
+		
+		if (StringUtils.isNotBlank(scheduling)) {
+			log.debug("Cron de {}: {}", name, scheduling);
+			response.put("scheduling", scheduling);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@GetMapping("")

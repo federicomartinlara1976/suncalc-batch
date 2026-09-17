@@ -1,7 +1,6 @@
 package net.bounceme.chronos.suncalc.facade;
 
 import java.util.Map;
-import java.util.Objects;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,20 +23,31 @@ public class JobListener {
 	public void executeJob(JobDTO<?> jobDTO) {
 		ExecutionResult resultado = null;
 		Map<String, Object> content = (Map<String, Object>) jobDTO.getContent();
-
-		Integer year = (Integer) content.get("year"); 
-		if (!Objects.isNull(year)) {
-			Integer month = (Integer) content.get("month");
-			
-			if (!Objects.isNull(month)) {
-				resultado = jobService.run((String) content.get("name"), year, month);
+		
+		String name = (String) content.get("name");
+		
+		switch (name) {
+		case "importTimes": 
+		case "recalculateDifferences":
+			resultado = jobService.run(name);
+			break;
+		case "importByMonth": {
+				Integer year = (Integer) content.get("year"); 
+				Integer month = (Integer) content.get("month");
+				resultado = jobService.run(name, year, month);
 			}
-			else {
-				resultado = jobService.run((String) content.get("name"), year);
+			break;
+		case "importFromDate": {
+				String date = (String) content.get("date");
+				resultado = jobService.run(name, date);
 			}
-		}
-		else {
-			resultado = jobService.run((String) content.get("name"));
+			break;
+		case "recalculateByYear": {
+				Integer year = (Integer) content.get("year"); 
+				resultado = jobService.run(name, year);
+			}
+			break;
+		default: log.warn("Tarea no especificada");
 		}
 		
 		log.info("{}", resultado);

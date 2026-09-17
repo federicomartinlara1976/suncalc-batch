@@ -32,5 +32,9 @@ public class TaskDTO implements Serializable {
 	@Getter
 	@Setter
 	private Integer month;
+	
+	@Getter
+	@Setter
+	private String date;
 
 }
