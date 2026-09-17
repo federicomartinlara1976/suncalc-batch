@@ -57,6 +57,45 @@ public class JobServiceImpl implements JobService {
 					.message(result.getExitStatus().getExitDescription()).build();
 		}
 	}
+	
+	@Override
+	@SneakyThrows
+	public ExecutionResult run(String name, Integer year) {
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addDate("date", new Date());
+		builder.addJobParameter("year", year, Integer.class);
+
+		Job job = ctx.getBean("recalculateByYear", Job.class);
+		JobExecution result = jobLauncher.run(job, builder.toJobParameters());
+
+		// Exit on failure
+		if (ExitStatus.FAILED.equals(result.getExitStatus())) {
+			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message("La tarea ha fallado").build();
+		} else {
+			return ExecutionResult.builder().exitStatus(result.getExitStatus())
+					.message(result.getExitStatus().getExitDescription()).build();
+		}
+	}
+	
+	@Override
+	@SneakyThrows
+	public ExecutionResult run(String name, Integer year, Integer month) {
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addDate("date", new Date());
+		builder.addJobParameter("month", month, Integer.class);
+		builder.addJobParameter("year", year, Integer.class);
+
+		Job job = ctx.getBean("importByMonth", Job.class);
+		JobExecution result = jobLauncher.run(job, builder.toJobParameters());
+
+		// Exit on failure
+		if (ExitStatus.FAILED.equals(result.getExitStatus())) {
+			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message("La tarea ha fallado").build();
+		} else {
+			return ExecutionResult.builder().exitStatus(result.getExitStatus())
+					.message(result.getExitStatus().getExitDescription()).build();
+		}
+	}
 
 	/**
 	 * @param name
@@ -105,25 +144,5 @@ public class JobServiceImpl implements JobService {
 		}
 
 		return jobNames;
-	}
-
-	@Override
-	@SneakyThrows
-	public ExecutionResult runImportByMonthAndYear(Integer year, Integer month) {
-		JobParametersBuilder builder = new JobParametersBuilder();
-		builder.addDate("date", new Date());
-		builder.addJobParameter("month", month, Integer.class);
-		builder.addJobParameter("year", year, Integer.class);
-
-		Job job = ctx.getBean("importByMonth", Job.class);
-		JobExecution result = jobLauncher.run(job, builder.toJobParameters());
-
-		// Exit on failure
-		if (ExitStatus.FAILED.equals(result.getExitStatus())) {
-			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message("La tarea ha fallado").build();
-		} else {
-			return ExecutionResult.builder().exitStatus(result.getExitStatus())
-					.message(result.getExitStatus().getExitDescription()).build();
-		}
 	}
 }

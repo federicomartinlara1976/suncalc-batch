@@ -19,7 +19,6 @@ import jakarta.validation.Valid;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.dto.JobDTO;
-import net.bounceme.chronos.suncalc.dto.MonthYearDTO;
 import net.bounceme.chronos.suncalc.dto.TaskDTO;
 import net.bounceme.chronos.suncalc.facade.JobFacade;
 import net.bounceme.chronos.suncalc.services.JobService;
@@ -53,7 +52,8 @@ public class JobController {
 	 * Ejecuta una tarea que recupera los datos de un mes. Se lanza de forma asíncrona, ya que 
 	 * su tiempo de ejecución es indeterminado. 
 	 * 
-	 * @param task
+	 * @param year
+	 * @param month
 	 * @param result
 	 * @return
 	 */
@@ -62,12 +62,38 @@ public class JobController {
 	public ResponseEntity<Map<String, Object>> executeTaskByMonthAndYear(@PathVariable Integer year, @PathVariable Integer month) {
 		Map<String, Object> response = new HashMap<>();
 
-		log.info("Ejecutar: byMonthAndYear with {}/{}", month, year);
+		log.debug("Ejecutar: byMonthAndYear with {}/{}", month, year);
 		
-		MonthYearDTO monthYearDTO = MonthYearDTO.builder().month(month).year(year).build();
+		TaskDTO taskDTO = TaskDTO.builder().name("importByMonth").month(month).year(year).build();
 		
-		JobDTO<MonthYearDTO> jobDTO = new JobDTO<>();
-		jobDTO.setContent(monthYearDTO);
+		JobDTO<TaskDTO> jobDTO = new JobDTO<>();
+		jobDTO.setContent(taskDTO);
+		jobFacade.publishJob(jobDTO);
+		
+		response.put("message", "Tarea en ejecución");
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	/**
+	 * Ejecuta una tarea que recupera los datos de un mes. Se lanza de forma asíncrona, ya que 
+	 * su tiempo de ejecución es indeterminado. 
+	 * 
+	 * @param year
+	 * @param month
+	 * @param result
+	 * @return
+	 */
+	@PostMapping("/recalculate/{year}")
+	@SneakyThrows
+	public ResponseEntity<Map<String, Object>> recalculateByYear(@PathVariable Integer year) {
+		Map<String, Object> response = new HashMap<>();
+
+		log.debug("Ejecutar: recalculateByYear with {}", year);
+		
+		TaskDTO taskDTO = TaskDTO.builder().name("recalculateByYear").year(year).build();
+		
+		JobDTO<TaskDTO> jobDTO = new JobDTO<>();
+		jobDTO.setContent(taskDTO);
 		jobFacade.publishJob(jobDTO);
 		
 		response.put("message", "Tarea en ejecución");

@@ -53,6 +53,24 @@ public class SuncalcHelper {
 	      .toLocalTime();
 	}
 	
+	public Integer obtenerDia(Date fecha) {
+	    return fecha.toInstant()
+	                .atZone(ZoneId.systemDefault())
+	                .getDayOfMonth(); // 1-31
+	}
+	
+	public Integer obtenerMes(Date fecha) {
+	    return fecha.toInstant()
+	                .atZone(ZoneId.systemDefault())
+	                .getMonthValue(); // 1 = enero, 12 = diciembre
+	}
+	
+	public Integer obtenerAnio(Date fecha) {
+	    return fecha.toInstant()
+	                .atZone(ZoneId.systemDefault())
+	                .getYear();
+	}
+	
 	public Differences createDifferences(TimeData nextData, TimeData prevData) {
 		Differences d = new Differences();
 		

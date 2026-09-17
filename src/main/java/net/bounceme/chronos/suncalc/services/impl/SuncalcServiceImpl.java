@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import net.bounceme.chronos.suncalc.model.TimeData;
@@ -60,7 +61,7 @@ public class SuncalcServiceImpl implements SuncalcService {
 	@Override
 	public List<TimeData> getByRangeDate(String initDate, String endDate) {
 		repositoryCollectionCustom.setCollectionName(collection);
-		return timeDataRepository.listRegistros(initDate, endDate);
+		return timeDataRepository.listRegistros(initDate, endDate, Sort.by(Sort.Direction.ASC, "_id"));
 	}
 
 }
