@@ -26,5 +26,5 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
       - El escuchador de eventos bloquea hasta finalizar la tarea. Utilizar colas de RabbitMQ para desacoplar **(Completado - 16/09/2026)**
       
     - 17/09/2026
-      - Endpoint y tarea para recuperar datos desde una fecha hasta la fecha actual, sobreescribiendo registros si ya los hubiera
+      - Endpoint y tarea para recuperar datos desde una fecha hasta la fecha actual, sobreescribiendo registros si ya los hubiera **(Completado - 17/09/2026)**
       
