@@ -25,6 +25,8 @@ import net.bounceme.chronos.suncalc.services.JobService;
 @Service
 public class JobServiceImpl implements JobService {
 
+	private static final String TASK_FAILED = "La tarea ha fallado";
+
 	@Autowired
 	private ApplicationContext ctx;
 
@@ -51,7 +53,7 @@ public class JobServiceImpl implements JobService {
 
 		// Exit on failure
 		if (ExitStatus.FAILED.equals(result.getExitStatus())) {
-			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message("La tarea ha fallado").build();
+			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message(TASK_FAILED).build();
 		} else {
 			return ExecutionResult.builder().exitStatus(result.getExitStatus())
 					.message(result.getExitStatus().getExitDescription()).build();
@@ -70,7 +72,7 @@ public class JobServiceImpl implements JobService {
 
 		// Exit on failure
 		if (ExitStatus.FAILED.equals(result.getExitStatus())) {
-			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message("La tarea ha fallado").build();
+			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message(TASK_FAILED).build();
 		} else {
 			return ExecutionResult.builder().exitStatus(result.getExitStatus())
 					.message(result.getExitStatus().getExitDescription()).build();
@@ -90,7 +92,7 @@ public class JobServiceImpl implements JobService {
 
 		// Exit on failure
 		if (ExitStatus.FAILED.equals(result.getExitStatus())) {
-			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message("La tarea ha fallado").build();
+			return ExecutionResult.builder().exitStatus(ExitStatus.FAILED).message(TASK_FAILED).build();
 		} else {
 			return ExecutionResult.builder().exitStatus(result.getExitStatus())
 					.message(result.getExitStatus().getExitDescription()).build();
