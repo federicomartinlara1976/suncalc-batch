@@ -28,6 +28,10 @@ import net.bounceme.chronos.suncalc.services.JobService;
 @Slf4j
 public class JobController {
 
+	private static final String IN_PROGRESS = "Tarea en ejecución";
+
+	private static final String MESSAGE = "message";
+
 	@Autowired
 	private JobService jobService;
 	
@@ -44,7 +48,7 @@ public class JobController {
 		jobDTO.setContent(task);
 		jobFacade.publishJob(jobDTO);
 		
-		response.put("message", "Tarea en ejecución");
+		response.put(MESSAGE, IN_PROGRESS);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
@@ -70,7 +74,7 @@ public class JobController {
 		jobDTO.setContent(taskDTO);
 		jobFacade.publishJob(jobDTO);
 		
-		response.put("message", "Tarea en ejecución");
+		response.put(MESSAGE, IN_PROGRESS);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
@@ -96,7 +100,7 @@ public class JobController {
 		jobDTO.setContent(taskDTO);
 		jobFacade.publishJob(jobDTO);
 		
-		response.put("message", "Tarea en ejecución");
+		response.put(MESSAGE, IN_PROGRESS);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

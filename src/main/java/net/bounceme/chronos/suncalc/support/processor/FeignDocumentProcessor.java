@@ -44,7 +44,7 @@ public class FeignDocumentProcessor implements DocumentProcessor {
 
 	@Override
 	public TimeData process() {
-		return obtainData("today");
+		return obtainData(TODAY);
 	}
 
 	@SneakyThrows
