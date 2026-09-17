@@ -133,7 +133,7 @@ public class JobController {
 	}
 
 	@GetMapping("/scheduling")
-	public ResponseEntity<Map<String, Object>> schedulingJob(@Valid @RequestParam String name, BindingResult result) {
+	public ResponseEntity<Map<String, Object>> schedulingJob(@Valid @RequestParam String name) {
 		Map<String, Object> response = new HashMap<>();
 
 		String scheduling = jobService.getJobScheduling(name);
