@@ -23,33 +23,33 @@ public class JobListener {
 	public void executeJob(JobDTO<?> jobDTO) {
 		ExecutionResult resultado = null;
 		Map<String, Object> content = (Map<String, Object>) jobDTO.getContent();
-		
+
 		String name = (String) content.get("name");
-		
+
 		switch (name) {
-		case "importTimes": 
-		case "recalculateDifferences":
+		case "importTimes", "recalculateDifferences":
 			resultado = jobService.run(name);
 			break;
 		case "importByMonth": {
-				Integer year = (Integer) content.get("year"); 
-				Integer month = (Integer) content.get("month");
-				resultado = jobService.run(name, year, month);
-			}
+			Integer year = (Integer) content.get("year");
+			Integer month = (Integer) content.get("month");
+			resultado = jobService.run(name, year, month);
+		}
 			break;
 		case "importFromDate": {
-				String date = (String) content.get("date");
-				resultado = jobService.run(name, date);
-			}
+			String date = (String) content.get("date");
+			resultado = jobService.run(name, date);
+		}
 			break;
 		case "recalculateByYear": {
-				Integer year = (Integer) content.get("year"); 
-				resultado = jobService.run(name, year);
-			}
-			break;
-		default: log.warn("Tarea no especificada");
+			Integer year = (Integer) content.get("year");
+			resultado = jobService.run(name, year);
 		}
-		
+			break;
+		default:
+			log.warn("Tarea no especificada");
+		}
+
 		log.info("{}", resultado);
 	}
 
