@@ -13,10 +13,22 @@ public interface JobService {
 	
 	/**
 	 * @param year
+	 * @return
+	 */
+	ExecutionResult run(String name, String date);
+	
+	/**
+	 * @param year
+	 * @return
+	 */
+	ExecutionResult run(String name, Integer year);
+	
+	/**
+	 * @param year
 	 * @param month
 	 * @return
 	 */
-	ExecutionResult runImportByMonthAndYear(Integer year, Integer month);
+	ExecutionResult run(String name, Integer year, Integer month);
 	
 	/**
 	 * @return

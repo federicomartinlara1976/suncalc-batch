@@ -9,5 +9,5 @@ public class JobDTO<T> {
 
 	@Getter
 	@Setter
-	T content;
+	private T content;
 }

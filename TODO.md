@@ -14,9 +14,17 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
 - **Versión 1.0.3**
 
     - 13/09/2026
-      - Endpoint y tarea para recuperar datos de un mes y año concretos **(Completado 15/09/2026)**
+      - Endpoint y tarea para recuperar datos de un mes y año concretos **(Completado - 15/09/2026)**
       
 - **Versión 1.0.4**
 
     - 14/09/2026
-      - Eliminar código deprecado y todas las dependencias que no se utilicen
+      - Eliminar código deprecado y todas las dependencias que no se utilicen **(Completado - 15/09/2026)**
+      
+    - 15/09/2026
+      - Endpoint y tarea para recalcular diferencias para 1 año en concreto, si el año es el presente, hasta la fecha actual **(Completado - 16/09/2026)**
+      - El escuchador de eventos bloquea hasta finalizar la tarea. Utilizar colas de RabbitMQ para desacoplar **(Completado - 16/09/2026)**
+      
+    - 17/09/2026
+      - Endpoint y tarea para recuperar datos desde una fecha hasta la fecha actual, sobreescribiendo registros si ya los hubiera **(Completado - 17/09/2026)**
+      

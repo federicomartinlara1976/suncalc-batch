@@ -13,22 +13,15 @@
 
 	<groupId>net.bounceme.chronos</groupId>
 	<artifactId>suncalc-batch</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<name>suncalc-batch</name>
 	<description>Recover data from Suncalc.org</description>
 
 	<properties>
 		<java.version>21</java.version>
 		<spring-cloud.version>2023.0.5</spring-cloud.version>
-		<jsoup.version>1.15.3</jsoup.version>
-		<selenium.version>4.8.0</selenium.version>
-		<httpclient5.version>5.2.1</httpclient5.version>
-		<selenium.version>4.12.0</selenium.version>
-
-		<jacoco.version>0.7.9</jacoco.version>
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.language>java</sonar.language>
 	</properties>
@@ -136,51 +129,7 @@
 		    <artifactId>mysql-connector-j</artifactId>
 		    <scope>runtime</scope>
 		</dependency>
-
-		<!-- HTML parser implementations -->
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>${jsoup.version}</version>
-		</dependency>
 		
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-		  	<artifactId>selenium-java</artifactId>
-		</dependency>
-		
-		<dependency>
-		    <groupId>org.seleniumhq.selenium</groupId>
-		    <artifactId>selenium-chrome-driver</artifactId>
-		</dependency>
-		
-		<dependency>
-		    <groupId>org.seleniumhq.selenium</groupId>
-		    <artifactId>selenium-firefox-driver</artifactId>
-		</dependency>
-		
-		<dependency>
-		  <groupId>org.seleniumhq.selenium</groupId>
-		  <artifactId>selenium-http-jdk-client</artifactId>
-		</dependency>
-        
-        <dependency>
-    		<groupId>io.github.bonigarcia</groupId>
-    		<artifactId>webdrivermanager</artifactId>
-    		<version>5.3.2</version>
-		</dependency>
-		
-		<dependency>
-            <groupId>org.apache.httpcomponents.client5</groupId>
-            <artifactId>httpclient5</artifactId>
-        </dependency>
-        
-        <dependency>
-        	<groupId>com.google.guava</groupId>
-        	<artifactId>guava</artifactId>
-        	<version>31.0.1-jre</version>
-        </dependency>
-
 		<!-- Graylog appender -->
 		<dependency>
 			<groupId>de.siegmar</groupId>
@@ -211,12 +160,6 @@
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jacoco</groupId>
-			<artifactId>jacoco-maven-plugin</artifactId>
-			<version>${jacoco.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -283,56 +226,6 @@
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>3.4.0.905</version>
-			</plugin>
-
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
-				<configuration>
-					<destFile>${sonar.jacoco.reportPath}</destFile>
-					<append>true</append>
-				</configuration>
-				<executions>
-					<execution> <!-- 1 -->
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<configuration>
-							<destFile>${project.build.directory}/jacoco-ut.exec</destFile>
-						</configuration>
-					</execution>
-					<execution> <!-- 2 -->
-						<id>pre-integration-prepare</id>
-						<goals>
-							<goal>prepare-agent-integration</goal>
-						</goals>
-					</execution>
-					<execution> <!-- 3 -->
-						<id>report</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>merge</goal>
-						</goals>
-						<configuration>
-							<fileSets>
-								<fileSet>
-									<directory>${project.build.directory}</directory>
-									<includes>
-										<include>*.exec</include>
-									</includes>
-								</fileSet>
-							</fileSets>
-						</configuration>
-					</execution>
-					<execution> <!-- 4 -->
-						<id>merged-report-generation</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 
 			<plugin>
