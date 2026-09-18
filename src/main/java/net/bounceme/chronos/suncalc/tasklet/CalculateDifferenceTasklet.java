@@ -27,6 +27,8 @@ public class CalculateDifferenceTasklet implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		TimeData nextData = (TimeData) chunkContext.getStepContext().getJobExecutionContext().get("NEXT_TIME_DATA");
+		
+		// FIXME - prevData será la fecha anterior a nextData
 		TimeData prevData = (TimeData) chunkContext.getStepContext().getJobExecutionContext().get("PREV_TIME_DATA");
 
 		Differences d = SuncalcHelper.createDifferences(nextData, prevData);
