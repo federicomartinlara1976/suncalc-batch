@@ -17,6 +17,14 @@
 			<batch:listener ref="importJobListener" />
 		</batch:listeners>
 	</batch:job>
+	
+	<batch:job id="recalculateDifferences" job-repository="jobRepository">
+		<batch:flow id="recalculateDifferencesFlow" parent="recalculateFlow" />
+		
+		<batch:listeners>
+			<batch:listener ref="importJobListener" />
+		</batch:listeners>
+	</batch:job>
 
 	<!-- Thread safe Reader -->
 	<bean id="timeDataImporterReader"
