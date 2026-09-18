@@ -26,7 +26,6 @@ public class UpdateTimeDataImporterWriter extends ImporterWriter {
         	}
         
         	timeDataRepository.save(item);
-        	jobExecution.getExecutionContext().put("NEXT_TIME_DATA", item);
         });
     }
 
