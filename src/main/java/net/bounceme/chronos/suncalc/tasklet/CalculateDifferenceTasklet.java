@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import net.bounceme.chronos.suncalc.model.Differences;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.repository.DifferencesDataRepository;
 import net.bounceme.chronos.suncalc.repository.RepositoryCollectionCustom;
@@ -57,18 +56,14 @@ public class CalculateDifferenceTasklet implements Tasklet {
 		LocalDate lPrevDate = fecha.toInstant().atZone(zone).toLocalDate().minusDays(1);
 		String idPrevDate = dateFormat.format(Date.from(lPrevDate.atStartOfDay(zone).toInstant()));
 		
-		timeDataRepository.findById(idPrevDate).ifPresent(prevData -> {
+		timeDataRepository.findById(idPrevDate).ifPresent(prevData -> 
 			SuncalcHelper.createDifferences(nextData, prevData).ifPresent(d-> {
 				log.info("Diferences[{}] -> dawn: {}, sunrise: {}, culmination: {}, sunset: {}, dusk: {}",
 						d.getId(), d.getDawn(), d.getSunrise(), d.getCulmination(), d.getSunset(), d.getDusk());
 				
 				differencesDataRepository.save(d);
-			});
-
-			
-		});
-
-		
+			})	
+		);
 
 		return RepeatStatus.FINISHED;
 	}
