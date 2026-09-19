@@ -14,9 +14,9 @@ public class CustomSkipListener implements SkipListener<Object, Object> {
     public void onSkipInRead(Throwable t) {
         StringBuilder message = new StringBuilder("ERROR en LECTURA: ");
 
-        if (t instanceof FlatFileParseException) {
+        if (t instanceof FlatFileParseException flatFileParseException) {
             message.append("Linea ")
-                    .append(((FlatFileParseException)t).getLineNumber())
+                    .append(flatFileParseException.getLineNumber())
                     .append(": Error de formato para la siguiente entrada: ")
                     .append(((FlatFileParseException)t).getInput());
         } else {

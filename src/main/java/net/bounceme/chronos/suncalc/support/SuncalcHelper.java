@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -71,10 +72,11 @@ public class SuncalcHelper {
 	                .getYear();
 	}
 	
-	public Differences createDifferences(TimeData nextData, TimeData prevData) {
-		Differences d = new Differences();
+	public Optional<Differences> createDifferences(TimeData nextData, TimeData prevData) {
 		
 		if (!Objects.isNull(nextData)) {
+			Differences d = new Differences();
+			
 			d.setDawn(calculateDifference(nextData.getDawn(), prevData.getDawn()));
 			d.setSunrise(calculateDifference(nextData.getSunrise(), prevData.getSunrise()));
 			d.setCulmination(calculateDifference(nextData.getCulmination(), prevData.getCulmination()));
@@ -83,9 +85,11 @@ public class SuncalcHelper {
 			
 			d.setId(nextData.getId() + " - " + prevData.getId());
 			d.setLastDate(nextData.getId());
+			
+			return Optional.of(d);
 		}
 		
-		return d;
+		return Optional.empty();
 	}
 
 	private Long calculateDifference(Date nextData, Date prevData) {
@@ -100,9 +104,9 @@ public class SuncalcHelper {
 	
 	public Integer getDiasDelMes(Integer month, Integer year) {
 	    switch (month) {
-	        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+	        case 1, 3, 5, 7, 8, 10, 12:
 	            return 31;
-	        case 4: case 6: case 9: case 11:
+	        case 4, 6, 9, 11:
 	            return 30;
 	        case 2:
 	            return esBisiesto(year) ? 29 : 28;
