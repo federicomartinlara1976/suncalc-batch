@@ -58,12 +58,14 @@ public class CalculateDifferenceTasklet implements Tasklet {
 		String idPrevDate = dateFormat.format(Date.from(lPrevDate.atStartOfDay(zone).toInstant()));
 		
 		timeDataRepository.findById(idPrevDate).ifPresent(prevData -> {
-			Differences d = SuncalcHelper.createDifferences(nextData, prevData);
+			SuncalcHelper.createDifferences(nextData, prevData).ifPresent(d-> {
+				log.info("Diferences[{}] -> dawn: {}, sunrise: {}, culmination: {}, sunset: {}, dusk: {}",
+						d.getId(), d.getDawn(), d.getSunrise(), d.getCulmination(), d.getSunset(), d.getDusk());
+				
+				differencesDataRepository.save(d);
+			});
 
-			log.info("Diferences[{}] -> dawn: {}, sunrise: {}, culmination: {}, sunset: {}, dusk: {}",
-					d.getId(), d.getDawn(), d.getSunrise(), d.getCulmination(), d.getSunset(), d.getDusk());
 			
-			differencesDataRepository.save(d);
 		});
 
 		

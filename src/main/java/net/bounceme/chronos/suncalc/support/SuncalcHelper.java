@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -71,10 +72,11 @@ public class SuncalcHelper {
 	                .getYear();
 	}
 	
-	public Differences createDifferences(TimeData nextData, TimeData prevData) {
-		Differences d = new Differences();
+	public Optional<Differences> createDifferences(TimeData nextData, TimeData prevData) {
 		
 		if (!Objects.isNull(nextData)) {
+			Differences d = new Differences();
+			
 			d.setDawn(calculateDifference(nextData.getDawn(), prevData.getDawn()));
 			d.setSunrise(calculateDifference(nextData.getSunrise(), prevData.getSunrise()));
 			d.setCulmination(calculateDifference(nextData.getCulmination(), prevData.getCulmination()));
@@ -83,9 +85,11 @@ public class SuncalcHelper {
 			
 			d.setId(nextData.getId() + " - " + prevData.getId());
 			d.setLastDate(nextData.getId());
+			
+			return Optional.of(d);
 		}
 		
-		return d;
+		return Optional.empty();
 	}
 
 	private Long calculateDifference(Date nextData, Date prevData) {
