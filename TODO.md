@@ -28,3 +28,8 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
     - 17/09/2026
       - Endpoint y tarea para recuperar datos desde una fecha hasta la fecha actual, sobreescribiendo registros si ya los hubiera **(Completado - 17/09/2026)**
       
+- **Versión 1.0.5**
+
+    - 21/09/2026
+      - Cálculo de los solsticios y los equinoccios (los cálculos se harán en Octave y se mostrarán en el servicio, por lo que se hará uso del plugin de java de Octave)
+      
