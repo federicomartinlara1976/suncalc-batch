@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
@@ -27,46 +28,60 @@ public class JavaOctaveService implements CalcService {
 
 	private static final Integer SCALE = 2;
 	
+	private Boolean enabled;
+	
 	private OctaveEngine octave;
 
 	private OctaveDoubleToArray octaveDoubleToArray;
 
 	private OctaveDoubleToMatrix octaveDoubleToMatrix;
 
-	@SneakyThrows(OctaveEvalException.class)
+	
 	public JavaOctaveService() {
-		octave = new OctaveEngineFactory().getScriptEngine();
-		
-		// Load the astronomy package
-		octave.eval("pkg load astronomia");
-				
-		// Test if load is correct by recovering the package version
-		octave.eval("astronomia_version = astronomia_version()");
-		String packageVersion = getString("astronomia_version");
-		log.info("Astronomia version: {}", packageVersion);
-		
-		octaveDoubleToArray = new OctaveDoubleToArray();
-		octaveDoubleToMatrix = new OctaveDoubleToMatrix();
+		try {
+			octave = new OctaveEngineFactory().getScriptEngine();
+			
+			// Load the astronomy package
+			octave.eval("pkg load astronomia");
+					
+			// Test if load is correct by recovering the package version
+			octave.eval("astronomia_version = astronomia_version()");
+			String packageVersion = getString("astronomia_version");
+			log.info("Astronomia version: {}", packageVersion);
+			
+			octaveDoubleToArray = new OctaveDoubleToArray();
+			octaveDoubleToMatrix = new OctaveDoubleToMatrix();
+			
+			enabled = true;
+		} catch (OctaveEvalException e) {
+			log.error("Error:", e);
+			enabled = false;
+		}
 	}
 
-	@SneakyThrows(OctaveEvalException.class)
+	@SneakyThrows
 	public void addPath(String path) {
+		Assert.isTrue(enabled, "Servicio no disponible");
 		String cmd = String.format("addpath('%s')", path);
 		octave.eval(cmd);
 	}
 
 	@SneakyThrows(OctaveEvalException.class)
 	public void resetPath() {
+		Assert.isTrue(enabled, "Servicio no disponible");
 		octave.eval("restoredefaultpath();");
 	}
 
 	@SneakyThrows(OctaveEvalException.class)
 	public void clearEnvironment() {
+		Assert.isTrue(enabled, "Servicio no disponible");
 		octave.eval("clear()");
 	}
 
 	@SneakyThrows(OctaveEvalException.class)
 	public void execute(String cmd) {
+		Assert.isTrue(enabled, "Servicio no disponible");
+		
 		log.debug("Ejecutar comando: {}", cmd);
 		octave.eval(cmd);
 	}
@@ -77,6 +92,8 @@ public class JavaOctaveService implements CalcService {
 	 */
 	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, BigDecimal value) {
+		Assert.isTrue(enabled, "Servicio no disponible");
+		
 		log.debug("Pasando variable {} con valor {}", name, value.doubleValue());
 		String cmd = String.format("%s=%s", name, value.toString());
 		octave.eval(cmd);
@@ -88,6 +105,8 @@ public class JavaOctaveService implements CalcService {
 	 */
 	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, Integer value) {
+		Assert.isTrue(enabled, "Servicio no disponible");
+		
 		log.debug("Pasando variable {} con valor {}", name, value.doubleValue());
 		String cmd = String.format("%s=%s", name, value.toString());
 		octave.eval(cmd);
@@ -96,6 +115,8 @@ public class JavaOctaveService implements CalcService {
 	@Override
 	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, BigDecimal[] value) {
+		Assert.isTrue(enabled, "Servicio no disponible");
+		
 		VectorDTO vectorDTO = new VectorDTO(name, value);
 		String cmdVar = vectorDTO.toString();
 		log.debug("Pasando variable {}", cmdVar);
@@ -112,6 +133,8 @@ public class JavaOctaveService implements CalcService {
 	@Override
 	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, BigDecimal[][] value) {
+		Assert.isTrue(enabled, "Servicio no disponible");
+		
 		MatrixDTO matrixDTO = new MatrixDTO(name, value);
 		String cmdVar = matrixDTO.toString();
 		log.debug("Pasando variable {}", cmdVar);
