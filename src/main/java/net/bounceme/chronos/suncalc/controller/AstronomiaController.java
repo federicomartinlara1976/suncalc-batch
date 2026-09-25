@@ -1,6 +1,7 @@
 package net.bounceme.chronos.suncalc.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.services.AstronomiaService;
 
 @RestController
@@ -18,8 +20,6 @@ import net.bounceme.chronos.suncalc.services.AstronomiaService;
 @Slf4j
 public class AstronomiaController {
 
-	private static final String MESSAGE = "message";
-	
 	@Autowired
 	private AstronomiaService astronomiaService;
 	
@@ -27,8 +27,8 @@ public class AstronomiaController {
 	public ResponseEntity<Map<String, Object>> getCurrent() {
 		Map<String, Object> response = new HashMap<>();
 
-		astronomiaService.calculateSolsticesEquinoxes(2026);
-		response.put(MESSAGE, "Ok");
+		List<DataSolsticeEquinoxDTO> results = astronomiaService.calculateSolsticesEquinoxes(2026);
+		response.put("result", results);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }
