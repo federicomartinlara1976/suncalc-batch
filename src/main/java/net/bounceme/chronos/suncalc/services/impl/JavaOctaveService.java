@@ -26,6 +26,8 @@ import net.bounceme.chronos.utils.calc.dto.VectorDTO;
 @Slf4j
 public class JavaOctaveService implements CalcService {
 
+	private static final String SERVICE_UNAVAILABLE = "Servicio no disponible";
+
 	private static final Integer SCALE = 2;
 	
 	private Boolean enabled;
@@ -61,26 +63,26 @@ public class JavaOctaveService implements CalcService {
 
 	@SneakyThrows
 	public void addPath(String path) {
-		Assert.isTrue(enabled, "Servicio no disponible");
+		Assert.isTrue(enabled, SERVICE_UNAVAILABLE);
 		String cmd = String.format("addpath('%s')", path);
 		octave.eval(cmd);
 	}
 
 	@SneakyThrows(OctaveEvalException.class)
 	public void resetPath() {
-		Assert.isTrue(enabled, "Servicio no disponible");
+		Assert.isTrue(enabled, SERVICE_UNAVAILABLE);
 		octave.eval("restoredefaultpath();");
 	}
 
 	@SneakyThrows(OctaveEvalException.class)
 	public void clearEnvironment() {
-		Assert.isTrue(enabled, "Servicio no disponible");
+		Assert.isTrue(enabled, SERVICE_UNAVAILABLE);
 		octave.eval("clear()");
 	}
 
 	@SneakyThrows(OctaveEvalException.class)
 	public void execute(String cmd) {
-		Assert.isTrue(enabled, "Servicio no disponible");
+		Assert.isTrue(enabled, SERVICE_UNAVAILABLE);
 		
 		log.debug("Ejecutar comando: {}", cmd);
 		octave.eval(cmd);
@@ -92,7 +94,7 @@ public class JavaOctaveService implements CalcService {
 	 */
 	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, BigDecimal value) {
-		Assert.isTrue(enabled, "Servicio no disponible");
+		Assert.isTrue(enabled, SERVICE_UNAVAILABLE);
 		
 		log.debug("Pasando variable {} con valor {}", name, value.doubleValue());
 		String cmd = String.format("%s=%s", name, value.toString());
@@ -105,7 +107,7 @@ public class JavaOctaveService implements CalcService {
 	 */
 	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, Integer value) {
-		Assert.isTrue(enabled, "Servicio no disponible");
+		Assert.isTrue(enabled, SERVICE_UNAVAILABLE);
 		
 		log.debug("Pasando variable {} con valor {}", name, value.doubleValue());
 		String cmd = String.format("%s=%s", name, value.toString());
@@ -115,7 +117,7 @@ public class JavaOctaveService implements CalcService {
 	@Override
 	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, BigDecimal[] value) {
-		Assert.isTrue(enabled, "Servicio no disponible");
+		Assert.isTrue(enabled, SERVICE_UNAVAILABLE);
 		
 		VectorDTO vectorDTO = new VectorDTO(name, value);
 		String cmdVar = vectorDTO.toString();
@@ -133,7 +135,7 @@ public class JavaOctaveService implements CalcService {
 	@Override
 	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, BigDecimal[][] value) {
-		Assert.isTrue(enabled, "Servicio no disponible");
+		Assert.isTrue(enabled, SERVICE_UNAVAILABLE);
 		
 		MatrixDTO matrixDTO = new MatrixDTO(name, value);
 		String cmdVar = matrixDTO.toString();
