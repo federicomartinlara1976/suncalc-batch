@@ -11,6 +11,7 @@ import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.OctaveUtils;
 import dk.ange.octave.exception.OctaveEvalException;
+import dk.ange.octave.exception.OctaveIOException;
 import dk.ange.octave.type.OctaveDouble;
 import dk.ange.octave.type.OctaveString;
 import lombok.SneakyThrows;
@@ -55,7 +56,7 @@ public class JavaOctaveService implements CalcService {
 			octaveDoubleToMatrix = new OctaveDoubleToMatrix();
 			
 			enabled = true;
-		} catch (OctaveEvalException e) {
+		} catch (OctaveIOException | OctaveEvalException e) {
 			log.error("Error:", e);
 			enabled = false;
 		}
