@@ -31,5 +31,5 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
 - **Versión 1.0.5**
 
     - 21/09/2026
-      - Cálculo de los solsticios y los equinoccios (los cálculos se harán en Octave y se mostrarán en el servicio, por lo que se hará uso del plugin de java de Octave)
+      - Cálculo de los solsticios y los equinoccios (los cálculos se harán en Octave y se mostrarán en el servicio, por lo que se hará uso del plugin de java de Octave) **(Completado - 25/09/2026)**
       
