@@ -22,7 +22,6 @@ import net.bounceme.chronos.utils.calc.dto.MatrixDTO;
 import net.bounceme.chronos.utils.calc.dto.VectorDTO;
 
 @Service
-@Scope("prototype")
 @Slf4j
 public class JavaOctaveService implements CalcService {
 
