@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.OctaveUtils;
+import dk.ange.octave.exception.OctaveEvalException;
 import dk.ange.octave.type.OctaveDouble;
 import dk.ange.octave.type.OctaveString;
 import lombok.SneakyThrows;
@@ -32,6 +33,7 @@ public class JavaOctaveService implements CalcService {
 
 	private OctaveDoubleToMatrix octaveDoubleToMatrix;
 
+	@SneakyThrows(OctaveEvalException.class)
 	public JavaOctaveService() {
 		octave = new OctaveEngineFactory().getScriptEngine();
 		
@@ -47,23 +49,23 @@ public class JavaOctaveService implements CalcService {
 		octaveDoubleToMatrix = new OctaveDoubleToMatrix();
 	}
 
-	@SneakyThrows
+	@SneakyThrows(OctaveEvalException.class)
 	public void addPath(String path) {
 		String cmd = String.format("addpath('%s')", path);
 		octave.eval(cmd);
 	}
 
-	@SneakyThrows
+	@SneakyThrows(OctaveEvalException.class)
 	public void resetPath() {
 		octave.eval("restoredefaultpath();");
 	}
 
-	@SneakyThrows
+	@SneakyThrows(OctaveEvalException.class)
 	public void clearEnvironment() {
 		octave.eval("clear()");
 	}
 
-	@SneakyThrows
+	@SneakyThrows(OctaveEvalException.class)
 	public void execute(String cmd) {
 		log.debug("Ejecutar comando: {}", cmd);
 		octave.eval(cmd);
@@ -73,7 +75,7 @@ public class JavaOctaveService implements CalcService {
 	 * @param name
 	 * @param value
 	 */
-	@SneakyThrows
+	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, BigDecimal value) {
 		log.debug("Pasando variable {} con valor {}", name, value.doubleValue());
 		String cmd = String.format("%s=%s", name, value.toString());
@@ -84,7 +86,7 @@ public class JavaOctaveService implements CalcService {
 	 * @param name
 	 * @param value
 	 */
-	@SneakyThrows
+	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, Integer value) {
 		log.debug("Pasando variable {} con valor {}", name, value.doubleValue());
 		String cmd = String.format("%s=%s", name, value.toString());
@@ -92,7 +94,7 @@ public class JavaOctaveService implements CalcService {
 	}
 
 	@Override
-	@SneakyThrows
+	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, BigDecimal[] value) {
 		VectorDTO vectorDTO = new VectorDTO(name, value);
 		String cmdVar = vectorDTO.toString();
@@ -108,7 +110,7 @@ public class JavaOctaveService implements CalcService {
 	 * String, java.math.BigDecimal[][])
 	 */
 	@Override
-	@SneakyThrows
+	@SneakyThrows(OctaveEvalException.class)
 	public void passVariable(String name, BigDecimal[][] value) {
 		MatrixDTO matrixDTO = new MatrixDTO(name, value);
 		String cmdVar = matrixDTO.toString();
@@ -120,7 +122,6 @@ public class JavaOctaveService implements CalcService {
 	 * @param name
 	 * @param value
 	 */
-	@SneakyThrows
 	public void terminate() {
 		octave.close();
 	}
