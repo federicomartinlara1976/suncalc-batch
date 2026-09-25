@@ -49,7 +49,7 @@ public class JavaOctaveService implements CalcService {
 			// Test if load is correct by recovering the package version
 			octave.eval("astronomia_version = astronomia_version()");
 			String packageVersion = getString("astronomia_version");
-			log.info("Astronomia version: {}", packageVersion);
+			log.debug("Astronomia version: {}", packageVersion);
 			
 			octaveDoubleToArray = new OctaveDoubleToArray();
 			octaveDoubleToMatrix = new OctaveDoubleToMatrix();
