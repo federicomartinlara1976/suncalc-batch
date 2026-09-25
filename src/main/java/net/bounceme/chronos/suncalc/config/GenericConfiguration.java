@@ -61,7 +61,7 @@ public class GenericConfiguration {
 	@Bean
 	@Scope("prototype")
 	Converter<BigDecimal[], Date> dateConverter() {
-		Converter<BigDecimal[], Date> converter = a -> {
+		return a -> {
 			Integer year = a[0].intValue();
 			Integer month = a[1].intValue();
 			Integer day = a[2].intValue();
@@ -82,7 +82,5 @@ public class GenericConfiguration {
 
 		    return cal.getTime();
 		};
-		
-		return converter;
 	}
 }
