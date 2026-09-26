@@ -20,6 +20,17 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Slf4j
 class GlobalControllerExceptionHandler {
+	
+	@ExceptionHandler(IllegalArgumentException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseEntity<Map<String, String>> handleException(IllegalArgumentException ex) {
+		log.error("ERROR: {}", ex.getMessage());
+
+		Map<String, String> errors = new HashMap<>();
+		errors.put("mensaje", ex.getMessage());
+
+		return ResponseEntity.internalServerError().body(errors);
+	}
 
 	@ExceptionHandler(DataAccessException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
