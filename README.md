@@ -1,9 +1,11 @@
 # suncalc-batch
-Recoge datos de efemérides solares
+- Recoge datos de efemérides solares. Se realiza mediante tareas programables de manera periódica.
+- Muestra la información por fechas.
+- Cálculo de solsticios y equinoccios.
 
-Se realiza mediante tareas programables de manera periódica.
+## Instalación del paquete de astronomía
 
-## Instalar paquete de astronomía
+Para el cálculo de equinoccios y solsticios se usa el software de cálculo matemático **Octave 6.4.0**. Realizar los siguientes pasos:
 
 1. Entrar en el contenedor para administrar con esta línea de comandos:
    
