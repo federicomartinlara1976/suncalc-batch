@@ -3,9 +3,10 @@ package net.bounceme.chronos.suncalc.services.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,17 +36,12 @@ public class AstronomiaServiceImpl implements AstronomiaService {
 	
 	@Override
 	public List<DataSolsticeEquinoxDTO> calculateSolsticesEquinoxes(Integer year) {
-		List<DataSolsticeEquinoxDTO> result = new ArrayList<>();
-		
-		for (String solstice : SOLSTICES) {
-			result.add(extractFor(year, solstice));
-		}
-		
-		for (String equinox : EQUINOXES) {
-			result.add(extractFor(year, equinox));
-		}
-		
-		return result;
+		return Stream.concat(
+                Arrays.stream(SOLSTICES),
+                Arrays.stream(EQUINOXES)
+            )
+            .map(evento -> extractFor(year, evento))
+            .toList();
 	}
 	
 	private DataSolsticeEquinoxDTO extractFor(Integer year, String item) {
