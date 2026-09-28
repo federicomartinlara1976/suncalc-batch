@@ -67,4 +67,14 @@ public class AstronomiaController {
 		response.put(RESULT, result);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	@GetMapping("/lunar-phase/{date}")
+	public ResponseEntity<Map<String, Object>> getLunarPhaseFor(@PathVariable String date) {
+		Map<String, Object> response = new HashMap<>();
+
+		FaseLunarDTO result = astronomiaService.calculateFaseLunar(date);
+		
+		response.put(RESULT, result);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 }
