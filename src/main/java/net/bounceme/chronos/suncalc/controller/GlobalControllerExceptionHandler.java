@@ -21,13 +21,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class GlobalControllerExceptionHandler {
 	
+	private static final String MENSAJE = "mensaje";
+
 	@ExceptionHandler(IllegalArgumentException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseEntity<Map<String, String>> handleException(IllegalArgumentException ex) {
 		log.error("ERROR: {}", ex.getMessage());
 
 		Map<String, String> errors = new HashMap<>();
-		errors.put("mensaje", ex.getMessage());
+		errors.put(MENSAJE, ex.getMessage());
 
 		return ResponseEntity.internalServerError().body(errors);
 	}
@@ -38,7 +40,7 @@ class GlobalControllerExceptionHandler {
 		log.error("ERROR: {}", ex.getMessage());
 
 		Map<String, String> errors = new HashMap<>();
-		errors.put("mensaje", ex.getMostSpecificCause().getMessage());
+		errors.put(MENSAJE, ex.getMostSpecificCause().getMessage());
 
 		return ResponseEntity.internalServerError().body(errors);
 	}
@@ -60,7 +62,7 @@ class GlobalControllerExceptionHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseEntity<Map<String, String>> handleParseException(ParseException ex) {
 		Map<String, String> errors = new HashMap<>();
-		errors.put("mensaje", ex.getMessage());
+		errors.put(MENSAJE, ex.getMessage());
 
 		return ResponseEntity.badRequest().body(errors);
 	}
