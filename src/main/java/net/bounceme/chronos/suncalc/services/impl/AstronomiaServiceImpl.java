@@ -1,6 +1,8 @@
 package net.bounceme.chronos.suncalc.services.impl;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +10,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.SneakyThrows;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
+import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
 import net.bounceme.chronos.suncalc.services.AstronomiaService;
 import net.bounceme.chronos.suncalc.services.CalcService;
 import net.bounceme.chronos.utils.calc.converters.Converter;
@@ -22,6 +26,9 @@ public class AstronomiaServiceImpl implements AstronomiaService {
 	
 	@Autowired
 	private CalcService calcService;
+	
+	@Autowired
+	private SimpleDateFormat dateFormat;
 	
 	@Autowired
 	private Converter<BigDecimal[], Date> dateConverter;
@@ -52,5 +59,21 @@ public class AstronomiaServiceImpl implements AstronomiaService {
  		Date localDate = dateConverter.apply(calcService.getArray("local"));
  		
  		return DataSolsticeEquinoxDTO.builder().name(item).utcDate(utcDate).localDate(localDate).build();
+	}
+
+	@Override
+	@SneakyThrows(ParseException.class)
+	public FaseLunarDTO calculateFaseLunar(String date) {
+		final String CMD_TEMPLATE = "[edad, fase, iluminacion] = fase_lunar(%s)";
+		String cmd = String.format(CMD_TEMPLATE, date);
+		
+		calcService.execute(cmd);
+		
+		return FaseLunarDTO.builder()
+				.date(dateFormat.parse(date))
+				.edad(calcService.getScalar("edad").floatValue())
+				.fase(calcService.getString("fase"))
+				.iluminacion(calcService.getScalar("iluminacion").floatValue())
+				.build();
 	}
 }
