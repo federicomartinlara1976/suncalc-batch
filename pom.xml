@@ -178,6 +178,12 @@
 			<artifactId>chronos-notification-utils</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.bounceme.chronos.libs</groupId>
+			<artifactId>chronos-calc-utils</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 	
 	<dependencyManagement>
