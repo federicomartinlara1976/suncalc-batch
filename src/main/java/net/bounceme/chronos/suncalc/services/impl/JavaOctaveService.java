@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.services.CalcService;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 import net.bounceme.chronos.utils.calc.converters.OctaveDoubleToArray;
-import net.bounceme.chronos.utils.calc.converters.OctaveDoubleToMatrix;
 import net.bounceme.chronos.utils.calc.dto.MatrixDTO;
 import net.bounceme.chronos.utils.calc.dto.VectorDTO;
 
