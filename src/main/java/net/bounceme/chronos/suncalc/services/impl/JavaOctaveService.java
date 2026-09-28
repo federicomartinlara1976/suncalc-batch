@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.services.CalcService;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 import net.bounceme.chronos.utils.calc.converters.OctaveDoubleToArray;
-import net.bounceme.chronos.utils.calc.converters.OctaveDoubleToMatrix;
 import net.bounceme.chronos.utils.calc.dto.MatrixDTO;
 import net.bounceme.chronos.utils.calc.dto.VectorDTO;
 
@@ -37,14 +36,13 @@ public class JavaOctaveService implements CalcService {
 
 	private OctaveDoubleToArray octaveDoubleToArray;
 
-	private OctaveDoubleToMatrix octaveDoubleToMatrix;
-
 	
 	public JavaOctaveService() {
 		try {
 			octave = new OctaveEngineFactory().getScriptEngine();
 			
-			// Load the astronomy package
+			// Load the symbolic and astronomy package
+			octave.eval("pkg load symbolic");
 			octave.eval("pkg load astronomia");
 					
 			// Test if load is correct by recovering the package version
@@ -53,7 +51,6 @@ public class JavaOctaveService implements CalcService {
 			log.debug("Astronomia version: {}", packageVersion);
 			
 			octaveDoubleToArray = new OctaveDoubleToArray();
-			octaveDoubleToMatrix = new OctaveDoubleToMatrix();
 			
 			enabled = true;
 		} catch (OctaveIOException | OctaveEvalException e) {
@@ -175,11 +172,6 @@ public class JavaOctaveService implements CalcService {
 	@Override
 	public BigDecimal[] getArray(String name) {
 		return octaveDoubleToArray.apply(octave.get(OctaveDouble.class, name));
-	}
-
-	@Override
-	public BigDecimal[][] getMatrix(String name) {
-		return octaveDoubleToMatrix.apply(octave.get(OctaveDouble.class, name));
 	}
 
 	@Override
