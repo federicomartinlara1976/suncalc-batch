@@ -37,8 +37,6 @@ public class JavaOctaveService implements CalcService {
 
 	private OctaveDoubleToArray octaveDoubleToArray;
 
-	private OctaveDoubleToMatrix octaveDoubleToMatrix;
-
 	
 	public JavaOctaveService() {
 		try {
@@ -54,7 +52,6 @@ public class JavaOctaveService implements CalcService {
 			log.debug("Astronomia version: {}", packageVersion);
 			
 			octaveDoubleToArray = new OctaveDoubleToArray();
-			octaveDoubleToMatrix = new OctaveDoubleToMatrix();
 			
 			enabled = true;
 		} catch (OctaveIOException | OctaveEvalException e) {
@@ -176,11 +173,6 @@ public class JavaOctaveService implements CalcService {
 	@Override
 	public BigDecimal[] getArray(String name) {
 		return octaveDoubleToArray.apply(octave.get(OctaveDouble.class, name));
-	}
-
-	@Override
-	public BigDecimal[][] getMatrix(String name) {
-		return octaveDoubleToMatrix.apply(octave.get(OctaveDouble.class, name));
 	}
 
 	@Override

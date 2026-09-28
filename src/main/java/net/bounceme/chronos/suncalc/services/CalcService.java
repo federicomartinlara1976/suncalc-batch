@@ -31,7 +31,5 @@ public interface CalcService {
 	
 	BigDecimal[] getArray(String name);
 	
-	BigDecimal[][] getMatrix(String name);
-	
 	String getString(String name);
 }
