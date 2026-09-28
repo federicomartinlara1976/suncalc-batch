@@ -44,7 +44,8 @@ public class JavaOctaveService implements CalcService {
 		try {
 			octave = new OctaveEngineFactory().getScriptEngine();
 			
-			// Load the astronomy package
+			// Load the symbolic and astronomy package
+			octave.eval("pkg load symbolic");
 			octave.eval("pkg load astronomia");
 					
 			// Test if load is correct by recovering the package version
