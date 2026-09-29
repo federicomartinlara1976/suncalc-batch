@@ -36,3 +36,8 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
     - 27/09/2026
       - Cálculo de la fase lunar **(Completado - 28/09/2026)**
       
+- **Versión 1.0.6**
+
+    - 29/09/2026
+      - Tests para revisar la cobertura de código
+      
