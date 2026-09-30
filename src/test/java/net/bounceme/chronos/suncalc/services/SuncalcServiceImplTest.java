@@ -52,11 +52,9 @@ class SuncalcServiceImplTest {
     @Captor private ArgumentCaptor<Sort> sortCaptor;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         // El campo @Value no lo resuelve @InjectMocks → se inyecta a mano
         ReflectionTestUtils.setField(service, "collection", COLLECTION);
-        // dateFormat.format(...) devuelve un id determinista
-        when(dateFormat.format(any(Date.class))).thenReturn(FIXED_ID);
     }
 
     // ==================================================================
@@ -66,6 +64,12 @@ class SuncalcServiceImplTest {
     @Nested
     @DisplayName("getCurrentTimeData")
     class GetCurrentTimeDataTests {
+
+        @BeforeEach
+        void setUp() {
+            // Solo este @Nested usa dateFormat.format(...)
+            when(dateFormat.format(any(Date.class))).thenReturn(FIXED_ID);
+        }
 
         @Test
         @DisplayName("Documento existente: devuelve el TimeData del repositorio sin llamar al processor")
@@ -180,7 +184,7 @@ class SuncalcServiceImplTest {
         void getByRangeDate_pasaSortAscendentePorId() {
             // Arrange
             String init = "2024-01-01";
-            String end   = "2024-12-31";
+            String end  = "2024-12-31";
             List<TimeData> esperado = List.of(
                     TimeData.builder().id("a").build(),
                     TimeData.builder().id("b").build());
