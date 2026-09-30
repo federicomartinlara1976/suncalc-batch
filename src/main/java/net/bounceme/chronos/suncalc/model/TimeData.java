@@ -9,10 +9,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import jakarta.validation.constraints.AssertTrue;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Document(collection = "#{@repositoryCollectionCustom.getCollectionName()}")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Data
 public class TimeData implements Serializable {
