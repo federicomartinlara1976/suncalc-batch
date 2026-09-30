@@ -242,7 +242,7 @@ class AstronomiaControllerTest {
         void getLunarPhaseFor_fechaCodificada_seDecodifica() throws Exception {
             // Arrange
             String fecha = "2024-06-15";
-            when(astronomiaService.calculateFaseLunar(eq(fecha)))
+            when(astronomiaService.calculateFaseLunar(fecha))
                     .thenReturn(FaseLunarDTO.builder().build());
 
             // Act / Assert
