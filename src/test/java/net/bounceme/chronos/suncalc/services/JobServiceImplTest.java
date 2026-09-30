@@ -171,7 +171,13 @@ class JobServiceImplTest {
 
             // Assert
             verify(jobLauncher).run(any(Job.class), paramsCaptor.capture());
-            assertThat(paramsCaptor.getValue().getLong("year")).isEqualTo(2024L);
+            JobParameters params = paramsCaptor.getValue();
+            
+            Object yearValue = params.getParameter("year").getValue();
+            assertThat(yearValue)
+            	.isInstanceOf(Integer.class)
+            	.isEqualTo(2024);
+            
             assertThat(paramsCaptor.getValue().getDate("date")).isNotNull();
         }
 
@@ -209,8 +215,17 @@ class JobServiceImplTest {
             // Assert
             verify(jobLauncher).run(any(Job.class), paramsCaptor.capture());
             JobParameters params = paramsCaptor.getValue();
-            assertThat(params.getLong("year")).isEqualTo(2024L);
-            assertThat(params.getLong("month")).isEqualTo(6L);
+            
+            Object yearValue = params.getParameter("year").getValue();
+            assertThat(yearValue)
+            	.isInstanceOf(Integer.class)
+            	.isEqualTo(2024);
+            
+            Object monthValue = params.getParameter("month").getValue();
+            assertThat(monthValue)
+            	.isInstanceOf(Integer.class)
+            	.isEqualTo(6);
+            
             assertThat(params.getDate("date")).isNotNull();
         }
 
