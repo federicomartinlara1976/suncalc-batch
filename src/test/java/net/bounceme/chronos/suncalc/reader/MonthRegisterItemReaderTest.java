@@ -106,7 +106,9 @@ class MonthRegisterItemReaderTest {
             stubParams(2024, null);
 
             // Act / Assert
-            assertThatThrownBy(() -> reader.open(new ExecutionContext()))
+            ExecutionContext executionContext = new ExecutionContext();
+            
+            assertThatThrownBy(() -> reader.open(executionContext))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("No se ha obtenido el mes");
 
@@ -120,7 +122,9 @@ class MonthRegisterItemReaderTest {
             stubParams(null, 6);
 
             // Act / Assert
-            assertThatThrownBy(() -> reader.open(new ExecutionContext()))
+            ExecutionContext executionContext = new ExecutionContext();
+            
+            assertThatThrownBy(() -> reader.open(executionContext))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("No se ha obtenido el año");
 
@@ -134,7 +138,9 @@ class MonthRegisterItemReaderTest {
             reader.jobExecution = null;
 
             // Act / Assert
-            assertThatThrownBy(() -> reader.open(new ExecutionContext()))
+            ExecutionContext executionContext = new ExecutionContext();
+            
+            assertThatThrownBy(() -> reader.open(executionContext))
                     .isInstanceOf(NullPointerException.class);
         }
     }

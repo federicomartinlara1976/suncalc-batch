@@ -179,7 +179,9 @@ class FromDateRegisterItemReaderTest {
             when(jobExecution.getJobParameters()).thenReturn(params);
 
             // Act / Assert
-            assertThatThrownBy(() -> reader.open(new ExecutionContext()))
+            ExecutionContext executionContext = new ExecutionContext();
+            
+            assertThatThrownBy(() -> reader.open(executionContext))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("No se ha obtenido la fecha");
 
@@ -194,7 +196,9 @@ class FromDateRegisterItemReaderTest {
             reader.jobExecution = null;
 
             // Act / Assert
-            assertThatThrownBy(() -> reader.open(new ExecutionContext()))
+            ExecutionContext executionContext = new ExecutionContext();
+            
+            assertThatThrownBy(() -> reader.open(executionContext))
                     .isInstanceOf(NullPointerException.class);
         }
     }
