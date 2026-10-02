@@ -55,7 +55,6 @@ class CalculateDifferencesExecutionTaskletTest {
 
     private static final String S_DESDE = "2024-01-01";
     private static final String S_DESDE_OTHER = "2023-01-01";
-    private static final String S_HASTA_END = "2024-12-31";
     private static final String S_HASTA_END_OTHER = "2023-12-31";
     private static final String S_HASTA_NOW = "2024-06-15";
     private static final String S_PREV = "2023-12-31";
