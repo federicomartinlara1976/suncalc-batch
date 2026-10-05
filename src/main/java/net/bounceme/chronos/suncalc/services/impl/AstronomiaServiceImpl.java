@@ -48,12 +48,7 @@ public class AstronomiaServiceImpl implements AstronomiaService {
                 Arrays.stream(EQUINOXES)
             )
             .map(evento -> extractFor(year, evento))
-            .sorted(new Comparator<DataSolsticeEquinoxDTO>() {
-                @Override
-                public int compare(DataSolsticeEquinoxDTO data1, DataSolsticeEquinoxDTO data2) {
-                    return data1.getUtcDate().compareTo(data2.getUtcDate());
-                }
-            })
+            .sorted((data1, data2) -> data1.getUtcDate().compareTo(data2.getUtcDate()))
             .toList();
 	}
 	
