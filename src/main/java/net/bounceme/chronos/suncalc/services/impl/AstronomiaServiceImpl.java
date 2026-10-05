@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
@@ -47,6 +48,12 @@ public class AstronomiaServiceImpl implements AstronomiaService {
                 Arrays.stream(EQUINOXES)
             )
             .map(evento -> extractFor(year, evento))
+            .sorted(new Comparator<DataSolsticeEquinoxDTO>() {
+                @Override
+                public int compare(DataSolsticeEquinoxDTO data1, DataSolsticeEquinoxDTO data2) {
+                    return data1.getUtcDate().compareTo(data2.getUtcDate());
+                }
+            })
             .toList();
 	}
 	
