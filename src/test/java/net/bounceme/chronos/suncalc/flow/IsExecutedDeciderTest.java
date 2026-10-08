@@ -143,11 +143,8 @@ class IsExecutedDeciderTest {
             decider.decide(jobExecution, stepExecution);
 
             // Assert
-//            assertThat((Map<String, Object>) executionContext)
-//                    .containsEntry(ALREADY_EXECUTED_KEY, Boolean.TRUE)
-//                    .hasSize(1);
-            
-            assertThat(Boolean.TRUE).isTrue();
+            assertThat(executionContext.get(ALREADY_EXECUTED_KEY))
+            		.isEqualTo(Boolean.TRUE);
         }
     }
 
@@ -171,7 +168,7 @@ class IsExecutedDeciderTest {
 
             // Assert
             assertThat(status.getName()).isEqualTo("NO_EXECUTED");
-            //assertThat((Map<String, Object>) executionContext).doesNotContainKey(ALREADY_EXECUTED_KEY);
+            assertThat(executionContext.get(ALREADY_EXECUTED_KEY)).isNull();
             assertThat(listAppender.list).isEmpty();
         }
 
@@ -186,7 +183,7 @@ class IsExecutedDeciderTest {
 
             // Assert
             assertThat(status.getName()).isEqualTo("NO_EXECUTED");
-            //assertThat((Map<String, Object>) executionContext).doesNotContainKey(ALREADY_EXECUTED_KEY);
+            assertThat(executionContext.get(ALREADY_EXECUTED_KEY)).isNull();
             assertThat(listAppender.list).isEmpty();
         }
     }
