@@ -24,10 +24,11 @@ public abstract class AbstractListener implements JobExecutionListener {
 	public void afterJob(JobExecution jobExecution) {
 		if (!Objects.isNull(startTime)) {
 			Long duration = System.currentTimeMillis() - startTime;
-			updateStatus(jobExecution);
 			log.info("JOBLISTENER: Se ha terminado de ejecutar el Job con ID: {}, ha tardado {} ms",
 					jobExecution.getJobId(), duration);
 		}
+		
+		updateStatus(jobExecution);
 	}
 	
 	protected abstract void initializeConfig(JobExecution jobExecution);
