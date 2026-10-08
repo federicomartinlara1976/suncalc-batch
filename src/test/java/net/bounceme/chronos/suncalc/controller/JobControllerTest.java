@@ -41,7 +41,7 @@ class JobControllerTest {
     @Mock private JobService jobService;
     @Mock private JobFacade jobFacade;
 
-    @Captor private ArgumentCaptor<JobDTO> jobCaptor;
+    @Captor private ArgumentCaptor<JobDTO<TaskDTO>> jobCaptor;
 
     private MockMvc mockMvc;
 
