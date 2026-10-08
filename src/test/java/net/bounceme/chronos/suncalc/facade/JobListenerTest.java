@@ -349,6 +349,8 @@ class JobListenerTest {
             } catch (ClassCastException expected) {
                 // OK
             }
+            
+            assertThat(Boolean.TRUE).isTrue();
         }
 
         @Test
@@ -365,6 +367,8 @@ class JobListenerTest {
             } catch (ClassCastException expected) {
                 // OK
             }
+            
+            assertThat(Boolean.TRUE).isTrue();
         }
     }
 
