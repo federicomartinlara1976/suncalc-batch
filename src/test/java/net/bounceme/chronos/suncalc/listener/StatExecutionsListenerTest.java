@@ -84,7 +84,8 @@ class StatExecutionsListenerTest {
             assertThat(executions).hasSize(1);
         }
 
-        @Test
+        @SuppressWarnings("unchecked")
+		@Test
         @DisplayName("Si ya existía EXECUTIONS, se reemplaza por una lista nueva vacía")
         void initializeConfig_reemplazaListaExistente() {
             // Arrange
@@ -97,7 +98,7 @@ class StatExecutionsListenerTest {
             listener.beforeJob(jobExecution);
 
             // Assert
-            Object value = executionContext.get(EXECUTIONS_KEY);
+            List<Execution> value = (List<Execution>) executionContext.get(EXECUTIONS_KEY);
             assertThat(value).isNotSameAs(previa);
             assertThat((List<?>) value).isEmpty();
         }
