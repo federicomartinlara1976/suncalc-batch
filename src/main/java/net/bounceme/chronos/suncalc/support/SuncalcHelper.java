@@ -11,12 +11,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.model.Differences;
 import net.bounceme.chronos.suncalc.model.TimeData;
 
 @UtilityClass
-@Slf4j
 public class SuncalcHelper {
 
 	/**

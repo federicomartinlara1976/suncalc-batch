@@ -54,7 +54,7 @@ public class JavaOctaveService implements CalcService {
 			
 			enabled = true;
 		} catch (OctaveIOException | OctaveEvalException e) {
-			log.error("Error:", e);
+			log.error("Error: {}", e.getMessage());
 			enabled = false;
 		}
 	}

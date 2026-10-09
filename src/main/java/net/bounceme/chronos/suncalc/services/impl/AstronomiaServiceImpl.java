@@ -3,12 +3,15 @@ package net.bounceme.chronos.suncalc.services.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
 import lombok.SneakyThrows;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
@@ -18,6 +21,7 @@ import net.bounceme.chronos.suncalc.services.CalcService;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @Service
+@Validated
 public class AstronomiaServiceImpl implements AstronomiaService {
 	
 	private static final String[] EQUINOXES = {"march_equinox", "september_equinox"};
@@ -34,18 +38,17 @@ public class AstronomiaServiceImpl implements AstronomiaService {
 	private Converter<BigDecimal[], Date> dateConverter;
 	
 	@Override
+	@SneakyThrows
 	public List<DataSolsticeEquinoxDTO> calculateSolsticesEquinoxes(Integer year) {
-		List<DataSolsticeEquinoxDTO> result = new ArrayList<>();
+		Assert.notNull(year, "El año no puede ser nulo");
 		
-		for (String solstice : SOLSTICES) {
-			result.add(extractFor(year, solstice));
-		}
-		
-		for (String equinox : EQUINOXES) {
-			result.add(extractFor(year, equinox));
-		}
-		
-		return result;
+		return Stream.concat(
+                Arrays.stream(SOLSTICES),
+                Arrays.stream(EQUINOXES)
+            )
+            .map(evento -> extractFor(year, evento))
+            .sorted((data1, data2) -> data1.getUtcDate().compareTo(data2.getUtcDate()))
+            .toList();
 	}
 	
 	private DataSolsticeEquinoxDTO extractFor(Integer year, String item) {
