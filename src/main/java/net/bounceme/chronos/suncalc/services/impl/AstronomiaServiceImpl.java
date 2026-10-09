@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
 import lombok.SneakyThrows;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
@@ -19,6 +21,7 @@ import net.bounceme.chronos.suncalc.services.CalcService;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @Service
+@Validated
 public class AstronomiaServiceImpl implements AstronomiaService {
 	
 	private static final String[] EQUINOXES = {"march_equinox", "september_equinox"};
@@ -35,12 +38,16 @@ public class AstronomiaServiceImpl implements AstronomiaService {
 	private Converter<BigDecimal[], Date> dateConverter;
 	
 	@Override
+	@SneakyThrows
 	public List<DataSolsticeEquinoxDTO> calculateSolsticesEquinoxes(Integer year) {
+		Assert.notNull(year, "El año no puede ser nulo");
+		
 		return Stream.concat(
                 Arrays.stream(SOLSTICES),
                 Arrays.stream(EQUINOXES)
             )
             .map(evento -> extractFor(year, evento))
+            .sorted((data1, data2) -> data1.getUtcDate().compareTo(data2.getUtcDate()))
             .toList();
 	}
 	

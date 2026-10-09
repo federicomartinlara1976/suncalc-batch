@@ -1,5 +1,7 @@
 package net.bounceme.chronos.suncalc.listener;
 
+import java.util.Objects;
+
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 
@@ -20,10 +22,13 @@ public abstract class AbstractListener implements JobExecutionListener {
 
 	@Override
 	public void afterJob(JobExecution jobExecution) {
-		Long duration = System.currentTimeMillis() - startTime;
+		if (!Objects.isNull(startTime)) {
+			Long duration = System.currentTimeMillis() - startTime;
+			log.info("JOBLISTENER: Se ha terminado de ejecutar el Job con ID: {}, ha tardado {} ms",
+					jobExecution.getJobId(), duration);
+		}
+		
 		updateStatus(jobExecution);
-		log.info("JOBLISTENER: Se ha terminado de ejecutar el Job con ID: {}, ha tardado {} ms",
-				jobExecution.getJobId(), duration);
 	}
 	
 	protected abstract void initializeConfig(JobExecution jobExecution);

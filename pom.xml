@@ -234,6 +234,53 @@
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>5.8.0.7211</version>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+				<configuration>
+			        <excludes>
+			            <exclude>**/SuncalcApplication.class</exclude>
+			            <exclude>**/*Application.class</exclude>
+			            <exclude>**/config/**</exclude>
+			            <exclude>**/dto/**</exclude>
+			            <exclude>**/model/**</exclude>
+			        </excludes>
+			    </configuration>
+				<executions>
+					<execution>
+						<goals>
+							<!-- Instrumenta el código para registrar la
+							cobertura antes de los tests -->
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<!-- Genera el reporte de cobertura de código -->
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<executions>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report-only</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
