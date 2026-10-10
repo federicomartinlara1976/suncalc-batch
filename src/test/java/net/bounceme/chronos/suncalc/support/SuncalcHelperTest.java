@@ -288,6 +288,30 @@ class SuncalcHelperTest {
             // 15 minutos = 900 segundos (o -900 según el orden de Duration.between)
             assertThat(Math.abs(result.get().getSunrise())).isEqualTo(900L);
         }
+        
+        @Test
+        @DisplayName("nextData con dawn válido, prevData con dawn null → diferencia 0L sin NPE")
+        void createDifferences_nextDawnValidoPrevDawnNull_diferenciaCero() {
+            // Arrange: next tiene dawn, prev no
+            Date d = new Date();
+            TimeData next = timeData("2024-06-15", d, null, null, null, null);
+            TimeData prev = timeData("2024-06-14", null, null, null, null, null);
+
+            // Act
+            Optional<Differences> result = SuncalcHelper.createDifferences(next, prev);
+
+            // Assert
+            assertThat(result).isPresent();
+            assertThat(result.get().getDawn()).isZero();
+            // El resto de campos: next tiene null y prev tiene null → 0L por el otro camino
+            assertThat(result.get().getSunrise()).isZero();
+            assertThat(result.get().getCulmination()).isZero();
+            assertThat(result.get().getSunset()).isZero();
+            assertThat(result.get().getDusk()).isZero();
+            // id y lastDate sí se setean porque nextData no es null
+            assertThat(result.get().getId()).isEqualTo("2024-06-15 - 2024-06-14");
+            assertThat(result.get().getLastDate()).isEqualTo("2024-06-15");
+        }
     }
 
     // ==================================================================
