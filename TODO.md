@@ -39,8 +39,8 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
 - **Versión 1.0.6**
 
     - 29/09/2026
-      - Tests para revisar la cobertura de código
+      - Tests para revisar la cobertura de código **(Completado - 09/10/2026)**
       
     - 04/10/2026
-      - Devolver la lista de solsticios y equinoccios ordenada por fecha (UTC o local)
+      - Devolver la lista de solsticios y equinoccios ordenada por fecha (UTC o local) **(Completado - 09/10/2026)**
       
