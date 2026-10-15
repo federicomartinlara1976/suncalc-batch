@@ -18,17 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
-import net.bounceme.chronos.suncalc.services.AstronomiaService;
+import net.bounceme.chronos.suncalc.services.EfemeridesService;
 
 @RestController
 @RequestMapping("/suncalc-batch")
 @Slf4j
-public class AstronomiaController {
+public class EfemeridesController {
 
 	private static final String RESULT = "result";
 
 	@Autowired
-	private AstronomiaService astronomiaService;
+	private EfemeridesService astronomiaService;
 	
 	@Autowired
 	private SimpleDateFormat dateFormat;

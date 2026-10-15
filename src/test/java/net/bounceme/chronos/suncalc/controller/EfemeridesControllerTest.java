@@ -28,22 +28,22 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
-import net.bounceme.chronos.suncalc.services.AstronomiaService;
+import net.bounceme.chronos.suncalc.services.EfemeridesService;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AstronomiaController - endpoints REST de astronomía")
-class AstronomiaControllerTest {
+class EfemeridesControllerTest {
 
     private static final String BASE = "/suncalc-batch";
 
-    @Mock private AstronomiaService astronomiaService;
+    @Mock private EfemeridesService astronomiaService;
     @Mock private SimpleDateFormat dateFormat;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        AstronomiaController controller = new AstronomiaController();
+        EfemeridesController controller = new EfemeridesController();
         ReflectionTestUtils.setField(controller, "astronomiaService", astronomiaService);
         ReflectionTestUtils.setField(controller, "dateFormat", dateFormat);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();

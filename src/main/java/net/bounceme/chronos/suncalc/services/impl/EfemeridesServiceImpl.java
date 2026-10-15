@@ -16,13 +16,13 @@ import org.springframework.validation.annotation.Validated;
 import lombok.SneakyThrows;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
-import net.bounceme.chronos.suncalc.services.AstronomiaService;
+import net.bounceme.chronos.suncalc.services.EfemeridesService;
 import net.bounceme.chronos.suncalc.services.CalcService;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @Service
 @Validated
-public class AstronomiaServiceImpl implements AstronomiaService {
+public class EfemeridesServiceImpl implements EfemeridesService {
 	
 	private static final String[] EQUINOXES = {"march_equinox", "september_equinox"};
 	private static final String[] SOLSTICES = {"june_solstice", "december_solstice"};

@@ -26,12 +26,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
-import net.bounceme.chronos.suncalc.services.impl.AstronomiaServiceImpl;
+import net.bounceme.chronos.suncalc.services.impl.EfemeridesServiceImpl;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AstronomiaServiceImpl - cobertura de servicios astronómicos")
-class AstronomiaServiceImplTest {
+class EfemeridesServiceImplTest {
 
     private static final String HOUR_ZONE = "Europe/Madrid";
 
@@ -45,7 +45,7 @@ class AstronomiaServiceImplTest {
     private Converter<BigDecimal[], Date> dateConverter;
 
     @InjectMocks
-    private AstronomiaServiceImpl service;
+    private EfemeridesServiceImpl service;
 
     @Captor
     private ArgumentCaptor<String> cmdCaptor;
