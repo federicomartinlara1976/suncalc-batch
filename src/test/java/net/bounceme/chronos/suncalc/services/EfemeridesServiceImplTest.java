@@ -161,9 +161,9 @@ class EfemeridesServiceImplTest {
             // Assert
             assertThat(result).isNotNull();
             assertThat(result.getDate()).isEqualTo(parsedDate);
-            assertThat(result.getEdad()).isEqualTo(7.5f);
-            assertThat(result.getFase()).isEqualTo("creciente");
-            assertThat(result.getIluminacion()).isEqualTo(0.75f);
+            assertThat(result.getMoonAgeDays()).isEqualTo(7.5f);
+            assertThat(result.getPhaseName()).isEqualTo("creciente");
+            assertThat(result.getIlluminationPercent()).isEqualTo(0.75f);
 
             verify(calcService, times(1)).execute(cmdCaptor.capture());
             assertThat(cmdCaptor.getValue())
