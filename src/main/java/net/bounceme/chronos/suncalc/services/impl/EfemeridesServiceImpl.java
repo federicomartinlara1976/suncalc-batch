@@ -1,23 +1,25 @@
 package net.bounceme.chronos.suncalc.services.impl;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.SneakyThrows;
+import net.bounceme.chronos.suncalc.clients.FaseLunarRest;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
-import net.bounceme.chronos.suncalc.services.EfemeridesService;
+import net.bounceme.chronos.suncalc.dto.InputFaseLunarDTO;
 import net.bounceme.chronos.suncalc.services.CalcService;
+import net.bounceme.chronos.suncalc.services.EfemeridesService;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @Service
@@ -26,13 +28,21 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	
 	private static final String[] EQUINOXES = {"march_equinox", "september_equinox"};
 	private static final String[] SOLSTICES = {"june_solstice", "december_solstice"};
-	private static final String HOUR_ZONE = "Europe/Madrid";
+	
+	@Value("${application.importTimes.timeZone}")
+	private String timeZone;
+	
+	@Value("${application.importTimes.coords.lat}")
+	private Float latitude;
+	
+	@Value("${application.importTimes.coords.lng}")
+	private Float longitude;
 	
 	@Autowired
 	private CalcService calcService;
 	
 	@Autowired
-	private SimpleDateFormat dateFormat;
+	private FaseLunarRest faseLunarRest;
 	
 	@Autowired
 	private Converter<BigDecimal[], Date> dateConverter;
@@ -53,7 +63,7 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	
 	private DataSolsticeEquinoxDTO extractFor(Integer year, String item) {
 		final String CMD_TEMPLATE = "[JDE, utc, local, off] = equinoccio_solsticio(%d, '%s', '%s')";
-		String cmd = String.format(CMD_TEMPLATE, year, item, HOUR_ZONE);
+		String cmd = String.format(CMD_TEMPLATE, year, item, timeZone);
 		
 		calcService.execute(cmd);
 		
@@ -65,18 +75,15 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	}
 
 	@Override
-	@SneakyThrows(ParseException.class)
 	public FaseLunarDTO calculateFaseLunar(String date) {
-		final String CMD_TEMPLATE = "[edad, fase, iluminacion] = fase_lunar(%s)";
-		String cmd = String.format(CMD_TEMPLATE, date);
-		
-		calcService.execute(cmd);
-		
-		return FaseLunarDTO.builder()
-				.date(dateFormat.parse(date))
-				.moonAgeDays(calcService.getScalar("edad").floatValue())
-				.phaseName(calcService.getString("fase"))
-				.illuminationPercent(calcService.getScalar("iluminacion").floatValue())
+		InputFaseLunarDTO inputFaseLunarDTO = InputFaseLunarDTO.builder()
+				.startDate(StringUtils.EMPTY)
+				.latitude(latitude)
+				.longitude(longitude)
+				.days(1)
+				.timezone(timeZone)
 				.build();
+		
+		return faseLunarRest.detalle(inputFaseLunarDTO).get(0);
 	}
 }

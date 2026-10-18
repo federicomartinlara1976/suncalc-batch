@@ -155,7 +155,7 @@ class FaseLunarDTOTest {
         @DisplayName("Orden de parámetros: date, edad, fase, iluminacion")
         void allArgs_ordenDeParametros() {
             // Act
-            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
+            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, "", "", "", "");
 
             // Assert
             assertThat(dto.getDate()).isSameAs(DATE);
@@ -181,7 +181,7 @@ class FaseLunarDTOTest {
         @DisplayName("Valores límite de Float: 0.0 y negativos se almacenan tal cual")
         void allArgs_valoresFloatLimite() {
             // Act
-            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", -0.5f, 0.0f, 0.0f, DATE, DATE, DATE, DATE);
+            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", -0.5f, 0.0f, 0.0f, "", "", "", "");
 
             // Assert
             assertThat(dto.getMoonAgeDays()).isEqualTo(0.0f);
@@ -201,7 +201,7 @@ class FaseLunarDTOTest {
         @DisplayName("Contiene el nombre de la clase y los valores de los campos")
         void toString_contieneClaseYValores() {
             // Arrange
-        	FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
+        	FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, "", "", "", "");
 
             // Act
             String result = dto.toString();
@@ -243,8 +243,8 @@ class FaseLunarDTOTest {
         @DisplayName("Sin @EqualsAndHashCode: dos instancias con mismos valores NO son iguales")
         void equals_dosInstanciasIguales_noSonEquals() {
             // Arrange
-            FaseLunarDTO dto1 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
-            FaseLunarDTO dto2 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
+            FaseLunarDTO dto1 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, "", "", "", "");
+            FaseLunarDTO dto2 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, "", "", "", "");
             
             // Assert
             assertThat(dto1)
@@ -256,8 +256,8 @@ class FaseLunarDTOTest {
         @DisplayName("hashCode es por identidad (dos instancias → distintos)")
         void hashCode_porIdentidad() {
             // Arrange
-            FaseLunarDTO dto1 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
-            FaseLunarDTO dto2 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
+            FaseLunarDTO dto1 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, "", "", "", "");
+            FaseLunarDTO dto2 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, "", "", "", "");
 
             // Assert
             assertThat(dto1.hashCode()).isNotEqualTo(dto2.hashCode());
@@ -267,7 +267,7 @@ class FaseLunarDTOTest {
         @DisplayName("La misma instancia sí es igual a sí misma")
         void equals_mismaInstancia() {
             // Arrange
-            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
+            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, "", "", "", "");
 
             // Assert
             assertThat(dto).isEqualTo(dto);
