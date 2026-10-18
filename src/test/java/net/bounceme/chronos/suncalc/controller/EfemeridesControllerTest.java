@@ -181,9 +181,9 @@ class EfemeridesControllerTest {
             // Act / Assert
             mockMvc.perform(get(BASE + "/lunar-phase"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.result.edad").value(7.5))
-                    .andExpect(jsonPath("$.result.fase").value("creciente"))
-                    .andExpect(jsonPath("$.result.iluminacion").value(0.75));
+                    .andExpect(jsonPath("$.result.moonAgeDays").value(7.5))
+                    .andExpect(jsonPath("$.result.phaseName").value("creciente"))
+                    .andExpect(jsonPath("$.result.illuminationPercent").value(0.75));
 
             verify(dateFormat).format(any(Date.class));
             verify(astronomiaService).calculateFaseLunar(fechaFormateada);
@@ -214,9 +214,9 @@ class EfemeridesControllerTest {
             // Act / Assert
             mockMvc.perform(get(BASE + "/lunar-phase/{date}", fecha))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.result.fase").value("menguante"))
-                    .andExpect(jsonPath("$.result.edad").value(3.2))
-                    .andExpect(jsonPath("$.result.iluminacion").value(0.4));
+                    .andExpect(jsonPath("$.result.phaseName").value("menguante"))
+                    .andExpect(jsonPath("$.result.moonAgeDays").value(3.2))
+                    .andExpect(jsonPath("$.result.illuminationPercent").value(0.4));
 
             verify(astronomiaService).calculateFaseLunar(fecha);
         }

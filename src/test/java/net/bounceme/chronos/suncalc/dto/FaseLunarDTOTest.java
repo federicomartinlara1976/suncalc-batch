@@ -155,7 +155,7 @@ class FaseLunarDTOTest {
         @DisplayName("Orden de parámetros: date, edad, fase, iluminacion")
         void allArgs_ordenDeParametros() {
             // Act
-            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, 0.0f, 0.0f, DATE, DATE, DATE, DATE);
+            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
 
             // Assert
             assertThat(dto.getDate()).isSameAs(DATE);
@@ -201,7 +201,7 @@ class FaseLunarDTOTest {
         @DisplayName("Contiene el nombre de la clase y los valores de los campos")
         void toString_contieneClaseYValores() {
             // Arrange
-        	FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, 0.0f, 0.0f, DATE, DATE, DATE, DATE);
+        	FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
 
             // Act
             String result = dto.toString();
@@ -225,9 +225,9 @@ class FaseLunarDTOTest {
             assertThatCode(dto::toString).doesNotThrowAnyException();
             assertThat(dto.toString())
                     .contains("date=null")
-                    .contains("edad=null")
-                    .contains("fase=null")
-                    .contains("iluminacion=null");
+                    .contains("moonAgeDays=null")
+                    .contains("phaseName=null")
+                    .contains("illuminationPercent=null");
         }
     }
 
