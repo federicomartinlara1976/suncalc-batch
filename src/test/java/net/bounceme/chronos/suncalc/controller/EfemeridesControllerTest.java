@@ -171,9 +171,9 @@ class EfemeridesControllerTest {
             String fechaFormateada = "2024-06-15";
             FaseLunarDTO dto = FaseLunarDTO.builder()
                     .date(new Date(0L))
-                    .edad(7.5f)
-                    .fase("creciente")
-                    .iluminacion(0.75f)
+                    .moonAgeDays(7.5f)
+                    .phaseName("creciente")
+                    .illuminationPercent(0.75f)
                     .build();
             when(dateFormat.format(any(Date.class))).thenReturn(fechaFormateada);
             when(astronomiaService.calculateFaseLunar(fechaFormateada)).thenReturn(dto);
@@ -205,9 +205,9 @@ class EfemeridesControllerTest {
             String fecha = "2024-06-15";
             FaseLunarDTO dto = FaseLunarDTO.builder()
                     .date(new Date(0L))
-                    .edad(3.2f)
-                    .fase("menguante")
-                    .iluminacion(0.4f)
+                    .moonAgeDays(3.2f)
+                    .phaseName("menguante")
+                    .illuminationPercent(0.4f)
                     .build();
             when(astronomiaService.calculateFaseLunar(fecha)).thenReturn(dto);
 

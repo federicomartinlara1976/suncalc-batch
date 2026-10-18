@@ -31,16 +31,16 @@ class FaseLunarDTOTest {
             // Act
             FaseLunarDTO dto = FaseLunarDTO.builder()
                     .date(DATE)
-                    .edad(EDAD)
-                    .fase(FASE)
-                    .iluminacion(ILUMINACION)
+                    .moonAgeDays(EDAD)
+                    .phaseName(FASE)
+                    .illuminationPercent(ILUMINACION)
                     .build();
 
             // Assert
             assertThat(dto.getDate()).isSameAs(DATE);
-            assertThat(dto.getEdad()).isEqualTo(EDAD);
-            assertThat(dto.getFase()).isEqualTo(FASE);
-            assertThat(dto.getIluminacion()).isEqualTo(ILUMINACION);
+            assertThat(dto.getMoonAgeDays()).isEqualTo(EDAD);
+            assertThat(dto.getPhaseName()).isEqualTo(FASE);
+            assertThat(dto.getIlluminationPercent()).isEqualTo(ILUMINACION);
         }
 
         @Test
@@ -51,9 +51,9 @@ class FaseLunarDTOTest {
 
             // Assert
             assertThat(dto.getDate()).isNull();
-            assertThat(dto.getEdad()).isNull();
-            assertThat(dto.getFase()).isNull();
-            assertThat(dto.getIluminacion()).isNull();
+            assertThat(dto.getMoonAgeDays()).isNull();
+            assertThat(dto.getPhaseName()).isNull();
+            assertThat(dto.getIlluminationPercent()).isNull();
         }
 
         @Test
@@ -61,14 +61,14 @@ class FaseLunarDTOTest {
         void builder_parcialSoloFase() {
             // Act
             FaseLunarDTO dto = FaseLunarDTO.builder()
-                    .fase(FASE)
+                    .phaseName(FASE)
                     .build();
 
             // Assert
             assertThat(dto.getDate()).isNull();
-            assertThat(dto.getEdad()).isNull();
-            assertThat(dto.getFase()).isEqualTo(FASE);
-            assertThat(dto.getIluminacion()).isNull();
+            assertThat(dto.getMoonAgeDays()).isNull();
+            assertThat(dto.getPhaseName()).isEqualTo(FASE);
+            assertThat(dto.getIlluminationPercent()).isNull();
         }
 
         @Test
@@ -77,16 +77,16 @@ class FaseLunarDTOTest {
             // Act
             FaseLunarDTO dto = FaseLunarDTO.builder()
                     .date(null)
-                    .edad(null)
-                    .fase(null)
-                    .iluminacion(null)
+                    .moonAgeDays(null)
+                    .phaseName(null)
+                    .illuminationPercent(null)
                     .build();
 
             // Assert
             assertThat(dto.getDate()).isNull();
-            assertThat(dto.getEdad()).isNull();
-            assertThat(dto.getFase()).isNull();
-            assertThat(dto.getIluminacion()).isNull();
+            assertThat(dto.getMoonAgeDays()).isNull();
+            assertThat(dto.getPhaseName()).isNull();
+            assertThat(dto.getIlluminationPercent()).isNull();
         }
     }
 
@@ -104,15 +104,15 @@ class FaseLunarDTOTest {
             // Act
             FaseLunarDTO dto = new FaseLunarDTO();
             dto.setDate(DATE);
-            dto.setEdad(EDAD);
-            dto.setFase(FASE);
-            dto.setIluminacion(ILUMINACION);
+            dto.setMoonAgeDays(EDAD);
+            dto.setPhaseName(FASE);
+            dto.setIlluminationPercent(ILUMINACION);
 
             // Assert
             assertThat(dto.getDate()).isSameAs(DATE);
-            assertThat(dto.getEdad()).isEqualTo(EDAD);
-            assertThat(dto.getFase()).isEqualTo(FASE);
-            assertThat(dto.getIluminacion()).isEqualTo(ILUMINACION);
+            assertThat(dto.getMoonAgeDays()).isEqualTo(EDAD);
+            assertThat(dto.getPhaseName()).isEqualTo(FASE);
+            assertThat(dto.getIlluminationPercent()).isEqualTo(ILUMINACION);
         }
 
         @Test
@@ -123,9 +123,9 @@ class FaseLunarDTOTest {
 
             // Assert
             assertThat(dto.getDate()).isNull();
-            assertThat(dto.getEdad()).isNull();
-            assertThat(dto.getFase()).isNull();
-            assertThat(dto.getIluminacion()).isNull();
+            assertThat(dto.getMoonAgeDays()).isNull();
+            assertThat(dto.getPhaseName()).isNull();
+            assertThat(dto.getIlluminationPercent()).isNull();
         }
 
         @Test
@@ -133,13 +133,13 @@ class FaseLunarDTOTest {
         void setterConNullSobreescribe() {
             // Arrange
             FaseLunarDTO dto = new FaseLunarDTO();
-            dto.setFase(FASE);
+            dto.setPhaseName(FASE);
 
             // Act
-            dto.setFase(null);
+            dto.setPhaseName(null);
 
             // Assert
-            assertThat(dto.getFase()).isNull();
+            assertThat(dto.getPhaseName()).isNull();
         }
     }
 
@@ -155,37 +155,37 @@ class FaseLunarDTOTest {
         @DisplayName("Orden de parámetros: date, edad, fase, iluminacion")
         void allArgs_ordenDeParametros() {
             // Act
-            FaseLunarDTO dto = new FaseLunarDTO(DATE, EDAD, FASE, ILUMINACION);
+            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, 0.0f, 0.0f, DATE, DATE, DATE, DATE);
 
             // Assert
             assertThat(dto.getDate()).isSameAs(DATE);
-            assertThat(dto.getEdad()).isEqualTo(EDAD);
-            assertThat(dto.getFase()).isEqualTo(FASE);
-            assertThat(dto.getIluminacion()).isEqualTo(ILUMINACION);
+            assertThat(dto.getMoonAgeDays()).isEqualTo(EDAD);
+            assertThat(dto.getPhaseName()).isEqualTo(FASE);
+            assertThat(dto.getIlluminationPercent()).isEqualTo(ILUMINACION);
         }
 
         @Test
         @DisplayName("All-args con todos null → todos null")
         void allArgs_todosNull() {
             // Act
-            FaseLunarDTO dto = new FaseLunarDTO(null, null, null, null);
+            FaseLunarDTO dto = new FaseLunarDTO(null, null, null, null, null, null, null, null, null, null, null);
 
             // Assert
             assertThat(dto.getDate()).isNull();
-            assertThat(dto.getEdad()).isNull();
-            assertThat(dto.getFase()).isNull();
-            assertThat(dto.getIluminacion()).isNull();
+            assertThat(dto.getMoonAgeDays()).isNull();
+            assertThat(dto.getPhaseName()).isNull();
+            assertThat(dto.getIlluminationPercent()).isNull();
         }
 
         @Test
         @DisplayName("Valores límite de Float: 0.0 y negativos se almacenan tal cual")
         void allArgs_valoresFloatLimite() {
             // Act
-            FaseLunarDTO dto = new FaseLunarDTO(DATE, 0.0f, FASE, -0.5f);
+            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", -0.5f, 0.0f, 0.0f, DATE, DATE, DATE, DATE);
 
             // Assert
-            assertThat(dto.getEdad()).isEqualTo(0.0f);
-            assertThat(dto.getIluminacion()).isEqualTo(-0.5f);
+            assertThat(dto.getMoonAgeDays()).isEqualTo(0.0f);
+            assertThat(dto.getIlluminationPercent()).isEqualTo(-0.5f);
         }
     }
 
@@ -201,7 +201,7 @@ class FaseLunarDTOTest {
         @DisplayName("Contiene el nombre de la clase y los valores de los campos")
         void toString_contieneClaseYValores() {
             // Arrange
-            FaseLunarDTO dto = new FaseLunarDTO(DATE, EDAD, FASE, ILUMINACION);
+        	FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, 0.0f, 0.0f, DATE, DATE, DATE, DATE);
 
             // Act
             String result = dto.toString();
@@ -210,9 +210,9 @@ class FaseLunarDTOTest {
             assertThat(result)
                     .startsWith("FaseLunarDTO(")
                     .contains("date=")
-                    .contains("edad=" + EDAD)
-                    .contains("fase=" + FASE)
-                    .contains("iluminacion=" + ILUMINACION);
+                    .contains("moonAgeDays=" + EDAD)
+                    .contains("phaseName=" + FASE)
+                    .contains("illuminationPercent=" + ILUMINACION);
         }
 
         @Test
@@ -243,9 +243,9 @@ class FaseLunarDTOTest {
         @DisplayName("Sin @EqualsAndHashCode: dos instancias con mismos valores NO son iguales")
         void equals_dosInstanciasIguales_noSonEquals() {
             // Arrange
-            FaseLunarDTO dto1 = new FaseLunarDTO(DATE, EDAD, FASE, ILUMINACION);
-            FaseLunarDTO dto2 = new FaseLunarDTO(DATE, EDAD, FASE, ILUMINACION);
-
+            FaseLunarDTO dto1 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
+            FaseLunarDTO dto2 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
+            
             // Assert
             assertThat(dto1)
             	.isNotEqualTo(dto2)
@@ -256,8 +256,8 @@ class FaseLunarDTOTest {
         @DisplayName("hashCode es por identidad (dos instancias → distintos)")
         void hashCode_porIdentidad() {
             // Arrange
-            FaseLunarDTO dto1 = new FaseLunarDTO(DATE, EDAD, FASE, ILUMINACION);
-            FaseLunarDTO dto2 = new FaseLunarDTO(DATE, EDAD, FASE, ILUMINACION);
+            FaseLunarDTO dto1 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
+            FaseLunarDTO dto2 = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
 
             // Assert
             assertThat(dto1.hashCode()).isNotEqualTo(dto2.hashCode());
@@ -267,7 +267,7 @@ class FaseLunarDTOTest {
         @DisplayName("La misma instancia sí es igual a sí misma")
         void equals_mismaInstancia() {
             // Arrange
-            FaseLunarDTO dto = new FaseLunarDTO(DATE, EDAD, FASE, ILUMINACION);
+            FaseLunarDTO dto = new FaseLunarDTO(DATE, "", FASE, "", ILUMINACION, EDAD, 0.0f, DATE, DATE, DATE, DATE);
 
             // Assert
             assertThat(dto).isEqualTo(dto);

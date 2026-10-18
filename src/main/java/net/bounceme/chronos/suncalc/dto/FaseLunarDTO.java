@@ -1,5 +1,7 @@
 package net.bounceme.chronos.suncalc.dto;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +17,7 @@ public class FaseLunarDTO {
 	
 	@Getter
 	@Setter
-	private String date;
+	private Date date;
 	
 	@Getter
 	@Setter
@@ -43,18 +45,18 @@ public class FaseLunarDTO {
         
 	@Getter
 	@Setter
-	private String principalPhase;
+	private Date principalPhase;
         
 	@Getter
 	@Setter
-	private String principalPhaseTime;
+	private Date principalPhaseTime;
         
 	@Getter
 	@Setter
-	private String moonrise;
+	private Date moonrise;
         
 	@Getter
 	@Setter
-	private String moonset;
+	private Date moonset;
 
 }
