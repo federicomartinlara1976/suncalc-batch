@@ -1,8 +1,6 @@
 package net.bounceme.chronos.suncalc.services.impl;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -16,8 +14,8 @@ import org.springframework.validation.annotation.Validated;
 import lombok.SneakyThrows;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
-import net.bounceme.chronos.suncalc.services.EfemeridesService;
 import net.bounceme.chronos.suncalc.services.CalcService;
+import net.bounceme.chronos.suncalc.services.EfemeridesService;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @Service
@@ -30,9 +28,6 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	
 	@Autowired
 	private CalcService calcService;
-	
-	@Autowired
-	private SimpleDateFormat dateFormat;
 	
 	@Autowired
 	private Converter<BigDecimal[], Date> dateConverter;
@@ -65,7 +60,6 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	}
 
 	@Override
-	@SneakyThrows(ParseException.class)
 	public FaseLunarDTO calculateFaseLunar(String date) {
 		final String CMD_TEMPLATE = "[edad, fase, iluminacion] = fase_lunar(%s)";
 		String cmd = String.format(CMD_TEMPLATE, date);
@@ -73,10 +67,10 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 		calcService.execute(cmd);
 		
 		return FaseLunarDTO.builder()
-				.date(dateFormat.parse(date))
-				.edad(calcService.getScalar("edad").floatValue())
-				.fase(calcService.getString("fase"))
-				.iluminacion(calcService.getScalar("iluminacion").floatValue())
+				.date(date)
+				.moonAgeDays(calcService.getScalar("edad").floatValue())
+				.phaseName(calcService.getString("fase"))
+				.illuminationPercent(calcService.getScalar("iluminacion").floatValue())
 				.build();
 	}
 }
