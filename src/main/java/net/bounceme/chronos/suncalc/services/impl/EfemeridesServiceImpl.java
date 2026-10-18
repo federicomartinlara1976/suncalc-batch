@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -77,7 +76,7 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	@Override
 	public FaseLunarDTO calculateFaseLunar(String date) {
 		InputFaseLunarDTO inputFaseLunarDTO = InputFaseLunarDTO.builder()
-				.startDate(StringUtils.EMPTY)
+				.startDate(date)
 				.latitude(latitude)
 				.longitude(longitude)
 				.days(1)

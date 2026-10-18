@@ -2,6 +2,7 @@ package net.bounceme.chronos.suncalc.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,11 +10,12 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,9 +25,12 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import net.bounceme.chronos.suncalc.clients.FaseLunarRest;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
+import net.bounceme.chronos.suncalc.dto.InputFaseLunarDTO;
 import net.bounceme.chronos.suncalc.services.impl.EfemeridesServiceImpl;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
@@ -33,10 +38,11 @@ import net.bounceme.chronos.utils.calc.converters.Converter;
 @DisplayName("AstronomiaServiceImpl - cobertura de servicios astronómicos")
 class EfemeridesServiceImplTest {
 
-    private static final String HOUR_ZONE = "Europe/Madrid";
-
     @Mock
     private CalcService calcService;
+    
+    @Mock
+    private FaseLunarRest faseLunarRest; // Importa tu clase/interfaz real
 
     @Mock
     private SimpleDateFormat dateFormat;
@@ -112,10 +118,10 @@ class EfemeridesServiceImplTest {
             // Assert
             verify(calcService, times(4)).execute(cmdCaptor.capture());
             assertThat(cmdCaptor.getAllValues()).containsExactly(
-                    "[JDE, utc, local, off] = equinoccio_solsticio(2024, 'june_solstice', '" + HOUR_ZONE + "')",
-                    "[JDE, utc, local, off] = equinoccio_solsticio(2024, 'december_solstice', '" + HOUR_ZONE + "')",
-                    "[JDE, utc, local, off] = equinoccio_solsticio(2024, 'march_equinox', '" + HOUR_ZONE + "')",
-                    "[JDE, utc, local, off] = equinoccio_solsticio(2024, 'september_equinox', '" + HOUR_ZONE + "')");
+                    "[JDE, utc, local, off] = equinoccio_solsticio(2024, 'june_solstice', 'null')",
+                    "[JDE, utc, local, off] = equinoccio_solsticio(2024, 'december_solstice', 'null')",
+                    "[JDE, utc, local, off] = equinoccio_solsticio(2024, 'march_equinox', 'null')",
+                    "[JDE, utc, local, off] = equinoccio_solsticio(2024, 'september_equinox', 'null')");
 
             verifyNoMoreInteractions(calcService);
         }
@@ -143,52 +149,72 @@ class EfemeridesServiceImplTest {
     @DisplayName("calculateFaseLunar")
     class CalculateFaseLunarTests {
 
-        @Test
-        @DisplayName("Fecha válida: construye el DTO con edad, fase e iluminación")
-        void calculateFaseLunar_fechaValida_devuelveDTOCompleto() throws ParseException {
-            // Arrange
-            String fecha = "2024-06-15";
-            Date parsedDate = new Date(1718409600000L);
-
-            when(dateFormat.parse(fecha)).thenReturn(parsedDate);
-            when(calcService.getScalar("edad")).thenReturn(BigDecimal.valueOf(7.5));
-            when(calcService.getString("fase")).thenReturn("creciente");
-            when(calcService.getScalar("iluminacion")).thenReturn(BigDecimal.valueOf(0.75));
-
-            // Act
-            FaseLunarDTO result = service.calculateFaseLunar(fecha);
-
-            // Assert
-            assertThat(result).isNotNull();
-            assertThat(result.getDate()).isEqualTo(parsedDate);
-            assertThat(result.getMoonAgeDays()).isEqualTo(7.5f);
-            assertThat(result.getPhaseName()).isEqualTo("creciente");
-            assertThat(result.getIlluminationPercent()).isEqualTo(0.75f);
-
-            verify(calcService, times(1)).execute(cmdCaptor.capture());
-            assertThat(cmdCaptor.getValue())
-                    .isEqualTo("[edad, fase, iluminacion] = fase_lunar(" + fecha + ")");
-
-            verify(calcService).getScalar("edad");
-            verify(calcService).getString("fase");
-            verify(calcService).getScalar("iluminacion");
-            verify(dateFormat).parse(fecha);
+        private static final String FECHA = "2024-06-15";
+        private static final Float LATITUDE = 40.4168f;
+        private static final Float LONGITUDE = -3.7038f;
+        private static final String TIMEZONE = "Europe/Madrid";
+        
+        @BeforeEach
+        void setUp() {
+            // Inyectar las propiedades @Value en el servicio
+            ReflectionTestUtils.setField(service, "latitude", LATITUDE);
+            ReflectionTestUtils.setField(service, "longitude", LONGITUDE);
+            ReflectionTestUtils.setField(service, "timeZone", TIMEZONE);
         }
 
         @Test
-        @DisplayName("Fecha inválida: propaga ParseException (vía @SneakyThrows)")
-        void calculateFaseLunar_fechaInvalida_propagaParseException() throws ParseException {
+        @DisplayName("Fecha válida: llama al REST con el DTO correcto y devuelve el primer elemento")
+        void calculateFaseLunar_fechaValida_devuelveDTOCompleto() {
             // Arrange
-            String fecha = "no-es-una-fecha";
-            when(dateFormat.parse(fecha)).thenThrow(new ParseException("Formato inválido", 0));
+            FaseLunarDTO expectedDto = new FaseLunarDTO();
+            expectedDto.setDate(new Date());
+            expectedDto.setMoonAgeDays(7.5f);
+            expectedDto.setPhaseName("creciente");
+            expectedDto.setIlluminationPercent(0.75f);
+
+            when(faseLunarRest.detalle(any(InputFaseLunarDTO.class)))
+                    .thenReturn(List.of(expectedDto));
+
+            ArgumentCaptor<InputFaseLunarDTO> captor = ArgumentCaptor.forClass(InputFaseLunarDTO.class);
+
+            // Act
+            FaseLunarDTO result = service.calculateFaseLunar(FECHA);
+
+            // Assert
+            assertThat(result).isSameAs(expectedDto);
+
+            verify(faseLunarRest).detalle(captor.capture());
+            InputFaseLunarDTO input = captor.getValue();
+            
+            assertThat(input.getStartDate()).isEqualTo(FECHA);
+            assertThat(input.getLatitude()).isEqualTo(LATITUDE);
+            assertThat(input.getLongitude()).isEqualTo(LONGITUDE);
+            assertThat(input.getDays()).isEqualTo(1);
+            assertThat(input.getTimezone()).isEqualTo(TIMEZONE);
+        }
+
+        @Test
+        @DisplayName("Respuesta vacía del REST: lanza IndexOutOfBoundsException al hacer get(0)")
+        void calculateFaseLunar_respuestaVacia_lanzaIndexOutOfBounds() {
+            // Arrange
+            when(faseLunarRest.detalle(any(InputFaseLunarDTO.class)))
+                    .thenReturn(Collections.emptyList());
 
             // Act / Assert
-            assertThatThrownBy(() -> service.calculateFaseLunar(fecha))
-                    .isInstanceOf(ParseException.class)
-                    .hasMessageContaining("Formato inválido");
+            assertThatThrownBy(() -> service.calculateFaseLunar(FECHA))
+                    .isInstanceOf(IndexOutOfBoundsException.class);
+        }
 
-            // El parseo ocurre después de execute, así que este sí se invocó
-            verify(calcService).execute(anyString());
+        @Test
+        @DisplayName("Respuesta null del REST: lanza NullPointerException")
+        void calculateFaseLunar_respuestaNull_lanzaNullPointerException() {
+            // Arrange
+            when(faseLunarRest.detalle(any(InputFaseLunarDTO.class)))
+                    .thenReturn(null);
+
+            // Act / Assert
+            assertThatThrownBy(() -> service.calculateFaseLunar(FECHA))
+                    .isInstanceOf(NullPointerException.class);
         }
     }
 }
