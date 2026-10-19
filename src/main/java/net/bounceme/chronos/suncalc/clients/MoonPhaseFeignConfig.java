@@ -11,7 +11,7 @@ public class MoonPhaseFeignConfig {
     private String token;
 
     @Bean
-    RequestInterceptor moonPhaseTokenInterceptor() {
+    public RequestInterceptor moonPhaseTokenInterceptor() {
         return template -> template.query("token", token);
     }
 }
