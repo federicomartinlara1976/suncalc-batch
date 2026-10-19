@@ -89,8 +89,8 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	public FaseLunarDTO calculateFaseLunar(String date) {
 		
 		return moonDataRepository.findById(date).map(f -> toFaseLunarDTO(f, date)).orElseGet(() -> {
-			Registro<?> registro = documentProcessor.process();
-			return (FaseLunarDTO) registro.getContent();
+			Registro<MoonData> registro = documentProcessor.process();
+			return toFaseLunarDTO(registro.getContent(), date);
 		});
 	}
 	

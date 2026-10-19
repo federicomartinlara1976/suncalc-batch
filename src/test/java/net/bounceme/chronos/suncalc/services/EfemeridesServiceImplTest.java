@@ -229,27 +229,43 @@ class EfemeridesServiceImplTest {
         }
 
         @Test
-        @DisplayName("Si NO existe en BD: llama al documentProcessor y devuelve su contenido")
+        @DisplayName("Si NO existe en BD: llama al documentProcessor y mapea su contenido a FaseLunarDTO")
         @SneakyThrows
-        void calculateFaseLunar_noExisteEnBd_llamaAlDocumentProcessor() {
+        void calculateFaseLunar_noExisteEnBd_llamaAlDocumentProcessorYMapea() {
             // Arrange
-            FaseLunarDTO expectedDto = new FaseLunarDTO();
-            expectedDto.setPhaseName("From Processor");
-            
-            Registro<FaseLunarDTO> registro = new Registro<>();
-            registro.setContent(expectedDto);
+            Date parsedDate = new Date();
+            when(dateFormat.parse(DATE_STR)).thenReturn(parsedDate);
 
+            MoonData moonData = new MoonData();
+            moonData.setPhaseName("From Processor");
+            moonData.setWeekday("Saturday");
+            // Puedes añadir más campos aquí si quieres verificar que se copian todos
+            
+            Registro<MoonData> registro = new Registro<>();
+            registro.setContent(moonData);
+            
+            // Como el procesador devuelve un Registro crudo (raw type) por el @SuppressWarnings del servicio
+            @SuppressWarnings("unchecked")
+            Registro<MoonData> rawRegistro = (Registro<MoonData>) (Registro) registro;
+            
+            when(documentProcessor.process()).thenReturn(rawRegistro);
             when(moonDataRepository.findById(DATE_STR)).thenReturn(Optional.empty());
-            when(documentProcessor.process()).thenReturn((Registro) registro);
 
             // Act
             FaseLunarDTO result = service.calculateFaseLunar(DATE_STR);
 
             // Assert
-            assertThat(result).isSameAs(expectedDto);
+            assertThat(result).isNotNull();
+            // Ahora SÍ se aplica toFaseLunarDTO, por lo que la fecha se parsea
+            assertThat(result.getDate()).isEqualTo(parsedDate);
+            assertThat(result.getPhaseName()).isEqualTo("From Processor");
+            assertThat(result.getWeekday()).isEqualTo("Saturday");
+
             verify(moonDataRepository).findById(DATE_STR);
             verify(documentProcessor).process();
-            verify(dateFormat, never()).parse(anyString()); // No hay parseo porque el fallback no mapea
+            
+            // CORREGIDO: Antes era "never()", pero el fallback ahora sí mapea los datos
+            verify(dateFormat).parse(DATE_STR); 
         }
 
         @Test
