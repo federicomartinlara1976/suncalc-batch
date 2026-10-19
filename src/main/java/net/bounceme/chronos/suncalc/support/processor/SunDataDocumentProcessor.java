@@ -34,11 +34,14 @@ public class SunDataDocumentProcessor implements DocumentProcessor {
 	@Qualifier("dateTimeFormat")
 	private SimpleDateFormat dateTimeFormat;
 	
+	@Value("${application.importTimes.timeZone}")
+	private String timeZone;
+	
 	@Value("${application.importTimes.coords.lat}")
-	private Float lat;
+	private Float latitude;
 	
 	@Value("${application.importTimes.coords.lng}")
-	private Float lng;
+	private Float longitude;
 	
 	@Setter
 	private String url;
@@ -58,10 +61,10 @@ public class SunDataDocumentProcessor implements DocumentProcessor {
 		timeData.setFecha(date);
 		
 		SunriseSunsetResponse response = sunriseSunsetRest.detalle(
-	            lat, 
-	            lng, 
+	            latitude, 
+	            longitude, 
 	            sDate, 
-	            "Europe/Madrid", 
+	            timeZone, 
 	            0, 
 	            null
 	        );

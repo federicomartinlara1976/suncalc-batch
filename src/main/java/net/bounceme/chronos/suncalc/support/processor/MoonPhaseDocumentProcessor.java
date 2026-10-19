@@ -1,0 +1,103 @@
+package net.bounceme.chronos.suncalc.support.processor;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import net.bounceme.chronos.suncalc.clients.FaseLunarRest;
+import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
+import net.bounceme.chronos.suncalc.dto.InputFaseLunarDTO;
+import net.bounceme.chronos.suncalc.model.MoonData;
+import net.bounceme.chronos.suncalc.model.Registro;
+
+@Component("sunDataDocumentProcessor")
+@Slf4j
+public class MoonPhaseDocumentProcessor implements DocumentProcessor {
+	
+	private static final String TODAY = "today";
+	
+	@Autowired
+	private FaseLunarRest faseLunarRest;
+	
+	@Autowired
+	@Qualifier("dateFormat")
+	private SimpleDateFormat dateFormat;
+	
+	@Autowired
+	@Qualifier("dateTimeFormat")
+	private SimpleDateFormat dateTimeFormat;
+	
+	@Value("${application.importTimes.timeZone}")
+	private String timeZone;
+	
+	@Value("${application.importTimes.coords.lat}")
+	private Float latitude;
+	
+	@Value("${application.importTimes.coords.lng}")
+	private Float longitude;
+	
+	@Setter
+	private String url;
+
+	@Override
+	public Registro<MoonData> process() {
+		return obtainData(TODAY);
+	}
+
+	@SneakyThrows
+	private Registro<MoonData> obtainData(String sDate) {
+		MoonData moonData = new MoonData();
+		
+		Boolean status = Boolean.FALSE;
+		// La fecha es la que viene a partir de sDate, excepto si es "today"
+		Date date = (!TODAY.equals(sDate)) ? dateFormat.parse(sDate) : new Date();
+		moonData.setFecha(date);
+		
+		InputFaseLunarDTO inputFaseLunarDTO = InputFaseLunarDTO.builder()
+				.startDate(sDate)
+				.latitude(latitude)
+				.longitude(longitude)
+				.days(1)
+				.timezone(timeZone)
+				.build();
+		
+		List<FaseLunarDTO> response = faseLunarRest.detalle(inputFaseLunarDTO);
+		
+		if (CollectionUtils.isNotEmpty(response)) {
+			FaseLunarDTO faseLunarDTO = response.get(0);
+			moonData.setId(dateFormat.format(faseLunarDTO.getDate()));
+			moonData.setWeekday(faseLunarDTO.getWeekday());
+			moonData.setPhaseName(faseLunarDTO.getPhaseName());
+			moonData.setPhaseEmoji(faseLunarDTO.getPhaseEmoji());
+			moonData.setIlluminationPercent(faseLunarDTO.getIlluminationPercent());
+			moonData.setMoonAgeDays(faseLunarDTO.getMoonAgeDays());
+			moonData.setDistanceKm(faseLunarDTO.getDistanceKm());
+			moonData.setPrincipalPhase(faseLunarDTO.getPrincipalPhase());
+			moonData.setPrincipalPhaseTime(faseLunarDTO.getPrincipalPhaseTime());
+			moonData.setMoonrise(faseLunarDTO.getMoonrise());
+			moonData.setMoonset(faseLunarDTO.getMoonset());
+			
+			status = Boolean.TRUE;
+		}
+		
+		moonData.setStatus(status);
+			
+		Registro<MoonData> registro = new Registro<>();
+		registro.setContent(moonData);
+		return registro;
+	}
+
+	@Override
+	public Registro<MoonData> process(String date) {
+		return obtainData(date);
+	}
+}
