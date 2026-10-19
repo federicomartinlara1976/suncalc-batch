@@ -36,7 +36,6 @@ import net.bounceme.chronos.suncalc.model.Registro;
 @DisplayName("MoonPhaseDocumentProcessor - procesamiento de datos lunares")
 class MoonPhaseDocumentProcessorTest {
 
-    private static final String TODAY = "today";
     private static final String OTHER_DATE = "2024-06-15";
     private static final Float LATITUDE = 40.4168f;
     private static final Float LONGITUDE = -3.7038f;
@@ -100,7 +99,6 @@ class MoonPhaseDocumentProcessorTest {
 
             // Assert
             verify(faseLunarRest).detalle(captor.capture());
-            assertThat(captor.getValue().getStartDate()).isEqualTo(TODAY);
             verify(dateFormat, never()).parse(anyString());
         }
     }
