@@ -34,7 +34,7 @@ import net.bounceme.chronos.suncalc.model.MoonData;
 import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.repository.MoonDataRepository;
 import net.bounceme.chronos.suncalc.services.impl.EfemeridesServiceImpl;
-import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
+import net.bounceme.chronos.suncalc.support.processor.MoonPhaseDocumentProcessor;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,9 +59,8 @@ class EfemeridesServiceImplTest {
     @Mock
     private MoonDataRepository moonDataRepository;
     
-    @SuppressWarnings("rawtypes")
-	@Mock
-    private DocumentProcessor documentProcessor;
+    @Mock
+    private MoonPhaseDocumentProcessor documentProcessor;
 
     @Captor
     private ArgumentCaptor<String> cmdCaptor;

@@ -13,7 +13,7 @@ import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.SunriseSunsetResponse;
 import net.bounceme.chronos.suncalc.model.TimeData;
 
-@Component("sunDataDocumentProcessor")
+@Component
 @Slf4j
 public class SunDataDocumentProcessor extends BaseDocumentProcessor<TimeData> {
 	

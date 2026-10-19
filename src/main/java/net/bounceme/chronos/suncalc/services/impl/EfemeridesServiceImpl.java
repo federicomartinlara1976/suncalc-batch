@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -24,7 +23,7 @@ import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.repository.MoonDataRepository;
 import net.bounceme.chronos.suncalc.services.CalcService;
 import net.bounceme.chronos.suncalc.services.EfemeridesService;
-import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
+import net.bounceme.chronos.suncalc.support.processor.MoonPhaseDocumentProcessor;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @Service
@@ -56,10 +55,8 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	@Autowired
 	private Converter<BigDecimal[], Date> dateConverter;
 	
-	@SuppressWarnings("rawtypes")
 	@Autowired
-	@Qualifier("moonDataDocumentProcessor")
-	private DocumentProcessor documentProcessor;
+	private MoonPhaseDocumentProcessor documentProcessor;
 	
 	@Override
 	@SneakyThrows

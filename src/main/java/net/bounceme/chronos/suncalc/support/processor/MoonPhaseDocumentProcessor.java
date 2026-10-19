@@ -15,7 +15,7 @@ import net.bounceme.chronos.suncalc.dto.InputFaseLunarDTO;
 import net.bounceme.chronos.suncalc.model.MoonData;
 import net.bounceme.chronos.suncalc.model.Registro;
 
-@Component("moonPhaseDocumentProcessor")
+@Component
 @Slf4j
 public class MoonPhaseDocumentProcessor extends BaseDocumentProcessor<MoonData> {
 	
