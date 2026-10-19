@@ -42,6 +42,7 @@ class SunDataDocumentProcessorTest {
 
     private static final Float LAT = 40.4168f;
     private static final Float LNG = -3.7038f;
+    private static final String TIMEZONE = "Europe/Madrid";
     private static final String TODAY = "today";
     private static final String OTHER_DATE = "2024-06-15";
 
@@ -56,8 +57,9 @@ class SunDataDocumentProcessorTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(processor, "lat", LAT);
-        ReflectionTestUtils.setField(processor, "lng", LNG);
+        ReflectionTestUtils.setField(processor, "latitude", LAT);
+        ReflectionTestUtils.setField(processor, "longitude", LNG);
+        ReflectionTestUtils.setField(processor, "timeZone", TIMEZONE);
 
         logger = (Logger) LoggerFactory.getLogger(SunDataDocumentProcessor.class);
         logger.setLevel(Level.DEBUG);

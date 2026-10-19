@@ -1,16 +1,12 @@
 package net.bounceme.chronos.suncalc.support.processor;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.clients.FaseLunarRest;
@@ -21,32 +17,12 @@ import net.bounceme.chronos.suncalc.model.Registro;
 
 @Component("sunDataDocumentProcessor")
 @Slf4j
-public class MoonPhaseDocumentProcessor implements DocumentProcessor {
+public class MoonPhaseDocumentProcessor extends BaseDocumentProcessor {
 	
 	private static final String TODAY = "today";
 	
 	@Autowired
 	private FaseLunarRest faseLunarRest;
-	
-	@Autowired
-	@Qualifier("dateFormat")
-	private SimpleDateFormat dateFormat;
-	
-	@Autowired
-	@Qualifier("dateTimeFormat")
-	private SimpleDateFormat dateTimeFormat;
-	
-	@Value("${application.importTimes.timeZone}")
-	private String timeZone;
-	
-	@Value("${application.importTimes.coords.lat}")
-	private Float latitude;
-	
-	@Value("${application.importTimes.coords.lng}")
-	private Float longitude;
-	
-	@Setter
-	private String url;
 
 	@Override
 	public Registro<MoonData> process() {
