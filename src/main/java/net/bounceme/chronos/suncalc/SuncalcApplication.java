@@ -14,10 +14,12 @@ import net.bounceme.chronos.notifications.services.NotificationService;
 @ImportResource({
     "classpath:applicationContext.xml",
 	"classpath:importTimes.xml",
+	"classpath:importMoonData.xml",
 	"classpath:importByMonth.xml",
 	"classpath:importFromDate.xml",
 	"classpath:recalculateDifferences.xml",
     "classpath:flow-importTimes.xml",
+    "classpath:flow-importMoonData.xml",
     "classpath:flow-importByMonth.xml",
     "classpath:flow-importFrom.xml",
     "classpath:flow-recalculateDifferences.xml"
