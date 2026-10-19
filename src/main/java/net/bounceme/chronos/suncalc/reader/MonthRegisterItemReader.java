@@ -13,7 +13,6 @@ import org.springframework.util.Assert;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.model.Execution;
-import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.repository.ExecutionsRepository;
 import net.bounceme.chronos.suncalc.support.SuncalcHelper;
 import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
@@ -22,9 +21,10 @@ import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
 @Slf4j
 public class MonthRegisterItemReader extends AbstractItemReader {
 
+	@SuppressWarnings("rawtypes")
 	@Autowired
-	@Qualifier("feignDocumentProcessor")
-	private DocumentProcessor<TimeData> documentProcessor;
+	@Qualifier("sunDataDocumentProcessor")
+	private DocumentProcessor documentProcessor;
 
 	@Autowired
 	private ExecutionsRepository executionsRepository;

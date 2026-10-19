@@ -18,7 +18,7 @@ import net.bounceme.chronos.suncalc.repository.MoonDataRepository;
 
 @Component
 @Slf4j
-public abstract class MoonPhaseWriter implements ItemWriter<MoonData> {
+public class MoonPhaseWriter implements ItemWriter<MoonData> {
 	
 	protected JobExecution jobExecution;
 	

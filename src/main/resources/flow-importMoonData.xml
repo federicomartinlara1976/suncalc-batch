@@ -16,7 +16,7 @@
 			<batch:tasklet>
 				<batch:chunk reader="moonDataImporterReader"
 					processor="moonDataProcessor"
-					writer="moonDataImporterWriter" commit-interval="5" skip-limit="2">
+					writer="moonPhaseWriter" commit-interval="5" skip-limit="2">
 					
 					<batch:skippable-exception-classes>
 						<batch:include class="org.springframework.batch.item.validator.ValidationException"/>

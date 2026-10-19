@@ -21,9 +21,10 @@ import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
 @Service
 public class SuncalcServiceImpl implements SuncalcService {
 
+	@SuppressWarnings("rawtypes")
 	@Autowired
-	@Qualifier("sunDatafeignDocumentProcessor")
-	private DocumentProcessor<TimeData> documentProcessor;
+	@Qualifier("sunDataDocumentProcessor")
+	private DocumentProcessor documentProcessor;
 
 	@Value("${application.importTimes.collection}")
 	private String collection;
