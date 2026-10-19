@@ -16,6 +16,7 @@ import org.springframework.util.Assert;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.model.Execution;
+import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.repository.ExecutionsRepository;
 import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
 
@@ -25,7 +26,7 @@ public class FromDateRegisterItemReader extends AbstractItemReader {
 
 	@Autowired
 	@Qualifier("feignDocumentProcessor")
-	private DocumentProcessor documentProcessor;
+	private DocumentProcessor<TimeData> documentProcessor;
 
 	@Autowired
 	private ExecutionsRepository executionsRepository;
