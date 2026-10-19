@@ -16,9 +16,18 @@ public class PeriodicTasks {
 	
 	@Scheduled(cron = "${application.importTimes.cron}")
     public void importTimesTask() {
+		sendJob("importTimes");
+    }
+	
+	@Scheduled(cron = "${application.moonPhase.cron}")
+    public void importMoonDataTask() {
+		sendJob("importMoonData");
+    }
+
+	private void sendJob(String name) {
 		JobDTO<TaskDTO> jobDTO = new JobDTO<>();
-		jobDTO.setContent(TaskDTO.builder().name("importTimes").build());
+		jobDTO.setContent(TaskDTO.builder().name(name).build());
 		
 		jobFacade.publishJob(jobDTO);
-    }
+	}
 }

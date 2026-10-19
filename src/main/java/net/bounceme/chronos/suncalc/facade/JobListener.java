@@ -27,7 +27,7 @@ public class JobListener {
 		String name = (String) content.get("name");
 
 		switch (name) {
-		case "importTimes", "recalculateDifferences":
+		case "importTimes", "recalculateDifferences", "importMoonData":
 			resultado = jobService.run(name);
 			break;
 		case "importByMonth": {
