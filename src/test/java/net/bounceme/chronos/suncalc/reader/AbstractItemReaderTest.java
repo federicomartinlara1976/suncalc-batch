@@ -58,11 +58,10 @@ class AbstractItemReaderTest {
         @DisplayName("read() sobre records vacío devuelve null sin explotar")
         void estadoInicial_readVacio_devuelveNull() {
             // Act
-        	Registro<?> registro = reader.read(); 
-            TimeData result = (TimeData) registro.getContent();
+        	Registro<?> registro = reader.read();
 
             // Assert
-            assertThat(result).isNull();
+            assertThat(registro).isNull();
         }
     }
 
