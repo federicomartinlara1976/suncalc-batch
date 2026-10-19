@@ -248,7 +248,10 @@ class MoonPhaseWriterTest {
             when(moonDataRepository.findById(FORMATTED_DATE)).thenReturn(Optional.empty());
 
             // Act / Assert
-            assertThatThrownBy(() -> writer.write(Chunk.of(item)))
+            // Extraemos el Chunk fuera de la lambda
+            Chunk<MoonData> chunk = Chunk.of(item);
+            
+            assertThatThrownBy(() -> writer.write(chunk))
                     .isInstanceOf(NullPointerException.class);
 
             // El guardado ocurre antes del NPE
