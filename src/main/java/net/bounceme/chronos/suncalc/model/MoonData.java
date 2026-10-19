@@ -15,7 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Document(collection = "#{@repositoryCollectionCustom.getCollectionName()}")
+@Document(collection = "moon")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
