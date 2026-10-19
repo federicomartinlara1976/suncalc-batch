@@ -17,7 +17,7 @@ import net.bounceme.chronos.suncalc.model.Registro;
 
 @Component("sunDataDocumentProcessor")
 @Slf4j
-public class MoonPhaseDocumentProcessor extends BaseDocumentProcessor {
+public class MoonPhaseDocumentProcessor extends BaseDocumentProcessor<MoonData> {
 	
 	private static final String TODAY = "today";
 	

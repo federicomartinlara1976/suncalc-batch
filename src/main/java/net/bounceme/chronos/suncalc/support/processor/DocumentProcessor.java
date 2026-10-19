@@ -2,12 +2,10 @@ package net.bounceme.chronos.suncalc.support.processor;
 
 import net.bounceme.chronos.suncalc.model.Registro;
 
-public interface DocumentProcessor {
+public interface DocumentProcessor<T> {
 
-	void setUrl(String url);
+	Registro<T> process();
 	
-	Registro<?> process();
-	
-	Registro<?> process(String date);
+	Registro<T> process(String date);
 
 }

@@ -15,7 +15,7 @@ import net.bounceme.chronos.suncalc.model.TimeData;
 
 @Component("sunDataDocumentProcessor")
 @Slf4j
-public class SunDataDocumentProcessor extends BaseDocumentProcessor {
+public class SunDataDocumentProcessor extends BaseDocumentProcessor<TimeData> {
 	
 	private static final String TODAY = "today";
 	

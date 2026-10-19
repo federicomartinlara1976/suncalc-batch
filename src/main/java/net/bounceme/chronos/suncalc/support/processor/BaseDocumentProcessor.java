@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
-import lombok.Setter;
-
-public abstract class BaseDocumentProcessor implements DocumentProcessor {
+public abstract class BaseDocumentProcessor<T> implements DocumentProcessor<T> {
 
 	@Autowired
 	@Qualifier("dateFormat")
@@ -26,7 +24,4 @@ public abstract class BaseDocumentProcessor implements DocumentProcessor {
 	
 	@Value("${application.importTimes.coords.lng}")
 	protected Float longitude;
-	
-	@Setter
-	protected String url;
 }
