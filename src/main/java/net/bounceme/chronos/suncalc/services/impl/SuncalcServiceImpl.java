@@ -23,7 +23,7 @@ public class SuncalcServiceImpl implements SuncalcService {
 
 	@Autowired
 	@Qualifier("sunDatafeignDocumentProcessor")
-	private DocumentProcessor documentProcessor;
+	private DocumentProcessor<TimeData> documentProcessor;
 
 	@Value("${application.importTimes.collection}")
 	private String collection;
