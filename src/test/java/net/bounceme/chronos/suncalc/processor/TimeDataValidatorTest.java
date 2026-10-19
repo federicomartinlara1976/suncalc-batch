@@ -33,6 +33,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.validation.ValidatorService;
 
@@ -96,14 +97,16 @@ class TimeDataValidatorTest {
         @DisplayName("validatorService.validate OK → no lanza y no toca dateFormat")
         void validate_sinExcepcion_noLanza() throws Exception {
             // Arrange
-            TimeData value = new TimeData();
-            doNothing().when(validatorService).validate(value);
+            TimeData timeData = new TimeData();
+            Registro<TimeData> value = new Registro<>(timeData);
+            
+            doNothing().when(validatorService).validate(timeData);
 
             // Act
             validator.validate(value);
 
             // Assert
-            verify(validatorService).validate(value);
+            verify(validatorService).validate(timeData);
             verify(dateFormat, never()).format(any(Date.class));
             assertThat(listAppender.list).isEmpty();
         }
@@ -112,13 +115,14 @@ class TimeDataValidatorTest {
         @DisplayName("Se delega en validatorService con el mismo objeto")
         void validate_delegaEnValidatorService() throws Exception {
             // Arrange
-            TimeData value = new TimeData();
+            TimeData timeData = new TimeData();
+            Registro<TimeData> value = new Registro<>(timeData);
 
             // Act
             validator.validate(value);
 
             // Assert
-            verify(validatorService).validate(value);
+            verify(validatorService).validate(timeData);
         }
     }
 
@@ -135,11 +139,12 @@ class TimeDataValidatorTest {
         void validate_unaViolacion_lanzaYLogea() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData value = timeDataWithDate(fecha);
+            TimeData timeData = timeDataWithDate(fecha);
+            Registro<TimeData> value = new Registro<>(timeData);
 
             ConstraintViolation<TimeData> v = violationWithMessage("campo inválido");
             ConstraintViolationException ex = new ConstraintViolationException(Set.of(v));
-            doThrow(ex).when(validatorService).validate(value);
+            doThrow(ex).when(validatorService).validate(timeData);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
 
             // Act / Assert
@@ -161,13 +166,14 @@ class TimeDataValidatorTest {
         void validate_variasViolaciones_logueaTodasYFormateaUnaVez() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData value = timeDataWithDate(fecha);
+            TimeData timeData = timeDataWithDate(fecha);
+            Registro<TimeData> value = new Registro<>(timeData);
 
             ConstraintViolation<TimeData> v1 = violationWithMessage("error 1");
             ConstraintViolation<TimeData> v2 = violationWithMessage("error 2");
             ConstraintViolation<TimeData> v3 = violationWithMessage("error 3");
             ConstraintViolationException ex = new ConstraintViolationException(Set.of(v1, v2, v3));
-            doThrow(ex).when(validatorService).validate(value);
+            doThrow(ex).when(validatorService).validate(timeData);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
 
             // Act / Assert
@@ -188,10 +194,11 @@ class TimeDataValidatorTest {
         void validate_sinViolaciones_lanzaIgual() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData value = timeDataWithDate(fecha);
+            TimeData timeData = timeDataWithDate(fecha);
+            Registro<TimeData> value = new Registro<>(timeData);
 
             ConstraintViolationException ex = new ConstraintViolationException(Set.of());
-            doThrow(ex).when(validatorService).validate(value);
+            doThrow(ex).when(validatorService).validate(timeData);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
 
             // Act / Assert
@@ -208,11 +215,12 @@ class TimeDataValidatorTest {
         void validate_mensajeIncluyeFechaFormateada() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData value = timeDataWithDate(fecha);
+            TimeData timeData = timeDataWithDate(fecha);
+            Registro<TimeData> value = new Registro<>(timeData);
 
             ConstraintViolationException ex = new ConstraintViolationException(
                     Set.of(violationWithMessage("x")));
-            doThrow(ex).when(validatorService).validate(value);
+            doThrow(ex).when(validatorService).validate(timeData);
             when(dateFormat.format(fecha)).thenReturn("2025-12-31");
 
             // Act / Assert
@@ -226,11 +234,12 @@ class TimeDataValidatorTest {
         void validate_violacionConMensajeNull_logueaSinFallar() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData value = timeDataWithDate(fecha);
+            TimeData timeData = timeDataWithDate(fecha);
+            Registro<TimeData> value = new Registro<>(timeData);
 
             ConstraintViolation<TimeData> v = violationWithMessage(null);
             ConstraintViolationException ex = new ConstraintViolationException(Set.of(v));
-            doThrow(ex).when(validatorService).validate(value);
+            doThrow(ex).when(validatorService).validate(timeData);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
 
             // Act / Assert
@@ -253,36 +262,23 @@ class TimeDataValidatorTest {
         @DisplayName("value null y validatorService no lanza → retorna sin tocar dateFormat")
         void validate_valueNullSinExcepcion_retorna() throws Exception {
             // Arrange
-            doNothing().when(validatorService).validate(null);
 
             // Act
             validator.validate(null);
 
             // Assert
-            verify(validatorService).validate(null);
+            verify(validatorService, never()).validate(null);
             verify(dateFormat, never()).format(any(Date.class));
-        }
-
-        @Test
-        @DisplayName("value null + ConstraintViolationException → NullPointerException al formatear")
-        void validate_valueNullConExcepcion_lanzaNPE() throws Exception {
-            // Arrange
-            ConstraintViolationException ex = new ConstraintViolationException(
-                    Set.of(violationWithMessage("x")));
-            doThrow(ex).when(validatorService).validate(null);
-
-            // Act / Assert
-            assertThatThrownBy(() -> validator.validate(null))
-                    .isInstanceOf(NullPointerException.class);
         }
 
         @Test
         @DisplayName("ValidationException del servicio se propaga sin envolver")
         void validate_servicioLanzaValidationException_sePropaga() throws Exception {
             // Arrange
-            TimeData value = new TimeData();
+            TimeData timeData = new TimeData();
+            Registro<TimeData> value = new Registro<>(timeData);
             ValidationException boom = new ValidationException("ya es una ValidationException");
-            doThrow(boom).when(validatorService).validate(value);
+            doThrow(boom).when(validatorService).validate(timeData);
 
             // Act / Assert
             assertThatThrownBy(() -> validator.validate(value))
@@ -296,9 +292,10 @@ class TimeDataValidatorTest {
         @DisplayName("RuntimeException del servicio se propaga sin envolver")
         void validate_servicioLanzaRuntime_sePropaga() throws Exception {
             // Arrange
-            TimeData value = new TimeData();
+            TimeData timeData = new TimeData();
+            Registro<TimeData> value = new Registro<>(timeData);
             RuntimeException boom = new IllegalStateException("boom");
-            doThrow(boom).when(validatorService).validate(value);
+            doThrow(boom).when(validatorService).validate(timeData);
 
             // Act / Assert
             assertThatThrownBy(() -> validator.validate(value))

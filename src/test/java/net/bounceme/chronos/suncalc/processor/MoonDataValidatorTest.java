@@ -34,6 +34,7 @@ import ch.qos.logback.core.read.ListAppender;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import net.bounceme.chronos.suncalc.model.MoonData;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.validation.ValidatorService;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,14 +97,15 @@ class MoonDataValidatorTest {
         @DisplayName("validatorService.validate OK → no lanza y no toca dateFormat")
         void validate_sinExcepcion_noLanza() throws Exception {
             // Arrange
-            MoonData value = new MoonData();
-            doNothing().when(validatorService).validate(value);
+        	MoonData moonData = new MoonData();
+            Registro<MoonData> value = new Registro<>(moonData);
+            doNothing().when(validatorService).validate(moonData);
 
             // Act
             validator.validate(value);
 
             // Assert
-            verify(validatorService).validate(value);
+            verify(validatorService).validate(moonData);
             verify(dateFormat, never()).format(any(Date.class));
             assertThat(listAppender.list).isEmpty();
         }
@@ -112,13 +114,14 @@ class MoonDataValidatorTest {
         @DisplayName("Se delega en validatorService con el mismo objeto")
         void validate_delegaEnValidatorService() throws Exception {
             // Arrange
-            MoonData value = new MoonData();
+            MoonData moonData = new MoonData();
+            Registro<MoonData> value = new Registro<>(moonData);
 
             // Act
             validator.validate(value);
 
             // Assert
-            verify(validatorService).validate(value);
+            verify(validatorService).validate(moonData);
         }
     }
 
@@ -135,11 +138,12 @@ class MoonDataValidatorTest {
         void validate_unaViolacion_lanzaYLogea() throws Exception {
             // Arrange
             Date fecha = new Date();
-            MoonData value = MoonDataWithDate(fecha);
-
+            MoonData moonData = MoonDataWithDate(fecha);
+            Registro<MoonData> value = new Registro<>(moonData);
+            
             ConstraintViolation<MoonData> v = violationWithMessage("campo inválido");
             ConstraintViolationException ex = new ConstraintViolationException(Set.of(v));
-            doThrow(ex).when(validatorService).validate(value);
+            doThrow(ex).when(validatorService).validate(moonData);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
 
             // Act / Assert
@@ -161,13 +165,14 @@ class MoonDataValidatorTest {
         void validate_variasViolaciones_logueaTodasYFormateaUnaVez() throws Exception {
             // Arrange
             Date fecha = new Date();
-            MoonData value = MoonDataWithDate(fecha);
+            MoonData moonData = MoonDataWithDate(fecha);
+            Registro<MoonData> value = new Registro<>(moonData);
 
             ConstraintViolation<MoonData> v1 = violationWithMessage("error 1");
             ConstraintViolation<MoonData> v2 = violationWithMessage("error 2");
             ConstraintViolation<MoonData> v3 = violationWithMessage("error 3");
             ConstraintViolationException ex = new ConstraintViolationException(Set.of(v1, v2, v3));
-            doThrow(ex).when(validatorService).validate(value);
+            doThrow(ex).when(validatorService).validate(moonData);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
 
             // Act / Assert
@@ -188,10 +193,11 @@ class MoonDataValidatorTest {
         void validate_sinViolaciones_lanzaIgual() throws Exception {
             // Arrange
             Date fecha = new Date();
-            MoonData value = MoonDataWithDate(fecha);
+            MoonData moonData = MoonDataWithDate(fecha);
+            Registro<MoonData> value = new Registro<>(moonData);
 
             ConstraintViolationException ex = new ConstraintViolationException(Set.of());
-            doThrow(ex).when(validatorService).validate(value);
+            doThrow(ex).when(validatorService).validate(moonData);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
 
             // Act / Assert
@@ -208,11 +214,12 @@ class MoonDataValidatorTest {
         void validate_mensajeIncluyeFechaFormateada() throws Exception {
             // Arrange
             Date fecha = new Date();
-            MoonData value = MoonDataWithDate(fecha);
+            MoonData moonData = MoonDataWithDate(fecha);
+            Registro<MoonData> value = new Registro<>(moonData);
 
             ConstraintViolationException ex = new ConstraintViolationException(
                     Set.of(violationWithMessage("x")));
-            doThrow(ex).when(validatorService).validate(value);
+            doThrow(ex).when(validatorService).validate(moonData);
             when(dateFormat.format(fecha)).thenReturn("2025-12-31");
 
             // Act / Assert
@@ -226,11 +233,12 @@ class MoonDataValidatorTest {
         void validate_violacionConMensajeNull_logueaSinFallar() throws Exception {
             // Arrange
             Date fecha = new Date();
-            MoonData value = MoonDataWithDate(fecha);
+            MoonData moonData = MoonDataWithDate(fecha);
+            Registro<MoonData> value = new Registro<>(moonData);
 
             ConstraintViolation<MoonData> v = violationWithMessage(null);
             ConstraintViolationException ex = new ConstraintViolationException(Set.of(v));
-            doThrow(ex).when(validatorService).validate(value);
+            doThrow(ex).when(validatorService).validate(moonData);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
 
             // Act / Assert
@@ -253,36 +261,23 @@ class MoonDataValidatorTest {
         @DisplayName("value null y validatorService no lanza → retorna sin tocar dateFormat")
         void validate_valueNullSinExcepcion_retorna() throws Exception {
             // Arrange
-            doNothing().when(validatorService).validate(null);
-
+            
             // Act
             validator.validate(null);
 
             // Assert
-            verify(validatorService).validate(null);
+            verify(validatorService, never()).validate(null);
             verify(dateFormat, never()).format(any(Date.class));
-        }
-
-        @Test
-        @DisplayName("value null + ConstraintViolationException → NullPointerException al formatear")
-        void validate_valueNullConExcepcion_lanzaNPE() throws Exception {
-            // Arrange
-            ConstraintViolationException ex = new ConstraintViolationException(
-                    Set.of(violationWithMessage("x")));
-            doThrow(ex).when(validatorService).validate(null);
-
-            // Act / Assert
-            assertThatThrownBy(() -> validator.validate(null))
-                    .isInstanceOf(NullPointerException.class);
         }
 
         @Test
         @DisplayName("ValidationException del servicio se propaga sin envolver")
         void validate_servicioLanzaValidationException_sePropaga() throws Exception {
             // Arrange
-            MoonData value = new MoonData();
+            MoonData moonData = new MoonData();
+            Registro<MoonData> value = new Registro<>(moonData);
             ValidationException boom = new ValidationException("ya es una ValidationException");
-            doThrow(boom).when(validatorService).validate(value);
+            doThrow(boom).when(validatorService).validate(moonData);
 
             // Act / Assert
             assertThatThrownBy(() -> validator.validate(value))
@@ -296,9 +291,11 @@ class MoonDataValidatorTest {
         @DisplayName("RuntimeException del servicio se propaga sin envolver")
         void validate_servicioLanzaRuntime_sePropaga() throws Exception {
             // Arrange
-            MoonData value = new MoonData();
+            MoonData moonData = new MoonData();
+            Registro<MoonData> value = new Registro<>(moonData);
+            
             RuntimeException boom = new IllegalStateException("boom");
-            doThrow(boom).when(validatorService).validate(value);
+            doThrow(boom).when(validatorService).validate(moonData);
 
             // Act / Assert
             assertThatThrownBy(() -> validator.validate(value))

@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.bounceme.chronos.suncalc.model.MoonData;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.validation.ValidatorService;
 import net.bounceme.chronos.suncalc.validation.impl.ValidatorServiceImpl;

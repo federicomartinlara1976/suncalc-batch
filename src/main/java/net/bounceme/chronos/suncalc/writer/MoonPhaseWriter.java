@@ -14,11 +14,12 @@ import org.springframework.stereotype.Component;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.model.MoonData;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.repository.MoonDataRepository;
 
 @Component
 @Slf4j
-public class MoonPhaseWriter implements ItemWriter<MoonData> {
+public class MoonPhaseWriter implements ItemWriter<Registro<MoonData>> {
 	
 	protected JobExecution jobExecution;
 	
@@ -35,21 +36,23 @@ public class MoonPhaseWriter implements ItemWriter<MoonData> {
 	
     @Override
     @SneakyThrows
-    public synchronized void write(Chunk<? extends MoonData> items) {
-    	items.forEach(item -> 
-            moonDataRepository.findById(dateFormat.format(item.getFecha())).ifPresentOrElse(timeData ->
-            	log.warn("Moon data {} already registered", timeData)
+    public synchronized void write(Chunk<? extends Registro<MoonData>> items) {
+    	items.forEach(item -> {
+    		MoonData moonData = item.getContent();
+    	
+            moonDataRepository.findById(dateFormat.format(moonData.getFecha())).ifPresentOrElse(m ->
+            	log.warn("Moon data {} already registered", m)
             , () -> {
             	log.debug("Writing {}", item);
             	// Set id if null
-            	if (Objects.isNull(item.getId())) {
-            		item.setId(dateFormat.format(item.getFecha()));
+            	if (Objects.isNull(moonData.getId())) {
+            		moonData.setId(dateFormat.format(moonData.getFecha()));
             	}
             
-            	moonDataRepository.save(item);
+            	moonDataRepository.save(moonData);
             	jobExecution.getExecutionContext().put("NEXT_TIME_DATA", item);
-            })
-        );
+            });
+    	});
     }
 
 }

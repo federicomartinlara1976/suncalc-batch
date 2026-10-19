@@ -13,13 +13,14 @@ import org.springframework.stereotype.Component;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.repository.RepositoryCollectionCustom;
 import net.bounceme.chronos.suncalc.repository.TimeDataRepository;
 
 @Component
 @Slf4j
-public abstract class ImporterWriter implements ItemWriter<TimeData> {
+public abstract class ImporterWriter implements ItemWriter<Registro<TimeData>> {
 	
 	protected JobExecution jobExecution;
 	
@@ -40,11 +41,11 @@ public abstract class ImporterWriter implements ItemWriter<TimeData> {
 		jobExecution = stepExecution.getJobExecution();
 	}
 	
-	protected abstract void doWrite(Chunk<? extends TimeData> items);
+	protected abstract void doWrite(Chunk<? extends Registro<TimeData>> items);
 	
     @Override
     @SneakyThrows
-    public synchronized void write(Chunk<? extends TimeData> items) {
+    public synchronized void write(Chunk<? extends Registro<TimeData>> items) {
         doWrite(items);
     }
 

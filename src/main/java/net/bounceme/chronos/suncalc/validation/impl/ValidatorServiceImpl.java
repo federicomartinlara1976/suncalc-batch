@@ -8,17 +8,19 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import lombok.SneakyThrows;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.validation.ValidatorService;
 
-public class ValidatorServiceImpl<T> implements ValidatorService<T> {
+@SuppressWarnings("hiding")
+public class ValidatorServiceImpl<Registro> implements ValidatorService<Registro> {
 
 	@Override
 	@SneakyThrows(ConstraintViolationException.class)
-	public void validate(T obj) {
+	public void validate(Registro obj) {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		
-		Set<ConstraintViolation<T>> violations = validator.validate(obj);
+		Set<ConstraintViolation<Registro>> violations = validator.validate(obj);
 		
 		if (!violations.isEmpty()) {
 			throw new ConstraintViolationException(violations);

@@ -4,10 +4,10 @@ package net.bounceme.chronos.suncalc.validation;
  * @author federico
  *
  */
-public interface ValidatorService<T> {
+public interface ValidatorService<Registro> {
 	
 	/**
 	 * @param T
 	 */
-	void validate(T obj);
+	void validate(Registro obj);
 }

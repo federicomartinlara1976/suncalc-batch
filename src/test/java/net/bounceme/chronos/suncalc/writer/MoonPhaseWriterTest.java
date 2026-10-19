@@ -28,6 +28,7 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ExecutionContext;
 
 import net.bounceme.chronos.suncalc.model.MoonData;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.repository.MoonDataRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,11 +58,11 @@ class MoonPhaseWriterTest {
     // Helpers
     // ------------------------------------------------------------------
 
-    private MoonData createMoonData(String id, Date fecha) {
+    private Registro<MoonData> createMoonData(String id, Date fecha) {
         MoonData md = new MoonData();
         md.setId(id);
         md.setFecha(fecha);
-        return md;
+        return new Registro<>(md);
     }
 
     // ==================================================================
@@ -119,7 +120,7 @@ class MoonPhaseWriterTest {
         void write_itemExistente_noGuarda() throws Exception {
             // Arrange
             Date fecha = new Date();
-            MoonData item = createMoonData("id-existente", fecha);
+            Registro<MoonData> item = createMoonData("id-existente", fecha);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
             when(moonDataRepository.findById(FORMATTED_DATE))
                     .thenReturn(Optional.of(new MoonData()));
@@ -147,7 +148,7 @@ class MoonPhaseWriterTest {
         void write_itemNuevoSinId_asignaGuardaYPublica() throws Exception {
             // Arrange
             Date fecha = new Date();
-            MoonData item = createMoonData(null, fecha);
+            Registro<MoonData> item = createMoonData(null, fecha);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
             when(moonDataRepository.findById(FORMATTED_DATE)).thenReturn(Optional.empty());
             when(jobExecution.getExecutionContext()).thenReturn(executionContext);
@@ -156,8 +157,8 @@ class MoonPhaseWriterTest {
             writer.write(Chunk.of(item));
 
             // Assert
-            assertThat(item.getId()).isEqualTo(FORMATTED_DATE);
-            verify(moonDataRepository).save(item);
+            assertThat(item.getContent().getId()).isEqualTo(FORMATTED_DATE);
+            verify(moonDataRepository).save(item.getContent());
             assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(item);
             
             // format llamado 2 veces: 1 para findById y 1 para setId
@@ -169,7 +170,7 @@ class MoonPhaseWriterTest {
         void write_itemNuevoConId_guardaYPublica() throws Exception {
             // Arrange
             Date fecha = new Date();
-            MoonData item = createMoonData("id-predefinido", fecha);
+            Registro<MoonData> item = createMoonData("id-predefinido", fecha);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
             when(moonDataRepository.findById(FORMATTED_DATE)).thenReturn(Optional.empty());
             when(jobExecution.getExecutionContext()).thenReturn(executionContext);
@@ -178,8 +179,8 @@ class MoonPhaseWriterTest {
             writer.write(Chunk.of(item));
 
             // Assert
-            assertThat(item.getId()).isEqualTo("id-predefinido");
-            verify(moonDataRepository).save(item);
+            assertThat(item.getContent().getId()).isEqualTo("id-predefinido");
+            verify(moonDataRepository).save(item.getContent());
             assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(item);
             
             // format llamado 1 sola vez: solo para findById
@@ -203,9 +204,9 @@ class MoonPhaseWriterTest {
             Date f2 = new Date(2000L);
             Date f3 = new Date(3000L);
             
-            MoonData item1 = createMoonData("1", f1);
-            MoonData item2 = createMoonData("2", f2); // existente
-            MoonData item3 = createMoonData("3", f3); // último guardado
+            Registro<MoonData> item1 = createMoonData("1", f1);
+            Registro<MoonData> item2 = createMoonData("2", f2); // existente
+            Registro<MoonData> item3 = createMoonData("3", f3); // último guardado
 
             when(dateFormat.format(f1)).thenReturn("2024-01-01");
             when(dateFormat.format(f2)).thenReturn("2024-01-02");
@@ -221,9 +222,9 @@ class MoonPhaseWriterTest {
             writer.write(Chunk.of(item1, item2, item3));
 
             // Assert
-            verify(moonDataRepository).save(item1);
-            verify(moonDataRepository, never()).save(item2);
-            verify(moonDataRepository).save(item3);
+            verify(moonDataRepository).save(item1.getContent());
+            verify(moonDataRepository, never()).save(item2.getContent());
+            verify(moonDataRepository).save(item3.getContent());
             
             // NEXT_TIME_DATA debe ser item3, no item1
             assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(item3);
@@ -243,19 +244,19 @@ class MoonPhaseWriterTest {
         void write_jobExecutionNull_lanzaNPE() {
             // Arrange
             writer.jobExecution = null;
-            MoonData item = createMoonData("x", new Date());
+            Registro<MoonData> item = createMoonData("x", new Date());
             when(dateFormat.format(any(Date.class))).thenReturn(FORMATTED_DATE);
             when(moonDataRepository.findById(FORMATTED_DATE)).thenReturn(Optional.empty());
 
             // Act / Assert
             // Extraemos el Chunk fuera de la lambda
-            Chunk<MoonData> chunk = Chunk.of(item);
+            Chunk<Registro<MoonData>> chunk = Chunk.of(item);
             
             assertThatThrownBy(() -> writer.write(chunk))
                     .isInstanceOf(NullPointerException.class);
 
             // El guardado ocurre antes del NPE
-            verify(moonDataRepository).save(item);
+            verify(moonDataRepository).save(item.getContent());
         }
 
         @Test
@@ -263,7 +264,7 @@ class MoonPhaseWriterTest {
         void write_saveLanza_propaga() throws Exception {
             // Arrange
             Date fecha = new Date();
-            MoonData item = createMoonData("x", fecha);
+            Registro<MoonData> item = createMoonData("x", fecha);
             RuntimeException boom = new IllegalStateException("Fallo de guardado");
 
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
