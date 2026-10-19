@@ -1,13 +1,13 @@
 package net.bounceme.chronos.suncalc.support.processor;
 
-import net.bounceme.chronos.suncalc.model.TimeData;
+import net.bounceme.chronos.suncalc.model.Registro;
 
 public interface DocumentProcessor {
 
 	void setUrl(String url);
 	
-	TimeData process();
+	Registro<?> process();
 	
-	TimeData process(String date);
+	Registro<?> process(String date);
 
 }

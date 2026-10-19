@@ -29,11 +29,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.repository.RepositoryCollectionCustom;
 import net.bounceme.chronos.suncalc.repository.TimeDataRepository;
 import net.bounceme.chronos.suncalc.services.impl.SuncalcServiceImpl;
-import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
+import net.bounceme.chronos.suncalc.support.processor.SunDataDocumentProcessor;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("SuncalcServiceImpl - servicio principal de cálculo solar")
@@ -42,7 +43,7 @@ class SuncalcServiceImplTest {
     private static final String COLLECTION = "times";
     private static final String FIXED_ID = "2024-06-15T10:00:00";
 
-    @Mock private DocumentProcessor documentProcessor;
+    @Mock private SunDataDocumentProcessor documentProcessor;
     @Mock private TimeDataRepository timeDataRepository;
     @Mock private RepositoryCollectionCustom repositoryCollectionCustom;
     @Mock private SimpleDateFormat dateFormat;
@@ -93,7 +94,7 @@ class SuncalcServiceImplTest {
         @DisplayName("Documento ausente: crea uno nuevo procesándolo y lo devuelve con id, fecha y status")
         void getCurrentTimeData_documentoAusente_creaYDevuelveNuevo() {
             // Arrange
-            TimeData procesado = TimeData.builder().build();
+            Registro<TimeData> procesado = new Registro<>(TimeData.builder().build());
             when(timeDataRepository.findById(FIXED_ID)).thenReturn(Optional.empty());
             when(documentProcessor.process()).thenReturn(procesado);
 
@@ -101,7 +102,7 @@ class SuncalcServiceImplTest {
             TimeData result = service.getCurrentTimeData();
 
             // Assert
-            assertThat(result).isSameAs(procesado);
+            assertThat(result).isSameAs(procesado.getContent());
             assertThat(result.getId()).isEqualTo(FIXED_ID);
             assertThat(result.getFecha()).isNotNull();
             assertThat(result.getStatus()).isTrue();
@@ -117,7 +118,7 @@ class SuncalcServiceImplTest {
         void getCurrentTimeData_seteaCollectionAntesDeConsultar() {
             // Arrange
             when(timeDataRepository.findById(FIXED_ID)).thenReturn(Optional.empty());
-            when(documentProcessor.process()).thenReturn(TimeData.builder().build());
+            when(documentProcessor.process()).thenReturn(new Registro<TimeData>(TimeData.builder().build()));
 
             // Act
             service.getCurrentTimeData();

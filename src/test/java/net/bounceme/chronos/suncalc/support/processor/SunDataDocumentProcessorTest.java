@@ -38,7 +38,7 @@ import net.bounceme.chronos.suncalc.model.TimeData;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("FeignDocumentProcessor - enriquecimiento de TimeData con datos REST")
-class FeignDocumentProcessorTest {
+class SunDataDocumentProcessorTest {
 
     private static final Float LAT = 40.4168f;
     private static final Float LNG = -3.7038f;
@@ -49,7 +49,7 @@ class FeignDocumentProcessorTest {
     @Mock private SimpleDateFormat dateFormat;
 
     @InjectMocks
-    private FeignDocumentProcessor processor;
+    private SunDataDocumentProcessor processor;
 
     private Logger logger;
     private ListAppender<ILoggingEvent> listAppender;
@@ -59,7 +59,7 @@ class FeignDocumentProcessorTest {
         ReflectionTestUtils.setField(processor, "lat", LAT);
         ReflectionTestUtils.setField(processor, "lng", LNG);
 
-        logger = (Logger) LoggerFactory.getLogger(FeignDocumentProcessor.class);
+        logger = (Logger) LoggerFactory.getLogger(SunDataDocumentProcessor.class);
         logger.setLevel(Level.DEBUG);
         listAppender = new ListAppender<>();
         listAppender.start();
@@ -143,7 +143,7 @@ class FeignDocumentProcessorTest {
             long before = System.currentTimeMillis();
 
             // Act
-            TimeData result = processor.process();
+            TimeData result = processor.process().getContent();
 
             // Assert
             long after = System.currentTimeMillis();
@@ -184,7 +184,7 @@ class FeignDocumentProcessorTest {
             when(dateFormat.parse(OTHER_DATE)).thenReturn(parsed);
 
             // Act
-            TimeData result = processor.process(OTHER_DATE);
+            TimeData result = processor.process(OTHER_DATE).getContent();
 
             // Assert
             verify(dateFormat).parse(OTHER_DATE);
@@ -223,7 +223,7 @@ class FeignDocumentProcessorTest {
             when(dateFormat.parse(OTHER_DATE)).thenReturn(new Date());
 
             // Act
-            TimeData result = processor.process(OTHER_DATE);
+            TimeData result = processor.process(OTHER_DATE).getContent();
 
             // Assert
             assertThat(result.getStatus()).isTrue();
@@ -242,7 +242,7 @@ class FeignDocumentProcessorTest {
             when(dateFormat.parse(OTHER_DATE)).thenReturn(new Date());
 
             // Act
-            TimeData result = processor.process(OTHER_DATE);
+            TimeData result = processor.process(OTHER_DATE).getContent();
 
             // Assert: misma instancia temporal que el ISO de origen
             assertThat(result.getDawn())
@@ -290,7 +290,7 @@ class FeignDocumentProcessorTest {
             when(dateFormat.parse(OTHER_DATE)).thenReturn(new Date());
 
             // Act
-            TimeData result = processor.process(OTHER_DATE);
+            TimeData result = processor.process(OTHER_DATE).getContent();
 
             // Assert
             assertThat(result.getStatus()).isFalse();
@@ -310,7 +310,7 @@ class FeignDocumentProcessorTest {
             when(dateFormat.parse(OTHER_DATE)).thenReturn(parsed);
 
             // Act
-            TimeData result = processor.process(OTHER_DATE);
+            TimeData result = processor.process(OTHER_DATE).getContent();
 
             // Assert
             assertThat(result.getFecha()).isSameAs(parsed);
@@ -324,7 +324,7 @@ class FeignDocumentProcessorTest {
             when(dateFormat.parse(OTHER_DATE)).thenReturn(new Date());
 
             // Act
-            TimeData result = processor.process(OTHER_DATE);
+            TimeData result = processor.process(OTHER_DATE).getContent();
 
             // Assert
             assertThat(result.getStatus()).isFalse();

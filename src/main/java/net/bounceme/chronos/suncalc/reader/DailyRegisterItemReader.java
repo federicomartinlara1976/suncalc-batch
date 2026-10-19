@@ -11,7 +11,7 @@ import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
 public class DailyRegisterItemReader extends AbstractItemReader {
 	
 	@Autowired
-	@Qualifier("feignDocumentProcessor")
+	@Qualifier("sunDataDocumentProcessor")
 	private DocumentProcessor documentProcessor;
 
 	/**
