@@ -19,14 +19,12 @@ import net.bounceme.chronos.suncalc.model.Registro;
 @Slf4j
 public class MoonPhaseDocumentProcessor extends BaseDocumentProcessor<MoonData> {
 	
-	private static final String TODAY = "today";
-	
 	@Autowired
 	private FaseLunarRest faseLunarRest;
 
 	@Override
 	public Registro<MoonData> process() {
-		return obtainData(TODAY);
+		return obtainData(dateFormat.format(new Date()));
 	}
 
 	@SneakyThrows
@@ -34,9 +32,7 @@ public class MoonPhaseDocumentProcessor extends BaseDocumentProcessor<MoonData> 
 		MoonData moonData = new MoonData();
 		
 		Boolean status = Boolean.FALSE;
-		// La fecha es la que viene a partir de sDate, excepto si es "today"
-		Date date = (!TODAY.equals(sDate)) ? dateFormat.parse(sDate) : new Date();
-		moonData.setFecha(date);
+		moonData.setFecha(dateFormat.parse(sDate));
 		
 		InputFaseLunarDTO inputFaseLunarDTO = InputFaseLunarDTO.builder()
 				.startDate(sDate)
