@@ -1,28 +1,35 @@
 package net.bounceme.chronos.suncalc.services.impl;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.SneakyThrows;
-import net.bounceme.chronos.suncalc.clients.FaseLunarRest;
+import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
-import net.bounceme.chronos.suncalc.dto.InputFaseLunarDTO;
+import net.bounceme.chronos.suncalc.model.MoonData;
+import net.bounceme.chronos.suncalc.model.Registro;
+import net.bounceme.chronos.suncalc.repository.MoonDataRepository;
 import net.bounceme.chronos.suncalc.services.CalcService;
 import net.bounceme.chronos.suncalc.services.EfemeridesService;
+import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @Service
 @Validated
+@Slf4j
 public class EfemeridesServiceImpl implements EfemeridesService {
 	
 	private static final String[] EQUINOXES = {"march_equinox", "september_equinox"};
@@ -38,13 +45,21 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	private Float longitude;
 	
 	@Autowired
+	private SimpleDateFormat dateFormat;
+	
+	@Autowired
 	private CalcService calcService;
 	
 	@Autowired
-	private FaseLunarRest faseLunarRest;
+	private MoonDataRepository moonDataRepository;
 	
 	@Autowired
 	private Converter<BigDecimal[], Date> dateConverter;
+	
+	@SuppressWarnings("rawtypes")
+	@Autowired
+	@Qualifier("moonDataDocumentProcessor")
+	private DocumentProcessor documentProcessor;
 	
 	@Override
 	@SneakyThrows
@@ -75,14 +90,35 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 
 	@Override
 	public FaseLunarDTO calculateFaseLunar(String date) {
-		InputFaseLunarDTO inputFaseLunarDTO = InputFaseLunarDTO.builder()
-				.startDate(date)
-				.latitude(latitude)
-				.longitude(longitude)
-				.days(1)
-				.timezone(timeZone)
-				.build();
 		
-		return faseLunarRest.detalle(inputFaseLunarDTO).get(0);
+		return moonDataRepository.findById(date).map(f -> toFaseLunarDTO(f, date)).orElseGet(() -> {
+			Registro<?> registro = documentProcessor.process();
+			return (FaseLunarDTO) registro.getContent();
+		});
+	}
+	
+	private FaseLunarDTO toFaseLunarDTO(MoonData f, String date) {
+	    return FaseLunarDTO.builder()
+	    	.date(parseDate(date))
+	    	.weekday(f.getWeekday())
+	    	.phaseName(f.getPhaseName())
+	    	.phaseEmoji(f.getPhaseEmoji())
+		    .illuminationPercent(f.getIlluminationPercent())
+		    .moonAgeDays(f.getMoonAgeDays())
+		    .distanceKm(f.getDistanceKm())
+		    .principalPhase(f.getPrincipalPhase())
+		    .principalPhaseTime(f.getPrincipalPhaseTime())
+		    .moonrise(f.getMoonrise())
+		    .moonset(f.getMoonset())
+		    .build();
+	}
+
+	private Date parseDate(String date) {
+	    try {
+	        return dateFormat.parse(date);
+	    } catch (ParseException e) {
+	        log.error("Error al parsear la fecha {}: {}", date, e.getMessage());
+	        return null;
+	    }
 	}
 }
