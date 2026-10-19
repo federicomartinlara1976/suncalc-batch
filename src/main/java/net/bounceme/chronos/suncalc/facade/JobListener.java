@@ -50,7 +50,7 @@ public class JobListener {
 			log.warn("Tarea no especificada");
 		}
 
-		log.debug("{}", resultado);
+		log.info("{}", resultado);
 	}
 
 }

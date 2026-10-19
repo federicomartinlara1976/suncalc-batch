@@ -2,20 +2,20 @@ package net.bounceme.chronos.suncalc.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,13 +25,16 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
+import lombok.SneakyThrows;
 import net.bounceme.chronos.suncalc.clients.FaseLunarRest;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
-import net.bounceme.chronos.suncalc.dto.InputFaseLunarDTO;
+import net.bounceme.chronos.suncalc.model.MoonData;
+import net.bounceme.chronos.suncalc.model.Registro;
+import net.bounceme.chronos.suncalc.repository.MoonDataRepository;
 import net.bounceme.chronos.suncalc.services.impl.EfemeridesServiceImpl;
+import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,6 +55,13 @@ class EfemeridesServiceImplTest {
 
     @InjectMocks
     private EfemeridesServiceImpl service;
+    
+    @Mock
+    private MoonDataRepository moonDataRepository;
+    
+    @SuppressWarnings("rawtypes")
+	@Mock
+    private DocumentProcessor documentProcessor;
 
     @Captor
     private ArgumentCaptor<String> cmdCaptor;
@@ -149,72 +159,113 @@ class EfemeridesServiceImplTest {
     @DisplayName("calculateFaseLunar")
     class CalculateFaseLunarTests {
 
-        private static final String FECHA = "2024-06-15";
-        private static final Float LATITUDE = 40.4168f;
-        private static final Float LONGITUDE = -3.7038f;
-        private static final String TIMEZONE = "Europe/Madrid";
-        
-        @BeforeEach
-        void setUp() {
-            // Inyectar las propiedades @Value en el servicio
-            ReflectionTestUtils.setField(service, "latitude", LATITUDE);
-            ReflectionTestUtils.setField(service, "longitude", LONGITUDE);
-            ReflectionTestUtils.setField(service, "timeZone", TIMEZONE);
+        private static final String DATE_STR = "2024-06-15";
+
+        // Asegúrate de tener estos mocks en la cabecera de la clase de test:
+        // @Mock private MoonDataRepository moonDataRepository;
+        // @Mock private DocumentProcessor documentProcessor;
+
+        @Test
+        @DisplayName("Si existe en BD: mapea todos los campos de MoonData a FaseLunarDTO")
+        void calculateFaseLunar_existeEnBd_mapeaCampos() throws ParseException {
+            // Arrange
+            Date parsedDate = new Date();
+            MoonData moonData = MoonData.builder()
+                    .weekday("Saturday")
+                    .phaseName("Waxing Crescent")
+                    .phaseEmoji("🌒")
+                    .illuminationPercent(0.75f)
+                    .moonAgeDays(7.5f)
+                    .distanceKm(384400f)
+                    .principalPhase("First Quarter")
+                    .principalPhaseTime(new Date().toString())
+                    .moonrise(new Date().toString())
+                    .moonset(new Date().toString())
+                    .build();
+
+            when(moonDataRepository.findById(DATE_STR)).thenReturn(Optional.of(moonData));
+            when(dateFormat.parse(DATE_STR)).thenReturn(parsedDate);
+
+            // Act
+            FaseLunarDTO result = service.calculateFaseLunar(DATE_STR);
+
+            // Assert
+            assertThat(result).isNotNull();
+            assertThat(result.getDate()).isEqualTo(parsedDate);
+            assertThat(result.getWeekday()).isEqualTo("Saturday");
+            assertThat(result.getPhaseName()).isEqualTo("Waxing Crescent");
+            assertThat(result.getPhaseEmoji()).isEqualTo("🌒");
+            assertThat(result.getIlluminationPercent()).isEqualTo(0.75f);
+            assertThat(result.getMoonAgeDays()).isEqualTo(7.5f);
+            assertThat(result.getDistanceKm()).isEqualTo(384400f);
+            assertThat(result.getPrincipalPhase()).isEqualTo("First Quarter");
+            assertThat(result.getPrincipalPhaseTime()).isEqualTo(moonData.getPrincipalPhaseTime());
+            assertThat(result.getMoonrise()).isEqualTo(moonData.getMoonrise());
+            assertThat(result.getMoonset()).isEqualTo(moonData.getMoonset());
+
+            verify(moonDataRepository).findById(DATE_STR);
+            verify(dateFormat).parse(DATE_STR);
+            verify(documentProcessor, never()).process(); // No debe llamar al fallback
         }
 
         @Test
-        @DisplayName("Fecha válida: llama al REST con el DTO correcto y devuelve el primer elemento")
-        void calculateFaseLunar_fechaValida_devuelveDTOCompleto() {
+        @DisplayName("Si existe en BD pero ParseException: setea la fecha a null y devuelve el resto")
+        void calculateFaseLunar_existeEnBdPeroFallaParseo_devuelveFechaNull() throws ParseException {
             // Arrange
-            FaseLunarDTO expectedDto = new FaseLunarDTO();
-            expectedDto.setDate(new Date());
-            expectedDto.setMoonAgeDays(7.5f);
-            expectedDto.setPhaseName("creciente");
-            expectedDto.setIlluminationPercent(0.75f);
-
-            when(faseLunarRest.detalle(any(InputFaseLunarDTO.class)))
-                    .thenReturn(List.of(expectedDto));
-
-            ArgumentCaptor<InputFaseLunarDTO> captor = ArgumentCaptor.forClass(InputFaseLunarDTO.class);
+            MoonData moonData = MoonData.builder().weekday("Saturday").build();
+            
+            when(moonDataRepository.findById(DATE_STR)).thenReturn(Optional.of(moonData));
+            when(dateFormat.parse(DATE_STR)).thenThrow(new ParseException("Error", 0));
 
             // Act
-            FaseLunarDTO result = service.calculateFaseLunar(FECHA);
+            FaseLunarDTO result = service.calculateFaseLunar(DATE_STR);
+
+            // Assert
+            assertThat(result).isNotNull();
+            assertThat(result.getDate()).isNull(); // Capturado en parseDate
+            assertThat(result.getWeekday()).isEqualTo("Saturday");
+
+            verify(dateFormat).parse(DATE_STR);
+            verify(documentProcessor, never()).process();
+        }
+
+        @Test
+        @DisplayName("Si NO existe en BD: llama al documentProcessor y devuelve su contenido")
+        @SneakyThrows
+        void calculateFaseLunar_noExisteEnBd_llamaAlDocumentProcessor() {
+            // Arrange
+            FaseLunarDTO expectedDto = new FaseLunarDTO();
+            expectedDto.setPhaseName("From Processor");
+            
+            Registro<FaseLunarDTO> registro = new Registro<>();
+            registro.setContent(expectedDto);
+
+            when(moonDataRepository.findById(DATE_STR)).thenReturn(Optional.empty());
+            when(documentProcessor.process()).thenReturn((Registro) registro);
+
+            // Act
+            FaseLunarDTO result = service.calculateFaseLunar(DATE_STR);
 
             // Assert
             assertThat(result).isSameAs(expectedDto);
-
-            verify(faseLunarRest).detalle(captor.capture());
-            InputFaseLunarDTO input = captor.getValue();
-            
-            assertThat(input.getStartDate()).isEqualTo(FECHA);
-            assertThat(input.getLatitude()).isEqualTo(LATITUDE);
-            assertThat(input.getLongitude()).isEqualTo(LONGITUDE);
-            assertThat(input.getDays()).isEqualTo(1);
-            assertThat(input.getTimezone()).isEqualTo(TIMEZONE);
+            verify(moonDataRepository).findById(DATE_STR);
+            verify(documentProcessor).process();
+            verify(dateFormat, never()).parse(anyString()); // No hay parseo porque el fallback no mapea
         }
 
         @Test
-        @DisplayName("Respuesta vacía del REST: lanza IndexOutOfBoundsException al hacer get(0)")
-        void calculateFaseLunar_respuestaVacia_lanzaIndexOutOfBounds() {
+        @DisplayName("Si NO existe en BD y el processor lanza excepción: se propaga")
+        void calculateFaseLunar_fallbackLanzaExcepcion_sePropaga() {
             // Arrange
-            when(faseLunarRest.detalle(any(InputFaseLunarDTO.class)))
-                    .thenReturn(Collections.emptyList());
+            when(moonDataRepository.findById(DATE_STR)).thenReturn(Optional.empty());
+            when(documentProcessor.process()).thenThrow(new RuntimeException("Fallo del processor"));
 
             // Act / Assert
-            assertThatThrownBy(() -> service.calculateFaseLunar(FECHA))
-                    .isInstanceOf(IndexOutOfBoundsException.class);
-        }
+            assertThatThrownBy(() -> service.calculateFaseLunar(DATE_STR))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("Fallo del processor");
 
-        @Test
-        @DisplayName("Respuesta null del REST: lanza NullPointerException")
-        void calculateFaseLunar_respuestaNull_lanzaNullPointerException() {
-            // Arrange
-            when(faseLunarRest.detalle(any(InputFaseLunarDTO.class)))
-                    .thenReturn(null);
-
-            // Act / Assert
-            assertThatThrownBy(() -> service.calculateFaseLunar(FECHA))
-                    .isInstanceOf(NullPointerException.class);
+            verify(moonDataRepository).findById(DATE_STR);
         }
     }
 }
