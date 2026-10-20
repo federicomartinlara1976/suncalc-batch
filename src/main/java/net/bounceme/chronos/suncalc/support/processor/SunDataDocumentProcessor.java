@@ -65,9 +65,7 @@ public class SunDataDocumentProcessor extends BaseDocumentProcessor<TimeData> {
 		
 		timeData.setStatus(status);
 			
-		Registro<TimeData> registro = new Registro<>();
-		registro.setContent(timeData);
-		return registro;
+		return new Registro<>(timeData);
 	}
 
 	@Override
