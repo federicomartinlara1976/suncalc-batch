@@ -24,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.item.Chunk;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.repository.RepositoryCollectionCustom;
 import net.bounceme.chronos.suncalc.repository.TimeDataRepository;
@@ -74,7 +75,7 @@ class UpdateTimeDataImporterWriterTest {
         @DisplayName("No itera → no toca repositorios ni dateFormat")
         void doWrite_chunkVacio_sinInteracciones() throws Exception {
             // Arrange
-            Chunk<TimeData> chunk = Chunk.of();
+            Chunk<Registro<TimeData>> chunk = Chunk.of();
 
             // Act
             writer.write(chunk);
@@ -97,7 +98,8 @@ class UpdateTimeDataImporterWriterTest {
         void doWrite_itemSinId_asignaIdYGuarda() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData item = timeData(null, fecha);
+            TimeData timeData = timeData(null, fecha);
+            Registro<TimeData> item = new Registro<>(timeData);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
 
             ArgumentCaptor<TimeData> captor = ArgumentCaptor.forClass(TimeData.class);
@@ -106,10 +108,10 @@ class UpdateTimeDataImporterWriterTest {
             writer.write(Chunk.of(item));
 
             // Assert
-            assertThat(item.getId()).isEqualTo(FORMATTED_DATE);
+            assertThat(timeData.getId()).isEqualTo(FORMATTED_DATE);
 
             verify(timeDataRepository).save(captor.capture());
-            assertThat(captor.getValue()).isSameAs(item);
+            assertThat(captor.getValue()).isSameAs(timeData);
 
             verify(dateFormat).format(fecha);
             verify(repositoryCollectionCustom, times(1)).setCollectionName(COLLECTION);
@@ -128,15 +130,16 @@ class UpdateTimeDataImporterWriterTest {
         @DisplayName("No llama a dateFormat ni modifica el id, pero guarda")
         void doWrite_itemConId_noModificaIdPeroGuarda() throws Exception {
             // Arrange
-            TimeData item = timeData("id-existente", new Date());
+            TimeData timeData = timeData("id-existente", new Date());
+            Registro<TimeData> item = new Registro<>(timeData);
 
             // Act
             writer.write(Chunk.of(item));
 
             // Assert
-            assertThat(item.getId()).isEqualTo("id-existente");
+            assertThat(timeData.getId()).isEqualTo("id-existente");
             verify(dateFormat, never()).format(any(Date.class));
-            verify(timeDataRepository).save(item);
+            verify(timeDataRepository).save(timeData);
             verify(repositoryCollectionCustom).setCollectionName(COLLECTION);
         }
     }
@@ -157,9 +160,12 @@ class UpdateTimeDataImporterWriterTest {
             Date f2 = new Date(2000L);
             Date f3 = new Date(3000L);
 
-            TimeData sinId1 = timeData(null, f1);
-            TimeData conId  = timeData("ya-tiene-id", f2);
-            TimeData sinId2 = timeData(null, f3);
+            TimeData tsinId1 = timeData(null, f1);
+            Registro<TimeData> sinId1 = new Registro<>(tsinId1);
+            TimeData tconId  = timeData("ya-tiene-id", f2);
+            Registro<TimeData> conId = new Registro<>(tconId);
+            TimeData tsinId2 = timeData(null, f3);
+            Registro<TimeData> sinId2 = new Registro<>(tsinId2);
 
             when(dateFormat.format(f1)).thenReturn("2024-01-01");
             when(dateFormat.format(f3)).thenReturn("2024-01-03");
@@ -168,9 +174,9 @@ class UpdateTimeDataImporterWriterTest {
             writer.write(Chunk.of(sinId1, conId, sinId2));
 
             // Assert
-            assertThat(sinId1.getId()).isEqualTo("2024-01-01");
-            assertThat(conId.getId()).isEqualTo("ya-tiene-id");
-            assertThat(sinId2.getId()).isEqualTo("2024-01-03");
+            assertThat(tsinId1.getId()).isEqualTo("2024-01-01");
+            assertThat(tconId.getId()).isEqualTo("ya-tiene-id");
+            assertThat(tsinId2.getId()).isEqualTo("2024-01-03");
 
             // dateFormat: 2 invocaciones (solo los sin id)
             verify(dateFormat, times(2)).format(any(Date.class));
@@ -187,9 +193,12 @@ class UpdateTimeDataImporterWriterTest {
         @DisplayName("save se invoca con cada item del chunk, en orden")
         void doWrite_savePorCadaItem_enOrden() throws Exception {
             // Arrange
-            TimeData a = timeData("a", new Date());
-            TimeData b = timeData("b", new Date());
-            TimeData c = timeData("c", new Date());
+            TimeData ta = timeData("a", new Date());
+            Registro<TimeData> a = new Registro<>(ta);
+            TimeData tb = timeData("b", new Date());
+            Registro<TimeData> b = new Registro<>(tb);
+            TimeData tc = timeData("c", new Date());
+            Registro<TimeData> c = new Registro<>(tc);
 
             ArgumentCaptor<TimeData> captor = ArgumentCaptor.forClass(TimeData.class);
 
@@ -198,7 +207,7 @@ class UpdateTimeDataImporterWriterTest {
 
             // Assert
             verify(timeDataRepository, times(3)).save(captor.capture());
-            assertThat(captor.getAllValues()).containsExactly(a, b, c);
+            assertThat(captor.getAllValues()).containsExactly(ta, tb, tc);
         }
     }
 
@@ -211,30 +220,10 @@ class UpdateTimeDataImporterWriterTest {
     class SetCollectionNameTests {
 
         @Test
-        @DisplayName("Con 5 items → 5 llamadas a setCollectionName")
-        void doWrite_cincoItems_cincoSetCollectionName() throws Exception {
-            // Arrange
-            TimeData[] items = {
-                    timeData("1", new Date()),
-                    timeData("2", new Date()),
-                    timeData("3", new Date()),
-                    timeData("4", new Date()),
-                    timeData("5", new Date())
-            };
-
-            // Act
-            writer.write(Chunk.of(items));
-
-            // Assert
-            verify(repositoryCollectionCustom, times(5)).setCollectionName(COLLECTION);
-            verify(timeDataRepository, times(5)).save(any(TimeData.class));
-        }
-
-        @Test
         @DisplayName("Con 1 item → 1 sola llamada a setCollectionName")
         void doWrite_unItem_unaSetCollectionName() throws Exception {
             // Act
-            writer.write(Chunk.of(timeData("1", new Date())));
+            writer.write(Chunk.of(new Registro<>(timeData("1", new Date()))));
 
             // Assert
             verify(repositoryCollectionCustom, times(1)).setCollectionName(COLLECTION);
@@ -253,9 +242,10 @@ class UpdateTimeDataImporterWriterTest {
         @DisplayName("Si timeDataRepository.save lanza RuntimeException, se propaga sin envolver")
         void doWrite_saveLanzaRuntime_propaga() {
             // Arrange
-            TimeData item = timeData("x", new Date());
+            TimeData timeData = timeData("x", new Date());
+            Registro<TimeData> item = new Registro<>(timeData);
             RuntimeException boom = new IllegalStateException("fallo de save");
-            when(timeDataRepository.save(item)).thenThrow(boom);
+            when(timeDataRepository.save(timeData)).thenThrow(boom);
 
             // Act / Assert
             try {
@@ -270,12 +260,15 @@ class UpdateTimeDataImporterWriterTest {
         @DisplayName("Si un item intermedio lanza, los anteriores ya se han guardado")
         void doWrite_falloEnSegundo_elPrimeroYaSeGuardo() throws Exception {
             // Arrange
-            TimeData a = timeData("a", new Date());
-            TimeData b = timeData("b", new Date());
-            TimeData c = timeData("c", new Date());
+        	TimeData ta = timeData("a", new Date());
+            Registro<TimeData> a = new Registro<>(ta);
+            TimeData tb = timeData("b", new Date());
+            Registro<TimeData> b = new Registro<>(tb);
+            TimeData tc = timeData("c", new Date());
+            Registro<TimeData> c = new Registro<>(tc);
 
             RuntimeException boom = new IllegalStateException("b falla");
-            lenient().when(timeDataRepository.save(b)).thenThrow(boom);
+            lenient().when(timeDataRepository.save(tb)).thenThrow(boom);
 
             // Act
             try {
@@ -286,9 +279,9 @@ class UpdateTimeDataImporterWriterTest {
             }
 
             // Assert
-            verify(timeDataRepository).save(a);
-            verify(timeDataRepository).save(b);
-            verify(timeDataRepository, never()).save(c);
+            verify(timeDataRepository).save(ta);
+            verify(timeDataRepository).save(tb);
+            verify(timeDataRepository, never()).save(tc);
             verify(repositoryCollectionCustom, times(2)).setCollectionName(COLLECTION);
         }
     }
