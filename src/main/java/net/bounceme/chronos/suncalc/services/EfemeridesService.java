@@ -5,7 +5,7 @@ import java.util.List;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
 
-public interface AstronomiaService {
+public interface EfemeridesService {
 
 	List<DataSolsticeEquinoxDTO> calculateSolsticesEquinoxes(Integer year);
 	

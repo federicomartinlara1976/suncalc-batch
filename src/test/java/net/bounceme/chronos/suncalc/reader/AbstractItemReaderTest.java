@@ -17,6 +17,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,10 +58,10 @@ class AbstractItemReaderTest {
         @DisplayName("read() sobre records vacío devuelve null sin explotar")
         void estadoInicial_readVacio_devuelveNull() {
             // Act
-            TimeData result = reader.read();
+        	Registro<?> registro = reader.read();
 
             // Assert
-            assertThat(result).isNull();
+            assertThat(registro).isNull();
         }
     }
 
@@ -155,12 +156,14 @@ class AbstractItemReaderTest {
         @DisplayName("Con 1 registro: primera lectura lo devuelve, segunda devuelve null")
         void read_unRegistro_devuelveUnaVezYNull() {
             // Arrange
-            TimeData only = new TimeData();
+        	Registro<TimeData> only = new Registro<>();
+            only.setContent(new TimeData());
+            
             reader.records.add(only);
 
             // Act
-            TimeData first = reader.read();
-            TimeData second = reader.read();
+            Registro<?> first = reader.read();
+            Registro<?> second = reader.read();
 
             // Assert
             assertThat(first).isSameAs(only);
@@ -171,9 +174,12 @@ class AbstractItemReaderTest {
         @DisplayName("Con N registros: los devuelve en orden de la lista")
         void read_variosRegistros_devuelveEnOrden() {
             // Arrange
-            TimeData a = new TimeData();
-            TimeData b = new TimeData();
-            TimeData c = new TimeData();
+            Registro<TimeData> a = new Registro<>(); 
+            a.setContent(new TimeData());
+            Registro<TimeData> b = new Registro<>();
+            b.setContent(new TimeData());
+            Registro<TimeData> c = new Registro<>(); 
+            c.setContent(new TimeData());
             reader.records.addAll(List.of(a, b, c));
 
             // Act / Assert
@@ -186,14 +192,16 @@ class AbstractItemReaderTest {
         @DisplayName("Tras agotar la lista: read() devuelve null y RESETEA el índice")
         void read_alAgotar_devuelveNullYResetea() {
             // Arrange
-            TimeData a = new TimeData();
-            TimeData b = new TimeData();
+        	Registro<TimeData> a = new Registro<>(); 
+            a.setContent(new TimeData());
+            Registro<TimeData> b = new Registro<>();
+            b.setContent(new TimeData());
             reader.records.addAll(List.of(a, b));
 
             // Act
             reader.read(); // a
             reader.read(); // b
-            TimeData exhausted = reader.read(); // null + reset
+            Registro<?> exhausted = reader.read(); // null + reset
 
             // Assert
             assertThat(exhausted).isNull();
@@ -203,8 +211,10 @@ class AbstractItemReaderTest {
         @DisplayName("Tras agotar, la siguiente lectura vuelve a empezar desde el principio")
         void read_alAgotarVuelveAEmpezarDesdeElPrincipio() {
             // Arrange
-            TimeData a = new TimeData();
-            TimeData b = new TimeData();
+        	Registro<TimeData> a = new Registro<>(); 
+            a.setContent(new TimeData());
+            Registro<TimeData> b = new Registro<>();
+            b.setContent(new TimeData());
             reader.records.addAll(List.of(a, b));
 
             // Act: primera pasada
@@ -213,7 +223,7 @@ class AbstractItemReaderTest {
             assertThat(reader.read()).isNull(); // reset
 
             // Segunda pasada: debe empezar de nuevo por 'a'
-            TimeData primeroSegundaPasada = reader.read();
+            Registro<?> primeroSegundaPasada = reader.read();
 
             // Assert
             assertThat(primeroSegundaPasada).isSameAs(a);
@@ -233,11 +243,11 @@ class AbstractItemReaderTest {
         void read_registrosAniadidosTrasLecturaVacia() {
             // Arrange
             assertThat(reader.read()).isNull();
-            TimeData late = new TimeData();
+            Registro<TimeData> late = new Registro<>(new TimeData());
             reader.records.add(late);
 
             // Act
-            TimeData result = reader.read();
+            Registro<?> result = reader.read();
 
             // Assert
             assertThat(result).isSameAs(late);

@@ -32,9 +32,10 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.item.ExecutionContext;
 
 import net.bounceme.chronos.suncalc.model.Execution;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.repository.ExecutionsRepository;
-import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
+import net.bounceme.chronos.suncalc.support.processor.SunDataDocumentProcessor;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("FromDateRegisterItemReader - lector por rango de fechas")
@@ -43,7 +44,7 @@ class FromDateRegisterItemReaderTest {
     private static final String DATE_PARAM = "fecha";
     private static final ZoneId ZONE = ZoneId.systemDefault();
 
-    @Mock private DocumentProcessor documentProcessor;
+    @Mock private SunDataDocumentProcessor documentProcessor;
     @Mock private ExecutionsRepository executionsRepository;
     @Mock private SimpleDateFormat dateFormat;
 
@@ -97,7 +98,7 @@ class FromDateRegisterItemReaderTest {
             stubFechaParam(hoyStr);
             when(dateFormat.parse(hoyStr)).thenReturn(new Date());
             when(dateFormat.format(any(Date.class))).thenReturn(hoyStr);
-            when(documentProcessor.process(hoyStr)).thenReturn(new TimeData());
+            when(documentProcessor.process(hoyStr)).thenReturn(new Registro<TimeData>());
 
             // Act
             reader.open(new ExecutionContext());
@@ -129,7 +130,7 @@ class FromDateRegisterItemReaderTest {
                     .thenReturn(d2)
                     .thenReturn(d3);
 
-            when(documentProcessor.process(anyString())).thenReturn(new TimeData());
+            when(documentProcessor.process(anyString())).thenReturn(new Registro<TimeData>());
 
             // Act
             reader.open(new ExecutionContext());
@@ -226,7 +227,7 @@ class FromDateRegisterItemReaderTest {
             when(dateFormat.format(any(Date.class)))
                     .thenReturn(startStr)
                     .thenReturn(hoyStr);
-            when(documentProcessor.process(anyString())).thenReturn(new TimeData());
+            when(documentProcessor.process(anyString())).thenReturn(new Registro<TimeData>());
 
             ArgumentCaptor<Execution> captor = ArgumentCaptor.forClass(Execution.class);
 
@@ -256,13 +257,13 @@ class FromDateRegisterItemReaderTest {
         @DisplayName("initialize() vacía records antes de repoblarlo")
         void initialize_vaciaRecordsAntesDeRepoblar() throws Exception {
             // Arrange
-            reader.records.add(new TimeData()); // residuo previo
+            reader.records.add(new Registro<TimeData>()); // residuo previo
 
             String hoyStr = format(LocalDate.now(ZONE));
             stubFechaParam(hoyStr);
             when(dateFormat.parse(hoyStr)).thenReturn(new Date());
             when(dateFormat.format(any(Date.class))).thenReturn(hoyStr);
-            when(documentProcessor.process(hoyStr)).thenReturn(new TimeData());
+            when(documentProcessor.process(hoyStr)).thenReturn(new Registro<TimeData>());
 
             // Act
             reader.open(new ExecutionContext());

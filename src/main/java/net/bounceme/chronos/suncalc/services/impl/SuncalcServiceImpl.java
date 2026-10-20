@@ -6,23 +6,22 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.repository.RepositoryCollectionCustom;
 import net.bounceme.chronos.suncalc.repository.TimeDataRepository;
 import net.bounceme.chronos.suncalc.services.SuncalcService;
-import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
+import net.bounceme.chronos.suncalc.support.processor.SunDataDocumentProcessor;
 
 @Service
 public class SuncalcServiceImpl implements SuncalcService {
 
 	@Autowired
-	@Qualifier("feignDocumentProcessor")
-	private DocumentProcessor documentProcessor;
+	private SunDataDocumentProcessor documentProcessor;
 
 	@Value("${application.importTimes.collection}")
 	private String collection;
@@ -43,7 +42,9 @@ public class SuncalcServiceImpl implements SuncalcService {
 		repositoryCollectionCustom.setCollectionName(collection);
 		
 		return timeDataRepository.findById(id).orElseGet(() -> {
-			TimeData t = documentProcessor.process();
+			
+			Registro<?> registro = documentProcessor.process();
+			TimeData t = (TimeData) registro.getContent();
 			t.setId(id);
 			t.setFecha(d);
 			t.setStatus(true);

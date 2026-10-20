@@ -15,15 +15,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.item.ExecutionContext;
 
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
-import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
+import net.bounceme.chronos.suncalc.support.processor.SunDataDocumentProcessor;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("DailyRegisterItemReader - lector de un único registro diario")
 class DailyRegisterItemReaderTest {
 
     @Mock
-    private DocumentProcessor documentProcessor;
+    private SunDataDocumentProcessor documentProcessor;
 
     @InjectMocks
     private DailyRegisterItemReader reader;
@@ -40,7 +41,7 @@ class DailyRegisterItemReaderTest {
         @DisplayName("Añade a 'records' el resultado de documentProcessor.process()")
         void initialize_aniadeResultadoDeProcess() {
             // Arrange
-            TimeData processed = new TimeData();
+            Registro<TimeData> processed = new Registro<>(new TimeData());
             when(documentProcessor.process()).thenReturn(processed);
 
             // Act
@@ -51,12 +52,13 @@ class DailyRegisterItemReaderTest {
             verify(documentProcessor).process();
         }
 
-        @Test
+        @SuppressWarnings("unchecked")
+		@Test
         @DisplayName("Cada llamada a open() añade un nuevo elemento (no reemplaza)")
         void initialize_variasLlamadas_acumulaResultados() {
             // Arrange
-            TimeData first = new TimeData();
-            TimeData second = new TimeData();
+            Registro<TimeData> first = new Registro<>(new TimeData());
+            Registro<TimeData> second = new Registro<>(new TimeData());
             when(documentProcessor.process()).thenReturn(first, second);
 
             // Act
@@ -120,13 +122,13 @@ class DailyRegisterItemReaderTest {
         @DisplayName("Tras open(), read() devuelve el registro procesado la primera vez")
         void read_trasOpen_devuelveElRegistro() {
             // Arrange
-            TimeData processed = new TimeData();
+        	Registro<TimeData> processed = new Registro<>(new TimeData());
             when(documentProcessor.process()).thenReturn(processed);
             reader.open(new ExecutionContext());
 
             // Act
-            TimeData first = reader.read();
-            TimeData second = reader.read();
+            Registro<?> first = reader.read();
+            Registro<?> second = reader.read();
 
             // Assert
             assertThat(first).isSameAs(processed);
@@ -137,7 +139,7 @@ class DailyRegisterItemReaderTest {
         @DisplayName("Sin open() previo, read() devuelve null (records vacío)")
         void read_sinOpen_devuelveNull() {
             // Act
-            TimeData result = reader.read();
+            Registro<?> result = reader.read();
 
             // Assert
             assertThat(result).isNull();
@@ -147,14 +149,14 @@ class DailyRegisterItemReaderTest {
         @DisplayName("Tras agotar el único registro, la siguiente pasada vuelve a leerlo")
         void read_autoReset_releeElMismoRegistro() {
             // Arrange
-            TimeData processed = new TimeData();
+        	Registro<TimeData> processed = new Registro<>(new TimeData());
             when(documentProcessor.process()).thenReturn(processed);
             reader.open(new ExecutionContext());
 
             // Act
             assertThat(reader.read()).isSameAs(processed); // 1ª lectura
             assertThat(reader.read()).isNull();            // agota + reset
-            TimeData segundaPasada = reader.read();        // vuelve a empezar
+            Registro<?> segundaPasada = reader.read();        // vuelve a empezar
 
             // Assert
             assertThat(segundaPasada).isSameAs(processed);

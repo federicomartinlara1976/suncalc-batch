@@ -29,6 +29,7 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.repository.RepositoryCollectionCustom;
 import net.bounceme.chronos.suncalc.repository.TimeDataRepository;
@@ -123,7 +124,8 @@ class TimeDataImporterWriterTest {
         void doWrite_itemSinId_asignaGuardaYPublica() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData item = timeData(null, fecha);
+            TimeData timeData = timeData(null, fecha);
+            Registro<TimeData> item = new Registro<>(timeData);
             stubItemNotInRepo();
             stubExecutionContext();
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
@@ -134,10 +136,10 @@ class TimeDataImporterWriterTest {
             writer.write(Chunk.of(item));
 
             // Assert
-            assertThat(item.getId()).isEqualTo(FORMATTED_DATE);
+            assertThat(timeData.getId()).isEqualTo(FORMATTED_DATE);
             verify(timeDataRepository).save(captor.capture());
-            assertThat(captor.getValue()).isSameAs(item);
-            assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(item);
+            assertThat(captor.getValue()).isSameAs(timeData);
+            assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(timeData);
 
             // findById + setId = 2 invocaciones de format
             verify(dateFormat, times(2)).format(fecha);
@@ -149,7 +151,8 @@ class TimeDataImporterWriterTest {
         void doWrite_itemConId_guardaYPublica() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData item = timeData("id-existente", fecha);
+            TimeData timeData = timeData("id-existente", fecha);
+            Registro<TimeData> item = new Registro<>(timeData);
             stubItemNotInRepo();
             stubExecutionContext();
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
@@ -158,9 +161,9 @@ class TimeDataImporterWriterTest {
             writer.write(Chunk.of(item));
 
             // Assert
-            assertThat(item.getId()).isEqualTo("id-existente");
-            verify(timeDataRepository).save(item);
-            assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(item);
+            assertThat(timeData.getId()).isEqualTo("id-existente");
+            verify(timeDataRepository).save(timeData);
+            assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(timeData);
 
             // Solo 1 invocación de format (findById); NO se re-formatea el id
             verify(dateFormat, times(1)).format(fecha);
@@ -180,7 +183,8 @@ class TimeDataImporterWriterTest {
         void doWrite_itemYaExiste_noGuarda() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData item = timeData("id-existente", fecha);
+            TimeData timeData = timeData("id-existente", fecha);
+            Registro<TimeData> item = new Registro<>(timeData);
             TimeData existing = timeData("id-existente", fecha);
             stubItemAlreadyInRepo(existing);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
@@ -204,7 +208,8 @@ class TimeDataImporterWriterTest {
         void doWrite_itemSinIdPeroYaExiste_noModificaId() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData item = timeData(null, fecha);
+            TimeData timeData = timeData(null, fecha);
+            Registro<TimeData> item = new Registro<>(timeData);
             TimeData existing = timeData("id-existente", fecha);
             stubItemAlreadyInRepo(existing);
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
@@ -213,7 +218,7 @@ class TimeDataImporterWriterTest {
             writer.write(Chunk.of(item));
 
             // Assert
-            assertThat(item.getId()).isNull();  // no se ha tocado
+            assertThat(timeData.getId()).isNull();  // no se ha tocado
             verify(timeDataRepository, never()).save(any(TimeData.class));
             verify(dateFormat, times(1)).format(fecha);
         }
@@ -235,9 +240,12 @@ class TimeDataImporterWriterTest {
             Date f2 = new Date(2000L);
             Date f3 = new Date(3000L);
 
-            TimeData existente1 = timeData("existente-1", f1);
-            TimeData existente2 = timeData("existente-2", f2);
-            TimeData nuevo = timeData("nuevo", f3);
+            TimeData timeData1 = timeData("existente-1", f1);
+            Registro<TimeData> existente1 = new Registro<>(timeData1);
+            TimeData timeData2 = timeData("existente-2", f2);
+            Registro<TimeData> existente2 = new Registro<>(timeData2);
+            TimeData timeDataNuevo = timeData("nuevo", f3);
+            Registro<TimeData> nuevo = new Registro<>(timeDataNuevo);
 
             TimeData existingRef = timeData("x", f1);
 
@@ -264,8 +272,8 @@ class TimeDataImporterWriterTest {
 
             // Assert
             verify(timeDataRepository, times(3)).save(any(TimeData.class));
-            verify(timeDataRepository).save(nuevo);
-            assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(nuevo);
+            verify(timeDataRepository).save(timeDataNuevo);
+            assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(timeDataNuevo);
 
             // setCollectionName: 3 veces (una por item)
             verify(repositoryCollectionCustom, times(3)).setCollectionName(COLLECTION);
@@ -279,9 +287,12 @@ class TimeDataImporterWriterTest {
             Date f2 = new Date(2000L);
             Date f3 = new Date(3000L);
 
-            TimeData a = timeData("a", f1);
-            TimeData b = timeData("b", f2);
-            TimeData c = timeData("c", f3);
+            TimeData ta = timeData("a", f1);
+            Registro<TimeData> a = new Registro<>(ta);
+            TimeData tb = timeData("b", f2);
+            Registro<TimeData> b = new Registro<>(tb);
+            TimeData tc = timeData("c", f3);
+            Registro<TimeData> c = new Registro<>(tc);
 
             stubItemNotInRepo();
             stubExecutionContext();
@@ -293,7 +304,7 @@ class TimeDataImporterWriterTest {
 
             // Assert
             verify(timeDataRepository, times(3)).save(any(TimeData.class));
-            assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(c);
+            assertThat(executionContext.get(NEXT_TIME_DATA_KEY)).isSameAs(tc);
         }
     }
 
@@ -306,35 +317,12 @@ class TimeDataImporterWriterTest {
     class EfectosComunesTests {
 
         @Test
-        @DisplayName("setCollectionName se invoca 1 vez por item, no 1 por chunk")
-        void doWrite_setCollectionNamePorItem() throws Exception {
-            // Arrange
-            stubItemNotInRepo();
-            stubExecutionContext();
-            when(dateFormat.format(any(Date.class))).thenReturn(FORMATTED_DATE);
-
-            TimeData[] items = {
-                    timeData("1", new Date()),
-                    timeData("2", new Date()),
-                    timeData("3", new Date()),
-                    timeData("4", new Date()),
-                    timeData("5", new Date())
-            };
-
-            // Act
-            writer.write(Chunk.of(items));
-
-            // Assert
-            verify(repositoryCollectionCustom, times(5)).setCollectionName(COLLECTION);
-            verify(timeDataRepository, times(5)).save(any(TimeData.class));
-        }
-
-        @Test
         @DisplayName("findById se invoca con el id formateado de la fecha del item")
         void doWrite_findByIdConIdFormateado() throws Exception {
             // Arrange
             Date fecha = new Date();
-            TimeData item = timeData("x", fecha);
+            TimeData timeData = timeData("x", fecha);
+            Registro<TimeData> item = new Registro<>(timeData);
             stubItemNotInRepo();
             stubExecutionContext();
             when(dateFormat.format(fecha)).thenReturn(FORMATTED_DATE);
@@ -360,7 +348,8 @@ class TimeDataImporterWriterTest {
         void doWrite_jobExecutionNull_lanzaNPE() {
             // Arrange
             writer.jobExecution = null;
-            TimeData item = timeData("x", new Date());
+            TimeData timeData = timeData("x", new Date());
+            Registro<TimeData> item = new Registro<>(timeData);
             stubItemNotInRepo();
             when(dateFormat.format(any(Date.class))).thenReturn(FORMATTED_DATE);
 
@@ -373,14 +362,15 @@ class TimeDataImporterWriterTest {
             }
 
             // El save se ejecutó antes del NPE
-            verify(timeDataRepository).save(item);
+            verify(timeDataRepository).save(timeData);
         }
 
         @Test
         @DisplayName("Si save lanza excepción, se propaga sin envolver")
         void doWrite_saveLanza_propaga() throws Exception {
             // Arrange
-            TimeData item = timeData("x", new Date());
+            TimeData timeData = timeData("x", new Date());
+            Registro<TimeData> item = new Registro<>(timeData);
             RuntimeException boom = new IllegalStateException("fallo de save");
             when(timeDataRepository.findById(anyString())).thenReturn(Optional.empty());
             when(dateFormat.format(any(Date.class))).thenReturn(FORMATTED_DATE);

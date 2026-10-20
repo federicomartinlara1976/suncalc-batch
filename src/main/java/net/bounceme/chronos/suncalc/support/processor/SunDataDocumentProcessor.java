@@ -1,54 +1,34 @@
 package net.bounceme.chronos.suncalc.support.processor;
 
-import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.clients.SunriseSunsetRest;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.SunriseSunsetResponse;
 import net.bounceme.chronos.suncalc.model.TimeData;
 
-@Component("feignDocumentProcessor")
+@Component
 @Slf4j
-public class FeignDocumentProcessor implements DocumentProcessor {
+public class SunDataDocumentProcessor extends BaseDocumentProcessor<TimeData> {
 	
 	private static final String TODAY = "today";
 	
 	@Autowired
 	private SunriseSunsetRest sunriseSunsetRest;
-	
-	@Autowired
-	@Qualifier("dateFormat")
-	private SimpleDateFormat dateFormat;
-	
-	@Autowired
-	@Qualifier("dateTimeFormat")
-	private SimpleDateFormat dateTimeFormat;
-	
-	@Value("${application.importTimes.coords.lat}")
-	private Float lat;
-	
-	@Value("${application.importTimes.coords.lng}")
-	private Float lng;
-	
-	@Setter
-	private String url;
 
 	@Override
-	public TimeData process() {
+	public Registro<TimeData> process() {
 		return obtainData(TODAY);
 	}
 
 	@SneakyThrows
-	private TimeData obtainData(String sDate) {
+	private Registro<TimeData> obtainData(String sDate) {
 		TimeData timeData = new TimeData();
 		
 		Boolean status = Boolean.FALSE;
@@ -57,10 +37,10 @@ public class FeignDocumentProcessor implements DocumentProcessor {
 		timeData.setFecha(date);
 		
 		SunriseSunsetResponse response = sunriseSunsetRest.detalle(
-	            lat, 
-	            lng, 
+	            latitude, 
+	            longitude, 
 	            sDate, 
-	            "Europe/Madrid", 
+	            timeZone, 
 	            0, 
 	            null
 	        );
@@ -85,11 +65,13 @@ public class FeignDocumentProcessor implements DocumentProcessor {
 		
 		timeData.setStatus(status);
 			
-		return timeData;
+		Registro<TimeData> registro = new Registro<>();
+		registro.setContent(timeData);
+		return registro;
 	}
 
 	@Override
-	public TimeData process(String date) {
+	public Registro<TimeData> process(String date) {
 		return obtainData(date);
 	}
 }

@@ -44,3 +44,12 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
     - 04/10/2026
       - Devolver la lista de solsticios y equinoccios ordenada por fecha (UTC o local) **(Completado - 09/10/2026)**
       
+- **Versión 1.0.7**
+
+    - 15/10/2026
+      - Refactor de servicios de astronomía para mejora de escalabilidad
+      
+    - 18/10/2026
+      - Corrección del cálculo de la fase lunar consultando a servicio web **(Completado - 18/10/2026)**
+      - Job periódico para recoger los datos diarios de la fase lunar **(Completado - 20/10/2026)**
+      

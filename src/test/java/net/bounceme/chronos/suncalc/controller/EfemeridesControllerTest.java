@@ -28,22 +28,22 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
-import net.bounceme.chronos.suncalc.services.AstronomiaService;
+import net.bounceme.chronos.suncalc.services.EfemeridesService;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AstronomiaController - endpoints REST de astronomía")
-class AstronomiaControllerTest {
+class EfemeridesControllerTest {
 
     private static final String BASE = "/suncalc-batch";
 
-    @Mock private AstronomiaService astronomiaService;
+    @Mock private EfemeridesService astronomiaService;
     @Mock private SimpleDateFormat dateFormat;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        AstronomiaController controller = new AstronomiaController();
+        EfemeridesController controller = new EfemeridesController();
         ReflectionTestUtils.setField(controller, "astronomiaService", astronomiaService);
         ReflectionTestUtils.setField(controller, "dateFormat", dateFormat);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
@@ -171,9 +171,9 @@ class AstronomiaControllerTest {
             String fechaFormateada = "2024-06-15";
             FaseLunarDTO dto = FaseLunarDTO.builder()
                     .date(new Date(0L))
-                    .edad(7.5f)
-                    .fase("creciente")
-                    .iluminacion(0.75f)
+                    .moonAgeDays(7.5f)
+                    .phaseName("creciente")
+                    .illuminationPercent(0.75f)
                     .build();
             when(dateFormat.format(any(Date.class))).thenReturn(fechaFormateada);
             when(astronomiaService.calculateFaseLunar(fechaFormateada)).thenReturn(dto);
@@ -181,9 +181,9 @@ class AstronomiaControllerTest {
             // Act / Assert
             mockMvc.perform(get(BASE + "/lunar-phase"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.result.edad").value(7.5))
-                    .andExpect(jsonPath("$.result.fase").value("creciente"))
-                    .andExpect(jsonPath("$.result.iluminacion").value(0.75));
+                    .andExpect(jsonPath("$.result.moonAgeDays").value(7.5))
+                    .andExpect(jsonPath("$.result.phaseName").value("creciente"))
+                    .andExpect(jsonPath("$.result.illuminationPercent").value(0.75));
 
             verify(dateFormat).format(any(Date.class));
             verify(astronomiaService).calculateFaseLunar(fechaFormateada);
@@ -205,18 +205,18 @@ class AstronomiaControllerTest {
             String fecha = "2024-06-15";
             FaseLunarDTO dto = FaseLunarDTO.builder()
                     .date(new Date(0L))
-                    .edad(3.2f)
-                    .fase("menguante")
-                    .iluminacion(0.4f)
+                    .moonAgeDays(3.2f)
+                    .phaseName("menguante")
+                    .illuminationPercent(0.4f)
                     .build();
             when(astronomiaService.calculateFaseLunar(fecha)).thenReturn(dto);
 
             // Act / Assert
             mockMvc.perform(get(BASE + "/lunar-phase/{date}", fecha))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.result.fase").value("menguante"))
-                    .andExpect(jsonPath("$.result.edad").value(3.2))
-                    .andExpect(jsonPath("$.result.iluminacion").value(0.4));
+                    .andExpect(jsonPath("$.result.phaseName").value("menguante"))
+                    .andExpect(jsonPath("$.result.moonAgeDays").value(3.2))
+                    .andExpect(jsonPath("$.result.illuminationPercent").value(0.4));
 
             verify(astronomiaService).calculateFaseLunar(fecha);
         }

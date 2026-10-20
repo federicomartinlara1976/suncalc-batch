@@ -34,4 +34,9 @@
 		<property name="validator" ref="timeDataValidator"/>
 	</bean>
 	
+	<bean id="moonDataProcessor" class="org.springframework.batch.item.validator.ValidatingItemProcessor">
+		<property name="filter" value="false" />
+		<property name="validator" ref="moonDataValidator"/>
+	</bean>
+	
 </beans>
