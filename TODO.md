@@ -50,5 +50,6 @@ Estas son las tareas pendientes por hacer, ordenadas por versión y fecha
       - Refactor de servicios de astronomía para mejora de escalabilidad
       
     - 18/10/2026
-      - Corrección del cálculo de la fase lunar consultando a servicio web
+      - Corrección del cálculo de la fase lunar consultando a servicio web **(Completado - 18/10/2026)**
+      - Job periódico para recoger los datos diarios de la fase lunar **(Completado - 20/10/2026)**
       

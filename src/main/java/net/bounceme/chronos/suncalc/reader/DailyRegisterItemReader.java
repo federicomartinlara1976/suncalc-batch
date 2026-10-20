@@ -5,14 +5,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import lombok.SneakyThrows;
+import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
 
 @Component
 public class DailyRegisterItemReader extends AbstractItemReader {
 	
 	@Autowired
-	@Qualifier("feignDocumentProcessor")
-	private DocumentProcessor documentProcessor;
+	@Qualifier("sunDataDocumentProcessor")
+	private DocumentProcessor<TimeData> documentProcessor;
 
 	/**
 	 * 

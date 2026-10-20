@@ -10,13 +10,14 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemStream;
 
-import net.bounceme.chronos.suncalc.model.TimeData;
+import net.bounceme.chronos.suncalc.model.Registro;
 
-public abstract class AbstractItemReader implements ItemReader<TimeData>, ItemStream {
+@SuppressWarnings("rawtypes")
+public abstract class AbstractItemReader implements ItemReader<Registro>, ItemStream {
 	
 	protected JobExecution jobExecution;
 	
-	protected List<TimeData> records = new ArrayList<>();
+	protected List<Registro> records = new ArrayList<>();
 	
 	private Integer index = 0;
 	
@@ -39,8 +40,8 @@ public abstract class AbstractItemReader implements ItemReader<TimeData>, ItemSt
 	 *
 	 */
 	@Override
-	public TimeData read() {
-		TimeData nextElement = null;
+	public Registro read() {
+		Registro nextElement = null;
 
 		if (index < records.size()) {
 			nextElement = records.get(index);

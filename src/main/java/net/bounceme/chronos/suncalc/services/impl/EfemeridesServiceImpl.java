@@ -9,33 +9,54 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.bounceme.chronos.suncalc.dto.DataSolsticeEquinoxDTO;
 import net.bounceme.chronos.suncalc.dto.FaseLunarDTO;
-import net.bounceme.chronos.suncalc.services.EfemeridesService;
+import net.bounceme.chronos.suncalc.model.MoonData;
+import net.bounceme.chronos.suncalc.model.Registro;
+import net.bounceme.chronos.suncalc.repository.MoonDataRepository;
 import net.bounceme.chronos.suncalc.services.CalcService;
+import net.bounceme.chronos.suncalc.services.EfemeridesService;
+import net.bounceme.chronos.suncalc.support.processor.MoonPhaseDocumentProcessor;
 import net.bounceme.chronos.utils.calc.converters.Converter;
 
 @Service
 @Validated
+@Slf4j
 public class EfemeridesServiceImpl implements EfemeridesService {
 	
 	private static final String[] EQUINOXES = {"march_equinox", "september_equinox"};
 	private static final String[] SOLSTICES = {"june_solstice", "december_solstice"};
-	private static final String HOUR_ZONE = "Europe/Madrid";
 	
-	@Autowired
-	private CalcService calcService;
+	@Value("${application.importTimes.timeZone}")
+	private String timeZone;
+	
+	@Value("${application.importTimes.coords.lat}")
+	private Float latitude;
+	
+	@Value("${application.importTimes.coords.lng}")
+	private Float longitude;
 	
 	@Autowired
 	private SimpleDateFormat dateFormat;
 	
 	@Autowired
+	private CalcService calcService;
+	
+	@Autowired
+	private MoonDataRepository moonDataRepository;
+	
+	@Autowired
 	private Converter<BigDecimal[], Date> dateConverter;
+	
+	@Autowired
+	private MoonPhaseDocumentProcessor documentProcessor;
 	
 	@Override
 	@SneakyThrows
@@ -53,7 +74,7 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	
 	private DataSolsticeEquinoxDTO extractFor(Integer year, String item) {
 		final String CMD_TEMPLATE = "[JDE, utc, local, off] = equinoccio_solsticio(%d, '%s', '%s')";
-		String cmd = String.format(CMD_TEMPLATE, year, item, HOUR_ZONE);
+		String cmd = String.format(CMD_TEMPLATE, year, item, timeZone);
 		
 		calcService.execute(cmd);
 		
@@ -65,18 +86,36 @@ public class EfemeridesServiceImpl implements EfemeridesService {
 	}
 
 	@Override
-	@SneakyThrows(ParseException.class)
 	public FaseLunarDTO calculateFaseLunar(String date) {
-		final String CMD_TEMPLATE = "[edad, fase, iluminacion] = fase_lunar(%s)";
-		String cmd = String.format(CMD_TEMPLATE, date);
 		
-		calcService.execute(cmd);
-		
-		return FaseLunarDTO.builder()
-				.date(dateFormat.parse(date))
-				.moonAgeDays(calcService.getScalar("edad").floatValue())
-				.phaseName(calcService.getString("fase"))
-				.illuminationPercent(calcService.getScalar("iluminacion").floatValue())
-				.build();
+		return moonDataRepository.findById(date).map(f -> toFaseLunarDTO(f, date)).orElseGet(() -> {
+			Registro<MoonData> registro = documentProcessor.process();
+			return toFaseLunarDTO(registro.getContent(), date);
+		});
+	}
+	
+	private FaseLunarDTO toFaseLunarDTO(MoonData f, String date) {
+	    return FaseLunarDTO.builder()
+	    	.date(parseDate(date))
+	    	.weekday(f.getWeekday())
+	    	.phaseName(f.getPhaseName())
+	    	.phaseEmoji(f.getPhaseEmoji())
+		    .illuminationPercent(f.getIlluminationPercent())
+		    .moonAgeDays(f.getMoonAgeDays())
+		    .distanceKm(f.getDistanceKm())
+		    .principalPhase(f.getPrincipalPhase())
+		    .principalPhaseTime(f.getPrincipalPhaseTime())
+		    .moonrise(f.getMoonrise())
+		    .moonset(f.getMoonset())
+		    .build();
+	}
+
+	private Date parseDate(String date) {
+	    try {
+	        return dateFormat.parse(date);
+	    } catch (ParseException e) {
+	        log.error("Error al parsear la fecha {}: {}", date, e.getMessage());
+	        return null;
+	    }
 	}
 }

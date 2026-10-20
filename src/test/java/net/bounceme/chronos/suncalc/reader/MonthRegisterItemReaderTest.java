@@ -33,10 +33,11 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.item.ExecutionContext;
 
 import net.bounceme.chronos.suncalc.model.Execution;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.repository.ExecutionsRepository;
 import net.bounceme.chronos.suncalc.support.SuncalcHelper;
-import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
+import net.bounceme.chronos.suncalc.support.processor.SunDataDocumentProcessor;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MonthRegisterItemReader - lector por mes completo")
@@ -45,7 +46,7 @@ class MonthRegisterItemReaderTest {
     private static final String MONTH_KEY = "month";
     private static final String YEAR_KEY = "year";
 
-    @Mock private DocumentProcessor documentProcessor;
+    @Mock private SunDataDocumentProcessor documentProcessor;
     @Mock private ExecutionsRepository executionsRepository;
     @Mock private JobExecution jobExecution;
 
@@ -284,7 +285,7 @@ class MonthRegisterItemReaderTest {
             // Arrange
             stubSingleDay();
             when(executionsRepository.existsById(anyString())).thenReturn(false);
-            when(documentProcessor.process(anyString())).thenReturn(new TimeData());
+            when(documentProcessor.process(anyString())).thenReturn(new Registro<TimeData>());
 
             // Act
             reader.open(new ExecutionContext());
@@ -305,7 +306,7 @@ class MonthRegisterItemReaderTest {
                     .thenReturn(2);
             when(executionsRepository.existsById("1990-06-01")).thenReturn(true);
             when(executionsRepository.existsById("1990-06-02")).thenReturn(false);
-            when(documentProcessor.process("1990-06-02")).thenReturn(new TimeData());
+            when(documentProcessor.process("1990-06-02")).thenReturn(new Registro<TimeData>());
 
             // Act
             reader.open(new ExecutionContext());
@@ -333,7 +334,7 @@ class MonthRegisterItemReaderTest {
             stubCurrentDate(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 10);
             suncalcHelperStatic.when(() -> SuncalcHelper.getDiasDelMes(anyInt(), anyInt()))
                     .thenReturn(3);
-            when(documentProcessor.process(anyString())).thenReturn(new TimeData());
+            when(documentProcessor.process(anyString())).thenReturn(new Registro<TimeData>());
 
             ArgumentCaptor<Execution> captor = ArgumentCaptor.forClass(Execution.class);
 
@@ -363,13 +364,13 @@ class MonthRegisterItemReaderTest {
         @DisplayName("initialize() vacía records antes de repoblarlo")
         void initialize_vaciaRecordsAntesDeRepoblar() {
             // Arrange
-            reader.records.add(new TimeData()); // residuo previo
+            reader.records.add(new Registro<TimeData>()); // residuo previo
             stubParams(1990, 6);
             stubCurrentDate(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 10);
             suncalcHelperStatic.when(() -> SuncalcHelper.getDiasDelMes(anyInt(), anyInt()))
                     .thenReturn(1);
             when(executionsRepository.existsById(anyString())).thenReturn(false);
-            when(documentProcessor.process(anyString())).thenReturn(new TimeData());
+            when(documentProcessor.process(anyString())).thenReturn(new Registro<TimeData>());
 
             // Act
             reader.open(new ExecutionContext());

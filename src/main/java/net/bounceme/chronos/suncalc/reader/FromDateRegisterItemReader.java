@@ -23,8 +23,9 @@ import net.bounceme.chronos.suncalc.support.processor.DocumentProcessor;
 @Slf4j
 public class FromDateRegisterItemReader extends AbstractItemReader {
 
+	@SuppressWarnings("rawtypes")
 	@Autowired
-	@Qualifier("feignDocumentProcessor")
+	@Qualifier("sunDataDocumentProcessor")
 	private DocumentProcessor documentProcessor;
 
 	@Autowired

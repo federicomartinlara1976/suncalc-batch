@@ -1,6 +1,7 @@
 package net.bounceme.chronos.suncalc.processor;
 
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 
 import org.springframework.batch.item.validator.ValidationException;
 import org.springframework.batch.item.validator.Validator;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import net.bounceme.chronos.suncalc.model.Registro;
 import net.bounceme.chronos.suncalc.model.TimeData;
 import net.bounceme.chronos.suncalc.validation.ValidatorService;
 
@@ -20,7 +22,7 @@ import net.bounceme.chronos.suncalc.validation.ValidatorService;
  */
 @Component
 @Slf4j
-public class TimeDataValidator implements Validator<TimeData> {
+public class TimeDataValidator implements Validator<Registro<TimeData>> {
 
 	@Autowired
 	@Qualifier("dateFormat")
@@ -30,15 +32,17 @@ public class TimeDataValidator implements Validator<TimeData> {
 	private ValidatorService<TimeData> validatorService;
 
 	@Override
-	public void validate(TimeData value) {
+	public void validate(Registro<TimeData> value) {
 		try {
-			validatorService.validate(value);
+			if (!Objects.isNull(value)) {
+				validatorService.validate(value.getContent());
+			}
 		} catch (ConstraintViolationException e) {
 			for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
 				log.error(violation.getMessage());
 			}
 			throw new ValidationException(String.format("El time data para la fecha [%s] no se va a procesar",
-					dateFormat.format(value.getFecha())));
+					dateFormat.format(value.getContent().getFecha())));
 		}
 	}
 }

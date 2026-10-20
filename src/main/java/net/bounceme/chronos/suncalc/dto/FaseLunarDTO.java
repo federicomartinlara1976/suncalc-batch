@@ -45,18 +45,18 @@ public class FaseLunarDTO {
         
 	@Getter
 	@Setter
-	private Date principalPhase;
+	private String principalPhase;
         
 	@Getter
 	@Setter
-	private Date principalPhaseTime;
+	private String principalPhaseTime;
         
 	@Getter
 	@Setter
-	private Date moonrise;
+	private String moonrise;
         
 	@Getter
 	@Setter
-	private Date moonset;
+	private String moonset;
 
 }
