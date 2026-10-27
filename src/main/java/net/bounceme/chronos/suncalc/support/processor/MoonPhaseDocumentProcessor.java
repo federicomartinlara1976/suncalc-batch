@@ -63,9 +63,7 @@ public class MoonPhaseDocumentProcessor extends BaseDocumentProcessor<MoonData> 
 		
 		moonData.setStatus(status);
 			
-		Registro<MoonData> registro = new Registro<>();
-		registro.setContent(moonData);
-		return registro;
+		return new Registro<>(moonData);
 	}
 
 	@Override

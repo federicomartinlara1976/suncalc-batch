@@ -228,7 +228,8 @@ class EfemeridesServiceImplTest {
             verify(documentProcessor, never()).process();
         }
 
-        @Test
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+		@Test
         @DisplayName("Si NO existe en BD: llama al documentProcessor y mapea su contenido a FaseLunarDTO")
         @SneakyThrows
         void calculateFaseLunar_noExisteEnBd_llamaAlDocumentProcessorYMapea() {
@@ -245,8 +246,7 @@ class EfemeridesServiceImplTest {
             registro.setContent(moonData);
             
             // Como el procesador devuelve un Registro crudo (raw type) por el @SuppressWarnings del servicio
-            @SuppressWarnings("unchecked")
-            Registro<MoonData> rawRegistro = (Registro<MoonData>) (Registro) registro;
+            Registro rawRegistro = (Registro) registro;
             
             when(documentProcessor.process()).thenReturn(rawRegistro);
             when(moonDataRepository.findById(DATE_STR)).thenReturn(Optional.empty());
