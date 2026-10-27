@@ -16,7 +16,7 @@ RUN apt-get update && \
         python3-pip \
         libmpfr-dev \
         libgmp-dev && \
-    pip3 install --no-cache-dir sympy && \
+    pip3 install --no-cache-dir --break-system-packages sympy && \
     mkdir -p /tmp/build && cd /tmp/build && \
     git clone --depth 1 https://github.com/federicomartinlara1976/octave.git && \
     cd octave/paquetes/astronomia && \
