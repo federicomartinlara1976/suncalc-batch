@@ -191,14 +191,14 @@
 		<dependency>
 		    <groupId>org.mockito</groupId>
 		    <artifactId>mockito-core</artifactId>
-		    <version>5.17.0</version>
+		    <version>5.22.0</version>
 		    <scope>test</scope>
 		</dependency>
 		<!-- Si usas mockito-junit-jupiter, actualízalo también -->
 		<dependency>
 		    <groupId>org.mockito</groupId>
 		    <artifactId>mockito-junit-jupiter</artifactId>
-		    <version>5.17.0</version>
+		    <version>5.22.0</version>
 		    <scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -270,7 +270,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.12</version>
+				<version>0.8.13</version>
 				<configuration>
 			        <excludes>
 			            <exclude>**/SuncalcApplication.class</exclude>
@@ -300,18 +300,18 @@
 			</plugin>
 			
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>3.0.0-M5</version>
-				<executions>
-					<execution>
-						<id>report</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report-only</goal>
-						</goals>
-					</execution>
-				</executions>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <configuration>
+			        <argLine>
+			            --add-opens java.base/java.lang=ALL-UNNAMED
+			            --add-opens java.base/java.util=ALL-UNNAMED
+			            --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+			            --add-opens java.base/jdk.internal.misc=ALL-UNNAMED
+			            --add-opens java.base/jdk.internal.reflect=ALL-UNNAMED
+			            -Dnet.bytebuddy.experimental=true
+			        </argLine>
+			    </configuration>
 			</plugin>
 
 			<plugin>
